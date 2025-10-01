@@ -5,6 +5,37 @@
   <h3>📦 Conectando doadores e beneficiários de forma eficiente 📦</h3>
 </div>
 
+# Roadmap de Evolução do Sistema "Solidarios"
+
+Próximas etapas para o desenvolvimento e aprimoramento do sistema de doações "Solidarios", focando nas atualizações necessárias e nas novas funcionalidades a serem implementadas.
+
+---
+
+### Melhorias em Funcionalidades Existentes
+
+| Funcionalidade | Melhoria Proposta | Justificativa Técnica |
+| :--- | :--- | :--- |
+| **Upload de Imagens** | Implementar compressão de imagem no frontend. | Reduz o consumo de largura de banda e custos de armazenamento, além de acelerar o upload. |
+| **Dashboards** | Adicionar filtros por período e gráficos interativos. | Facilita a análise de dados e a tomada de decisões estratégicas. |
+| **Listagens de Dados** | Otimizar `FlatList` no React Native com `React.memo` e `getItemLayout`. | Melhora a performance de renderização em listas longas, evitando lentidão no app. |
+| **Autenticação** | Utilizar `Expo SecureStore` para armazenar o refresh token. | Aumenta a segurança ao guardar tokens em um local encriptado do dispositivo. |
+| **Formulário de Doação** | Permitir o registo de múltiplos itens em uma única submissão. | Otimiza a experiência do doador, tornando o processo mais rápido e eficiente. |
+| **Perfil do Beneficiário** | Expandir o formulário de "Necessidades" para um questionário detalhado. | Coleta dados mais precisos para sugestões inteligentes de itens e melhor gestão. |
+
+---
+
+### Novas Funcionalidades a Desenvolver
+
+| Funcionalidade | Descrição | Perfil-Alvo | Prioridade |
+| :--- | :--- | :--- | :--- |
+| **Notificações Push** | Enviar alertas em tempo real sobre status de doações e novos itens. | Doador, Beneficiário | **Alta+** |
+| **Relatórios Avançados**| Geração de relatórios em PDF sobre movimentações e perfis. | Administrador | **Alta+** |
+| **Gestão de Campanhas**| Módulo para criar e gerir campanhas de arrecadação específicas. | Administrador | **Média-** |
+| **Chat Interno** | Canal de comunicação direto entre a equipe e os utilizadores. | Todos | **Média-** |
+| **Módulo de Descarte** | Funcionalidade para registar e justificar o descarte de itens. | Funcionário, Admin | **Média++** |
+| **Integração com Mapas**| Visualizar pontos de recolha e otimizar rotas de entrega. | Doador, Funcionário | **Baixa--** |
+| **Integração com Redes Sociais** | Permitir login social e partilha de campanhas/conquistas. | Doador | **Baixa----** |
+
 ## 📋 Índice
 
 - [Sobre o Projeto](#-sobre-o-projeto)
