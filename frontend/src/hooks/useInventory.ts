@@ -40,11 +40,11 @@ export const useInventory = () => {
 
     try {
       const response = await InventoryService.getAll(pageOptions);
-      setInventoryItems(response.data);
+      setInventoryItems(Array.isArray(response.data) ? response.data : []);
       setPagination({
-        page: response.meta.page,
-        totalPages: response.meta.pageCount,
-        totalItems: response.meta.itemCount,
+        page: response.meta?.page || 1,
+        totalPages: response.meta?.pageCount || 1,
+        totalItems: response.meta?.itemCount || 0,
       });
       return response;
     } catch (err: any) {
@@ -188,9 +188,9 @@ export const useInventory = () => {
       const response = await InventoryService.getLowStock(pageOptions);
       setInventoryItems(response.data);
       setPagination({
-        page: response.meta.page,
-        totalPages: response.meta.pageCount,
-        totalItems: response.meta.itemCount,
+        page: response.meta?.page || 1,
+        totalPages: response.meta?.pageCount || 1,
+        totalItems: response.meta?.itemCount || 0,
       });
       return response;
     } catch (err: any) {

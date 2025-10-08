@@ -211,9 +211,9 @@ export const useItems = () => {
         );
         setItems(response.data);
         setPagination({
-          page: response.meta.page,
-          totalPages: response.meta.pageCount,
-          totalItems: response.meta.itemCount,
+        page: response.meta?.page || 1,
+        totalPages: response.meta?.pageCount || 1,
+        totalItems: response.meta?.itemCount || 0,
         });
         return response;
       } catch (err: any) {
@@ -236,9 +236,9 @@ export const useItems = () => {
         const response = await ItemsService.getByStatus(status, pageOptions);
         setItems(response.data);
         setPagination({
-          page: response.meta.page,
-          totalPages: response.meta.pageCount,
-          totalItems: response.meta.itemCount,
+        page: response.meta?.page || 1,
+        totalPages: response.meta?.pageCount || 1,
+        totalItems: response.meta?.itemCount || 0,
         });
         return response;
       } catch (err: any) {

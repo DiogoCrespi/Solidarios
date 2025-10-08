@@ -120,23 +120,24 @@ const DashboardScreen: React.FC = () => {
         distributionsResponse &&
         usersResponse
       ) {
-        const items = itemsResponse.data;
+        const items = Array.isArray(itemsResponse.data) ? itemsResponse.data : [];
         const availableItems = items.filter(
           (item) => item.status === "disponivel"
         ).length;
-        const beneficiaries = usersResponse.data.filter(
+        const users = Array.isArray(usersResponse.data) ? usersResponse.data : [];
+        const beneficiaries = users.filter(
           (user) => user.role === "beneficiario"
         ).length;
-        const donors = usersResponse.data.filter(
+        const donors = users.filter(
           (user) => user.role === "doador"
         ).length;
 
         setStats({
-          totalItems: itemsResponse.meta.itemCount,
+          totalItems: itemsResponse.meta?.itemCount || 0,
           availableItems,
-          totalDistributions: distributionsResponse.meta.itemCount,
-          lowStockItems: lowStockResponse ? lowStockResponse.meta.itemCount : 0,
-          totalUsers: usersResponse.meta.itemCount,
+          totalDistributions: distributionsResponse.meta?.itemCount || 0,
+          lowStockItems: lowStockResponse ? (lowStockResponse.meta?.itemCount || 0) : 0,
+          totalUsers: usersResponse.meta?.itemCount || 0,
           totalBeneficiaries: beneficiaries,
           totalDonors: donors,
         });
@@ -145,11 +146,13 @@ const DashboardScreen: React.FC = () => {
         setRecentItems(items.slice(0, 3));
 
         // Definir distribuições recentes
-        setRecentDistributions(distributionsResponse.data.slice(0, 3));
+        const distributions = Array.isArray(distributionsResponse.data) ? distributionsResponse.data : [];
+        setRecentDistributions(distributions.slice(0, 3));
 
         // Definir itens com estoque baixo
         if (lowStockResponse) {
-          setLowStockInventory(lowStockResponse.data.slice(0, 3));
+          const lowStock = Array.isArray(lowStockResponse.data) ? lowStockResponse.data : [];
+          setLowStockInventory(lowStock.slice(0, 3));
         }
       }
     } catch (err) {

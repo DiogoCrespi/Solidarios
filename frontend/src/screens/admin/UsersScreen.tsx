@@ -60,7 +60,7 @@ const UsersScreen: React.FC = () => {
 
   // Aplicar filtros e busca aos usuários
   useEffect(() => {
-    if (!users) return;
+    if (!users || !Array.isArray(users)) return;
 
     let result = [...users];
 

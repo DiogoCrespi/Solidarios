@@ -45,6 +45,11 @@ Após isso, você pode ir direto para a pasta do Front-end
 
 ```bash
 cd ../frontend
+
+```
+```bash
+http://localhost:8082
+
 ```
 
 Na pasta frontend, você pode executar usando:

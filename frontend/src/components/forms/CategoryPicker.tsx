@@ -51,6 +51,7 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({
 
   useEffect(() => {
     // Carregar categorias ao montar o componente
+    console.log("CategoryPicker: Carregando categorias...");
     fetchCategories();
   }, [fetchCategories]);
 
@@ -126,14 +127,18 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({
   // Encontrar as categorias selecionadas para exibir os badges
   const getSelectedCategories = (): Category[] => {
     if (multiple) {
-      return categories.filter((category) => selectedIds.includes(category.id));
+      return (Array.isArray(categories) ? categories : []).filter((category) => selectedIds.includes(category.id));
     }
 
-    const selectedCategory = categories.find(
+    const selectedCategory = (Array.isArray(categories) ? categories : []).find(
       (category) => category.id === value
     );
     return selectedCategory ? [selectedCategory] : [];
   };
+
+  console.log("CategoryPicker: isLoading =", isLoading);
+  console.log("CategoryPicker: categoriesError =", categoriesError);
+  console.log("CategoryPicker: categories =", categories);
 
   if (isLoading) {
     return <Loading message="Carregando categorias..." />;
@@ -166,7 +171,7 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({
       </View>
 
       <FlatList
-        data={categories}
+        data={Array.isArray(categories) ? categories : []}
         keyExtractor={(item) => item.id}
         renderItem={renderCategoryItem}
         horizontal={false}

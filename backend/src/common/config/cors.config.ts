@@ -11,7 +11,7 @@ export function createCorsConfig(configService: ConfigService): CorsOptions {
     .filter((origin) => origin.length > 0);
 
   // Se não houver origens configuradas, usar configuração padrão para desenvolvimento
-  const origins = 'http://localhost:8081';
+  const origins = 'http://localhost:8082';
 
   return {
     origin: origins,

@@ -66,7 +66,7 @@ const ItemsScreen: React.FC = () => {
 
   // Aplicar filtros e busca aos itens
   useEffect(() => {
-    if (!items) return;
+    if (!items || !Array.isArray(items)) return;
 
     let result = [...items];
 
@@ -91,7 +91,7 @@ const ItemsScreen: React.FC = () => {
       result = result.filter(
         (item) =>
           item.description.toLowerCase().includes(query) ||
-          item.donor?.name.toLowerCase().includes(query) ||
+          item.donor?.name?.toLowerCase().includes(query) ||
           item.category?.name?.toLowerCase().includes(query) ||
           item.conservationState?.toLowerCase().includes(query) ||
           item.size?.toLowerCase().includes(query)
@@ -116,7 +116,7 @@ const ItemsScreen: React.FC = () => {
   };
 
   // Se estiver carregando inicialmente, mostrar loading
-  if (isLoading && !refreshing && !items.length) {
+  if (isLoading && !refreshing && (!items || !items.length)) {
     return <Loading visible={true} message="Carregando itens..." overlay />;
   }
 
@@ -162,7 +162,7 @@ const ItemsScreen: React.FC = () => {
   // Opções de filtro de categoria
   const categoryOptions = [
     { label: "Todas as categorias", value: "all" },
-    ...categories.map((category) => ({
+    ...(Array.isArray(categories) ? categories : []).map((category) => ({
       label: category.name,
       value: category.id,
     })),

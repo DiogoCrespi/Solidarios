@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   StyleSheet,
@@ -58,6 +58,11 @@ const CreateUserScreen: React.FC = () => {
     message: "",
   });
 
+  // Função para fechar notificação
+  const handleCloseNotification = useCallback(() => {
+    setNotification(prev => ({ ...prev, visible: false }));
+  }, []);
+
   // Função para criar um novo usuário
   const handleCreateUser = async (values: any) => {
     try {
@@ -102,7 +107,7 @@ const CreateUserScreen: React.FC = () => {
         visible={notification.visible}
         type={notification.type}
         message={notification.message}
-        onClose={() => setNotification({ ...notification, visible: false })}
+        onClose={handleCloseNotification}
       />
 
       <NotificationBanner

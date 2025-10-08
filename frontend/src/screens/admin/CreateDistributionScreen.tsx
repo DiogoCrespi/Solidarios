@@ -86,13 +86,13 @@ const CreateDistributionScreen: React.FC = () => {
   };
 
   // Opções de beneficiários
-  const beneficiaryOptions = users.map((user) => ({
+  const beneficiaryOptions = (users || []).map((user) => ({
     label: user.name,
     value: user.id,
   }));
 
   // Opções de itens
-  const itemOptions = items.map((item) => ({
+  const itemOptions = (items || []).map((item) => ({
     label: item.description,
     value: item.id,
   }));

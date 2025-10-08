@@ -63,7 +63,7 @@ const InventoryScreen: React.FC = () => {
 
   // Aplicar filtros e busca ao inventário
   useEffect(() => {
-    if (!inventoryItems) return;
+    if (!inventoryItems || !Array.isArray(inventoryItems)) return;
 
     let result = [...inventoryItems];
 
@@ -74,7 +74,7 @@ const InventoryScreen: React.FC = () => {
         (inv) =>
           inv.item.description.toLowerCase().includes(query) ||
           inv.location?.toLowerCase().includes(query) ||
-          inv.item.category?.name.toLowerCase().includes(query)
+          inv.item.category?.name?.toLowerCase().includes(query)
       );
     }
 
@@ -146,7 +146,7 @@ const InventoryScreen: React.FC = () => {
   };
 
   // Se estiver carregando inicialmente, mostrar loading
-  if (isLoading && !refreshing && !inventoryItems.length) {
+  if (isLoading && !refreshing && (!inventoryItems || !inventoryItems.length)) {
     return (
       <Loading visible={true} message="Carregando inventário..." overlay />
     );

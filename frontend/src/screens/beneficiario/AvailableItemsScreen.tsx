@@ -66,7 +66,7 @@ const AvailableItemsScreen: React.FC = () => {
 
   // Aplicar filtros e busca aos itens
   useEffect(() => {
-    if (!items) return;
+    if (!items || !Array.isArray(items)) return;
 
     let result = [...items];
 
@@ -153,7 +153,7 @@ const AvailableItemsScreen: React.FC = () => {
   // Opções de filtro de categoria
   const categoryOptions = [
     { label: "Todas as categorias", value: "all" },
-    ...categories.map((category) => ({
+    ...(Array.isArray(categories) ? categories : []).map((category) => ({
       label: category.name,
       value: category.id,
     })),

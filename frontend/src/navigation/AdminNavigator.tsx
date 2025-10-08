@@ -12,23 +12,23 @@ import {
   AdminDistributionsStackParamList,
   AdminUsersStackParamList,
 } from "./types";
-// Ícones (usando react-native-vector-icons)
-import Icon from "react-native-vector-icons/Ionicons";
+// Ícones usando texto simples para compatibilidade com web
+import { Text } from "react-native";
 
 const DashboardIcon = ({ color }: { color: string }) => (
-  <Icon name="speedometer" size={24} color={color} />
+  <Text style={{ color, fontSize: 20, fontWeight: 'bold' }}>📊</Text>
 );
 const ItemsIcon = ({ color }: { color: string }) => (
-  <Icon name="list" size={24} color={color} />
+  <Text style={{ color, fontSize: 20, fontWeight: 'bold' }}>📦</Text>
 );
 const InventoryIcon = ({ color }: { color: string }) => (
-  <Icon name="cube" size={24} color={color} />
+  <Text style={{ color, fontSize: 20, fontWeight: 'bold' }}>📋</Text>
 );
 const DistributionsIcon = ({ color }: { color: string }) => (
-  <Icon name="car" size={24} color={color} />
+  <Text style={{ color, fontSize: 20, fontWeight: 'bold' }}>🚚</Text>
 );
 const UsersIcon = ({ color }: { color: string }) => (
-  <Icon name="people" size={24} color={color} />
+  <Text style={{ color, fontSize: 20, fontWeight: 'bold' }}>👥</Text>
 );
 
 // Telas

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug - Solidarios</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .log-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .error {
+            color: #d32f2f;
+            background-color: #ffebee;
+            border-color: #f44336;
+        }
+        .success {
+            color: #388e3c;
+            background-color: #e8f5e8;
+            border-color: #4caf50;
+        }
+        .warning {
+            color: #f57c00;
+            background-color: #fff3e0;
+            border-color: #ff9800;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        button {
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug - Solidarios App</h1>
+        
+        <div class="log-section">
+            <h3>📊 Status da Aplicação</h3>
+            <div id="status">Verificando...</div>
+        </div>
+
+        <div class="log-section">
+            <h3>🌐 Teste de APIs</h3>
+            <button onclick="testAPIs()">Testar APIs</button>
+            <div id="api-results"></div>
+        </div>
+
+        <div class="log-section">
+            <h3>📱 Teste do Frontend</h3>
+            <button onclick="testFrontend()">Testar Frontend</button>
+            <div id="frontend-results"></div>
+        </div>
+
+        <div class="log-section">
+            <h3>📝 Logs do Console</h3>
+            <button onclick="clearLogs()">Limpar Logs</button>
+            <div id="console-logs"></div>
+        </div>
+    </div>
+
+    <script>
+        // Capturar logs do console
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        const logs = [];
+
+        function addLog(type, message) {
+            const timestamp = new Date().toLocaleTimeString();
+            logs.push({ type, message, timestamp });
+            updateLogDisplay();
+        }
+
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addLog('log', args.join(' '));
+        };
+
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addLog('error', args.join(' '));
+        };
+
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addLog('warning', args.join(' '));
+        };
+
+        function updateLogDisplay() {
+            const container = document.getElementById('console-logs');
+            container.innerHTML = logs.map(log => 
+                `<div class="log-section ${log.type}">
+                    <strong>[${log.timestamp}]</strong> ${log.message}
+                </div>`
+            ).join('');
+        }
+
+        function clearLogs() {
+            logs.length = 0;
+            updateLogDisplay();
+        }
+
+        // Testar APIs
+        async function testAPIs() {
+            const results = document.getElementById('api-results');
+            results.innerHTML = '<div class="log-section">Testando APIs...</div>';
+
+            const apis = [
+                { name: 'Items', url: 'http://localhost:3000/items?page=1&take=5' },
+                { name: 'Inventory', url: 'http://localhost:3000/inventory?page=1&take=5' },
+                { name: 'Users', url: 'http://localhost:3000/users?page=1&take=5' },
+                { name: 'Distributions', url: 'http://localhost:3000/distributions?page=1&take=5' }
+            ];
+
+            let html = '';
+            for (const api of apis) {
+                try {
+                    const response = await fetch(api.url, {
+                        headers: {
+                            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHNhbmVtLmNvbSIsInN1YiI6ImRlZTk1MjVkLThjYTMtNGNkZi05MzkxLTAwZTEyYWIxZDBhNCIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1OTkzMDM0OCwiZXhwIjoxNzU5OTMxMjQ4fQ.j38CgNY-ENc4ZZTxNejdw8n9gylMErk-spszmOHaUtg'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        html += `<div class="log-section success">
+                            <strong>✅ ${api.name}</strong> - Status: ${response.status}<br>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>`;
+                    } else {
+                        html += `<div class="log-section error">
+                            <strong>❌ ${api.name}</strong> - Status: ${response.status}<br>
+                            <pre>${await response.text()}</pre>
+                        </div>`;
+                    }
+                } catch (error) {
+                    html += `<div class="log-section error">
+                        <strong>❌ ${api.name}</strong> - Erro: ${error.message}
+                    </div>`;
+                }
+            }
+            
+            results.innerHTML = html;
+        }
+
+        // Testar Frontend
+        async function testFrontend() {
+            const results = document.getElementById('frontend-results');
+            results.innerHTML = '<div class="log-section">Testando Frontend...</div>';
+
+            try {
+                const response = await fetch('http://localhost:8082');
+                if (response.ok) {
+                    const html = await response.text();
+                    results.innerHTML = `<div class="log-section success">
+                        <strong>✅ Frontend</strong> - Status: ${response.status}<br>
+                        <pre>${html.substring(0, 500)}...</pre>
+                    </div>`;
+                } else {
+                    results.innerHTML = `<div class="log-section error">
+                        <strong>❌ Frontend</strong> - Status: ${response.status}
+                    </div>`;
+                }
+            } catch (error) {
+                results.innerHTML = `<div class="log-section error">
+                    <strong>❌ Frontend</strong> - Erro: ${error.message}
+                </div>`;
+            }
+        }
+
+        // Verificar status inicial
+        async function checkStatus() {
+            const status = document.getElementById('status');
+            try {
+                const backendResponse = await fetch('http://localhost:3000/health');
+                const frontendResponse = await fetch('http://localhost:8082');
+                
+                let statusHtml = '';
+                if (backendResponse.ok) {
+                    statusHtml += '<div class="log-section success">✅ Backend: Online</div>';
+                } else {
+                    statusHtml += '<div class="log-section error">❌ Backend: Offline</div>';
+                }
+                
+                if (frontendResponse.ok) {
+                    statusHtml += '<div class="log-section success">✅ Frontend: Online</div>';
+                } else {
+                    statusHtml += '<div class="log-section error">❌ Frontend: Offline</div>';
+                }
+                
+                status.innerHTML = statusHtml;
+            } catch (error) {
+                status.innerHTML = `<div class="log-section error">❌ Erro ao verificar status: ${error.message}</div>`;
+            }
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            checkStatus();
+            console.log('Debug page loaded');
+        });
+
+        // Capturar erros não tratados
+        window.addEventListener('error', function(e) {
+            console.error('Erro não tratado:', e.error);
+        });
+
+        window.addEventListener('unhandledrejection', function(e) {
+            console.error('Promise rejeitada:', e.reason);
+        });
+    </script>
+</body>
+</html>
+

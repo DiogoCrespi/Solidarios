@@ -41,11 +41,11 @@ export const useUsers = () => {
 
     try {
       const response = await UsersService.getAll(pageOptions);
-      setUsers(response.data);
+      setUsers(Array.isArray(response.data) ? response.data : []);
       setPagination({
-        page: response.meta.page,
-        totalPages: response.meta.pageCount,
-        totalItems: response.meta.itemCount,
+        page: response.meta?.page || 1,
+        totalPages: response.meta?.pageCount || 1,
+        totalItems: response.meta?.itemCount || 0,
       });
       return response;
     } catch (err: any) {
@@ -142,9 +142,9 @@ export const useUsers = () => {
         const response = await UsersService.getByRole(role, pageOptions);
         setUsers(response.data);
         setPagination({
-          page: response.meta.page,
-          totalPages: response.meta.pageCount,
-          totalItems: response.meta.itemCount,
+          page: response.meta?.page || 1,
+          totalPages: response.meta?.pageCount || 1,
+          totalItems: response.meta?.itemCount || 0,
         });
         return response;
       } catch (err: any) {

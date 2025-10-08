@@ -18,10 +18,13 @@ const CategoriesService = {
    * @returns Lista paginada de categorias
    */
   getAll: async (pageOptions?: PageOptionsDto): Promise<CategoriesPage> => {
-    const response = await api.get<CategoriesPage>("/categories", {
+    console.log("CategoriesService: Fazendo requisição para /categories");
+    const response = await api.get<{data: CategoriesPage}>("/categories", {
       params: pageOptions,
     });
-    return response.data;
+    console.log("CategoriesService: Resposta completa:", response);
+    console.log("CategoriesService: response.data:", response.data);
+    return response.data.data;
   },
 
   /**

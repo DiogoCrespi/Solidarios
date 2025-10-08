@@ -2,7 +2,7 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Icon from "react-native-vector-icons/Ionicons";
+import { Text } from "react-native";
 import theme from "../theme";
 import DashboardScreen from "../screens/admin/DashboardScreen";
 import ItemsScreen from "../screens/admin/ItemsScreen";
@@ -16,21 +16,21 @@ import CreateDistributionScreen from "../screens/admin/CreateDistributionScreen"
 import BeneficiariesScreen from "../screens/funcionario/BeneficiariesScreen";
 import BeneficiaryDetailScreen from "../screens/funcionario/BeneficiaryDetailScreen";
 
-// Implementação real dos ícones usando react-native-vector-icons
+// Ícones usando emojis para compatibilidade com web
 const DashboardIcon = ({ color }: { color: string }) => (
-  <Icon name="speedometer" size={24} color={color} />
+  <Text style={{ color, fontSize: 20, fontWeight: 'bold' }}>📊</Text>
 );
 const ItemsIcon = ({ color }: { color: string }) => (
-  <Icon name="list" size={24} color={color} />
+  <Text style={{ color, fontSize: 20, fontWeight: 'bold' }}>📦</Text>
 );
 const InventoryIcon = ({ color }: { color: string }) => (
-  <Icon name="cube" size={24} color={color} />
+  <Text style={{ color, fontSize: 20, fontWeight: 'bold' }}>📋</Text>
 );
 const DistributionsIcon = ({ color }: { color: string }) => (
-  <Icon name="car" size={24} color={color} />
+  <Text style={{ color, fontSize: 20, fontWeight: 'bold' }}>🚚</Text>
 );
 const BeneficiariesIcon = ({ color }: { color: string }) => (
-  <Icon name="people" size={24} color={color} />
+  <Text style={{ color, fontSize: 20, fontWeight: 'bold' }}>👥</Text>
 );
 
 // Stack Navigators para cada tab

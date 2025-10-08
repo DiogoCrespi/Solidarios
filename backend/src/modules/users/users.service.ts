@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from './entities/user.entity';
+import { User, UserRole } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PageOptionsDto } from '../../common/pagination/dto/page-options.dto';
@@ -80,6 +80,39 @@ export class UsersService {
     } catch (error) {
       this.logger.error(
         `Erro ao buscar usuários paginados: ${error.message}`,
+        error.stack,
+      );
+      throw error;
+    }
+  }
+
+  @LogMethod()
+  async findByRole(
+    role: UserRole,
+    pageOptionsDto: PageOptionsDto,
+  ): Promise<PageDto<User>> {
+    try {
+      const queryBuilder = this.usersRepository.createQueryBuilder('user');
+
+      queryBuilder
+        .where('user.role = :role', { role })
+        .orderBy('user.createdAt', pageOptionsDto.order)
+        .skip(pageOptionsDto.skip)
+        .take(pageOptionsDto.take);
+
+      const itemCount = await queryBuilder.getCount();
+      const users = await queryBuilder.getMany();
+
+      const pageMetaDto = new PageMetaDto({ pageOptionsDto, itemCount });
+
+      this.logger.debug(
+        `Retornando ${users.length} usuários com role ${role} (página ${pageOptionsDto.page})`,
+      );
+
+      return new PageDto(users, pageMetaDto);
+    } catch (error) {
+      this.logger.error(
+        `Erro ao buscar usuários por role ${role}: ${error.message}`,
         error.stack,
       );
       throw error;

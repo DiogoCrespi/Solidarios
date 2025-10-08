@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   StyleSheet,
@@ -86,9 +86,17 @@ const CreateItemScreen: React.FC = () => {
     fetchCategories();
   }, [fetchCategories]);
 
+  // Função para fechar notificação
+  const handleCloseNotification = useCallback(() => {
+    setNotification(prev => ({ ...prev, visible: false }));
+  }, []);
+
   // Função para criar um novo item
   const handleCreateItem = async (values: any) => {
     try {
+      console.log("CreateItemScreen: Dados do formulário:", values);
+      console.log("CreateItemScreen: donorId:", values.donorId);
+      console.log("CreateItemScreen: categoryId:", values.categoryId);
       const newItem = await createItem(values);
 
       if (newItem) {
@@ -130,7 +138,7 @@ const CreateItemScreen: React.FC = () => {
         type={notification.type}
         message={notification.message}
         description={notification.description}
-        onClose={() => setNotification({ ...notification, visible: false })}
+        onClose={handleCloseNotification}
       />
 
       <NotificationBanner
@@ -162,10 +170,10 @@ const CreateItemScreen: React.FC = () => {
           }}
           validationSchema={CreateItemSchema}
           onSubmit={(values) => {
-            // Adicionando o ID do doador (usando um ID fictício para administrador)
+            // Adicionando o ID do doador (usando o ID real do doador)
             const itemWithDonor = {
               ...values,
-              donorId: values.donorId || "admin-id", // Substituir por um ID real ou obtido de alguma forma
+              donorId: values.donorId || "5115cdab-3587-440f-83ae-ecc9e858f56d", // ID real do doador
             };
             handleCreateItem(itemWithDonor);
           }}

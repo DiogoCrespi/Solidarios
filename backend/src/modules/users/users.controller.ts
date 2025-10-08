@@ -66,6 +66,15 @@ export class UsersController {
     return this.usersService.findAllPaginated(pageOptionsDto);
   }
 
+  @Get('role/:role')
+  @ApiOperation({ summary: 'Buscar usuários por role' })
+  @ApiResponse({ status: 200, description: 'Usuários encontrados.' })
+  @ApiResponse({ status: 400, description: 'Role inválido.' })
+  @Roles(UserRole.ADMIN, UserRole.FUNCIONARIO)
+  findByRole(@Param('role') role: UserRole, @Query() pageOptionsDto: PageOptionsDto) {
+    return this.usersService.findByRole(role, pageOptionsDto);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Buscar um usuário pelo ID' })
   @ApiResponse({ status: 200, description: 'Usuário encontrado.' })

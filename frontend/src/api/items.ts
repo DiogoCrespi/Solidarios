@@ -19,10 +19,10 @@ const ItemsService = {
    * @returns Lista paginada de itens
    */
   getAll: async (pageOptions?: PageOptionsDto): Promise<ItemsPage> => {
-    const response = await api.get<ItemsPage>("/items", {
+    const response = await api.get<{data: ItemsPage}>("/items", {
       params: pageOptions,
     });
-    return response.data;
+    return response.data.data;
   },
 
   /**
@@ -31,8 +31,8 @@ const ItemsService = {
    * @returns Item encontrado
    */
   getById: async (id: string): Promise<Item> => {
-    const response = await api.get<Item>(`/items/${id}`);
-    return response.data;
+    const response = await api.get<{data: Item}>(`/items/${id}`);
+    return response.data.data;
   },
 
   /**
@@ -41,8 +41,10 @@ const ItemsService = {
    * @returns Item criado
    */
   create: async (itemData: CreateItemDto): Promise<Item> => {
-    const response = await api.post<Item>("/items", itemData);
-    return response.data;
+    console.log("ItemsService: Criando item com dados:", itemData);
+    const response = await api.post<{data: Item}>("/items", itemData);
+    console.log("ItemsService: Resposta da criação:", response);
+    return response.data.data;
   },
 
   /**
@@ -52,8 +54,8 @@ const ItemsService = {
    * @returns Item atualizado
    */
   update: async (id: string, itemData: UpdateItemDto): Promise<Item> => {
-    const response = await api.patch<Item>(`/items/${id}`, itemData);
-    return response.data;
+    const response = await api.patch<{data: Item}>(`/items/${id}`, itemData);
+    return response.data.data;
   },
 
   /**

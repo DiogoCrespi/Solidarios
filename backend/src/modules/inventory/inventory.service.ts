@@ -140,6 +140,43 @@ export class InventoryService {
   }
 
   @LogMethod()
+  async findLowStock(
+    pageOptionsDto: PageOptionsDto,
+  ): Promise<PageDto<Inventory>> {
+    this.logger.debug(
+      `Buscando itens com estoque baixo - página ${pageOptionsDto.page}`,
+    );
+
+    try {
+      const queryBuilder = this.inventoryRepository
+        .createQueryBuilder('inventory')
+        .leftJoinAndSelect('inventory.item', 'item')
+        .leftJoinAndSelect('item.donor', 'donor')
+        .leftJoinAndSelect('item.category', 'category')
+        .where('inventory.quantity <= :lowStockThreshold', { lowStockThreshold: 5 })
+        .orderBy('inventory.quantity', 'ASC')
+        .skip(pageOptionsDto.skip)
+        .take(pageOptionsDto.take);
+
+      const itemCount = await queryBuilder.getCount();
+      const inventory = await queryBuilder.getMany();
+
+      const pageMetaDto = new PageMetaDto({ pageOptionsDto, itemCount });
+
+      this.logger.debug(
+        `Retornando ${inventory.length} itens com estoque baixo (total: ${itemCount})`,
+      );
+      return new PageDto(inventory, pageMetaDto);
+    } catch (error) {
+      this.logger.error(
+        `Erro ao buscar itens com estoque baixo: ${error.message}`,
+        error.stack,
+      );
+      throw error;
+    }
+  }
+
+  @LogMethod()
   async findOne(id: string): Promise<Inventory> {
     this.logger.debug(`Buscando registro de inventário com ID: ${id}`);
 

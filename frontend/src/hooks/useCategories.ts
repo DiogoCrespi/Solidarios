@@ -39,12 +39,15 @@ export const useCategories = () => {
     setError(null);
 
     try {
+      console.log("useCategories: Chamando CategoriesService.getAll...");
       const response = await CategoriesService.getAll(pageOptions);
-      setCategories(response.data);
+      console.log("useCategories: Resposta recebida:", response);
+      console.log("useCategories: response.data:", response.data);
+      setCategories(Array.isArray(response.data) ? response.data : []);
       setPagination({
-        page: response.meta.page,
-        totalPages: response.meta.pageCount,
-        totalItems: response.meta.itemCount,
+        page: response.meta?.page || 1,
+        totalPages: response.meta?.pageCount || 1,
+        totalItems: response.meta?.itemCount || 0,
       });
       return response;
     } catch (err: any) {
