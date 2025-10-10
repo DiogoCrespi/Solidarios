@@ -99,7 +99,9 @@ api.interceptors.response.use(
       status: error.response?.status,
       url: error.config?.url,
       message: error.response?.data?.message || error.message,
+      data: error.response?.data,
     });
+    console.error("[API] Detalhes completos do erro:", JSON.stringify(error.response?.data, null, 2));
     return Promise.reject(error);
   }
 );

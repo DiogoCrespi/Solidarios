@@ -1,12 +1,14 @@
 // src/navigation/FuncionarioNavigator.tsx
 import React from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Text } from "react-native";
-import theme from "../theme";
+import { useRoute, useNavigation } from "@react-navigation/native";
+
+// Componentes
+import { SidebarLayout } from "../components/barrelComponents";
 import DashboardScreen from "../screens/admin/DashboardScreen";
 import ItemsScreen from "../screens/admin/ItemsScreen";
 import ItemDetailScreen from "../screens/admin/ItemDetailScreen";
+import CategoriesScreen from "../screens/admin/CategoriesScreen";
 import InventoryScreen from "../screens/admin/InventoryScreen";
 import InventoryDetailScreen from "../screens/admin/InventoryDetailScreen";
 import DistributionsScreen from "../screens/admin/DistributionsScreen";
@@ -15,23 +17,7 @@ import CreateItemScreen from "../screens/admin/CreateItemScreen";
 import CreateDistributionScreen from "../screens/admin/CreateDistributionScreen";
 import BeneficiariesScreen from "../screens/funcionario/BeneficiariesScreen";
 import BeneficiaryDetailScreen from "../screens/funcionario/BeneficiaryDetailScreen";
-
-// Ícones usando emojis para compatibilidade com web
-const DashboardIcon = ({ color }: { color: string }) => (
-  <Text style={{ color, fontSize: 20, fontWeight: 'bold' }}>📊</Text>
-);
-const ItemsIcon = ({ color }: { color: string }) => (
-  <Text style={{ color, fontSize: 20, fontWeight: 'bold' }}>📦</Text>
-);
-const InventoryIcon = ({ color }: { color: string }) => (
-  <Text style={{ color, fontSize: 20, fontWeight: 'bold' }}>📋</Text>
-);
-const DistributionsIcon = ({ color }: { color: string }) => (
-  <Text style={{ color, fontSize: 20, fontWeight: 'bold' }}>🚚</Text>
-);
-const BeneficiariesIcon = ({ color }: { color: string }) => (
-  <Text style={{ color, fontSize: 20, fontWeight: 'bold' }}>👥</Text>
-);
+import SettingsScreen from "../screens/admin/SettingsScreen";
 
 // Stack Navigators para cada tab
 const DashboardStack = createNativeStackNavigator();
@@ -109,64 +95,78 @@ const BeneficiariesNavigator = () => {
   );
 };
 
-// Tab Navigator principal
-const Tab = createBottomTabNavigator();
+// Stack Navigator principal com sidebar
+const MainStack = createNativeStackNavigator();
+
+// Componente wrapper para cada tela com sidebar
+const ScreenWithSidebar: React.FC<{ children: React.ReactNode; routeName: string }> = ({ children, routeName }) => {
+  const navigation = useNavigation();
+  
+  const handleNavigate = (route: string) => {
+    navigation.navigate(route as never);
+  };
+  
+  return (
+    <SidebarLayout currentRoute={routeName} onNavigate={handleNavigate}>
+      {children}
+    </SidebarLayout>
+  );
+};
+
+// Wrappers para cada tela
+const DashboardWithSidebar = () => (
+  <ScreenWithSidebar routeName="Dashboard">
+    <DashboardScreen />
+  </ScreenWithSidebar>
+);
+
+const ItemsWithSidebar = () => (
+  <ScreenWithSidebar routeName="Items">
+    <ItemsNavigator />
+  </ScreenWithSidebar>
+);
+
+const CategoriesWithSidebar = () => (
+  <ScreenWithSidebar routeName="Categories">
+    <CategoriesScreen />
+  </ScreenWithSidebar>
+);
+
+const InventoryWithSidebar = () => (
+  <ScreenWithSidebar routeName="Inventory">
+    <InventoryNavigator />
+  </ScreenWithSidebar>
+);
+
+const DistributionsWithSidebar = () => (
+  <ScreenWithSidebar routeName="Distributions">
+    <DistributionsNavigator />
+  </ScreenWithSidebar>
+);
+
+const BeneficiariesWithSidebar = () => (
+  <ScreenWithSidebar routeName="Beneficiaries">
+    <BeneficiariesNavigator />
+  </ScreenWithSidebar>
+);
+
+const SettingsWithSidebar = () => (
+  <ScreenWithSidebar routeName="Settings">
+    <SettingsScreen />
+  </ScreenWithSidebar>
+);
 
 const FuncionarioNavigator: React.FC = () => {
   return (
-    <Tab.Navigator
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: theme.colors.primary.secondary,
-        tabBarInactiveTintColor: theme.colors.neutral.darkGray,
-        tabBarStyle: {
-          backgroundColor: theme.colors.neutral.white,
-          borderTopWidth: 1,
-          borderTopColor: theme.colors.neutral.mediumGray,
-        },
-      }}
-    >
-      <Tab.Screen
-        name="Dashboard"
-        component={DashboardNavigator}
-        options={{
-          tabBarIcon: ({ color }) => <DashboardIcon color={color} />,
-          tabBarLabel: "Dashboard",
-        }}
-      />
-      <Tab.Screen
-        name="Items"
-        component={ItemsNavigator}
-        options={{
-          tabBarIcon: ({ color }) => <ItemsIcon color={color} />,
-          tabBarLabel: "Itens",
-        }}
-      />
-      <Tab.Screen
-        name="Inventory"
-        component={InventoryNavigator}
-        options={{
-          tabBarIcon: ({ color }) => <InventoryIcon color={color} />,
-          tabBarLabel: "Estoque",
-        }}
-      />
-      <Tab.Screen
-        name="Distributions"
-        component={DistributionsNavigator}
-        options={{
-          tabBarIcon: ({ color }) => <DistributionsIcon color={color} />,
-          tabBarLabel: "Distribuições",
-        }}
-      />
-      <Tab.Screen
-        name="Beneficiaries"
-        component={BeneficiariesNavigator}
-        options={{
-          tabBarIcon: ({ color }) => <BeneficiariesIcon color={color} />,
-          tabBarLabel: "Beneficiários",
-        }}
-      />
-    </Tab.Navigator>
+    <MainStack.Navigator screenOptions={{ headerShown: false }}>
+      <MainStack.Screen name="Dashboard" component={DashboardWithSidebar} />
+      <MainStack.Screen name="Items" component={ItemsWithSidebar} />
+      <MainStack.Screen name="Categories" component={CategoriesWithSidebar} />
+      <MainStack.Screen name="Inventory" component={InventoryWithSidebar} />
+      <MainStack.Screen name="Distributions" component={DistributionsWithSidebar} />
+      <MainStack.Screen name="Beneficiaries" component={BeneficiariesWithSidebar} />
+      <MainStack.Screen name="Settings" component={SettingsWithSidebar} />
+    </MainStack.Navigator>
   );
 };
 

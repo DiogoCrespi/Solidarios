@@ -20,7 +20,7 @@ import {
   Button,
   Select,
   NotificationBanner,
-  CategoryPicker,
+  CategoryPickerDropdown,
   FileUpload,
 } from "../../components/barrelComponents";
 import theme from "../../theme";
@@ -28,6 +28,8 @@ import theme from "../../theme";
 // Hooks
 import { useItems } from "../../hooks/useItems";
 import { useCategories } from "../../hooks/useCategories";
+import { useAuth } from "../../hooks/useAuth";
+import { useDonors } from "../../hooks/useDonors";
 import { ItemType } from "../../types/items.types";
 
 // Validação do formulário
@@ -75,6 +77,8 @@ const CreateItemScreen: React.FC = () => {
     useNavigation<StackNavigationProp<AdminItemsStackParamList>>();
   const { createItem, isLoading, error, clearError } = useItems();
   const { fetchCategories } = useCategories();
+  const { user } = useAuth();
+  const { donors } = useDonors();
   const [notification, setNotification] = useState({
     visible: false,
     type: "success" as "success" | "error",
@@ -86,6 +90,15 @@ const CreateItemScreen: React.FC = () => {
     fetchCategories();
   }, [fetchCategories]);
 
+  // Criar opções de doadores incluindo "Anônimo"
+  const donorOptions = [
+    { label: "Anônimo", value: "anonimo" },
+    ...donors.map((donor) => ({
+      label: `${donor.name} (${donor.email})`,
+      value: donor.id,
+    })),
+  ];
+
   // Função para fechar notificação
   const handleCloseNotification = useCallback(() => {
     setNotification(prev => ({ ...prev, visible: false }));
@@ -94,9 +107,6 @@ const CreateItemScreen: React.FC = () => {
   // Função para criar um novo item
   const handleCreateItem = async (values: any) => {
     try {
-      console.log("CreateItemScreen: Dados do formulário:", values);
-      console.log("CreateItemScreen: donorId:", values.donorId);
-      console.log("CreateItemScreen: categoryId:", values.categoryId);
       const newItem = await createItem(values);
 
       if (newItem) {
@@ -166,16 +176,63 @@ const CreateItemScreen: React.FC = () => {
             size: "",
             categoryId: "",
             photos: [] as Array<{ uri: string; name: string; type: string }>, // Tipando explicitamente
-            donorId: "", // Adicionando donorId que parece ser necessário
+            donorId: "anonimo", // Valor padrão: Doador Anônimo
           }}
           validationSchema={CreateItemSchema}
-          onSubmit={(values) => {
-            // Adicionando o ID do doador (usando o ID real do doador)
-            const itemWithDonor = {
-              ...values,
-              donorId: values.donorId || "5115cdab-3587-440f-83ae-ecc9e858f56d", // ID real do doador
+          onSubmit={(values, { setSubmitting }) => {
+            // Validar donorId
+            if (!values.donorId) {
+              setNotification({
+                visible: true,
+                type: "error",
+                message: "Doador não especificado",
+                description: "Selecione um doador ou escolha 'Anônimo'.",
+              });
+              setSubmitting(false);
+              return;
+            }
+            
+            // Se for anônimo, buscar o ID do doador anônimo
+            let finalDonorId = values.donorId;
+            if (values.donorId === "anonimo") {
+              const anonimoDonor = donors.find(d => d.email === "anonimo@solidarios.com");
+              if (anonimoDonor) {
+                finalDonorId = anonimoDonor.id;
+              } else {
+                setNotification({
+                  visible: true,
+                  type: "error",
+                  message: "Doador anônimo não encontrado",
+                  description: "O doador anônimo não foi criado no sistema.",
+                });
+                setSubmitting(false);
+                return;
+              }
+            }
+            
+            // Preparar dados para envio
+            const itemData: any = {
+              type: values.type,
+              description: values.description,
+              conservationState: values.conservationState,
+              categoryId: values.categoryId,
+              donorId: finalDonorId,
             };
-            handleCreateItem(itemWithDonor);
+            
+            // Adicionar size apenas se for roupa ou calçado
+            if (values.type === ItemType.ROUPA || values.type === ItemType.CALCADO) {
+              itemData.size = values.size;
+            }
+            
+            // Adicionar photos apenas se houver URLs válidas
+            if (values.photos && values.photos.length > 0) {
+              // Converter objetos de arquivo para URLs se necessário
+              itemData.photos = values.photos.map((photo: any) => 
+                typeof photo === 'string' ? photo : photo.uri
+              ).filter((url: string) => url && url.startsWith('http'));
+            }
+            
+            handleCreateItem(itemData).finally(() => setSubmitting(false));
           }}
         >
           {({
@@ -235,11 +292,23 @@ const CreateItemScreen: React.FC = () => {
                 />
               )}
 
-              <CategoryPicker
+              <CategoryPickerDropdown
                 name="categoryId"
                 label="Categoria"
+                placeholder="Selecione uma categoria"
                 required={true}
-                multiple={false}
+              />
+
+              <Select
+                label="Doador"
+                options={donorOptions}
+                selectedValue={values.donorId}
+                onSelect={(value) => setFieldValue("donorId", value)}
+                error={
+                  touched.donorId && errors.donorId
+                    ? errors.donorId
+                    : undefined
+                }
               />
 
               <FileUpload

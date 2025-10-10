@@ -11,3 +11,7 @@ export * from "./forms/barrelForms";
 
 // Componentes de feedback
 export * from "./feedback/barrelFeedback";
+
+// Componentes de navegação
+export { default as ExpandableSidebar } from "./navigation/ExpandableSidebar";
+export { default as SidebarLayout } from "./navigation/SidebarLayout";

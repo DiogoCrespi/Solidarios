@@ -59,3 +59,73 @@ npm start
 
 **Obs:** Caso não tenha emulador android, você poderá rodar web passando a flag 'w' quando requisitada
 
+---
+
+## Usuários de Teste
+
+### Administrador
+Para criar um usuário administrador, use um dos seguintes comandos:
+
+**Via endpoint `/users` (requer autenticação):**
+```bash
+curl -X POST http://localhost:3000/users \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Administrador",
+    "email": "admin@sanem.com",
+    "password": "admin123",
+    "role": "ADMIN",
+    "phone": "(11) 99999-9999",
+    "address": "Rua da Administração, 123"
+  }'
+```
+
+**Via endpoint `/auth/register` (público):**
+```bash
+curl -X POST http://localhost:3000/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Administrador",
+    "email": "admin@sanem.com",
+    "password": "admin123",
+    "role": "ADMIN"
+  }'
+```
+
+**PowerShell (Windows):**
+```powershell
+$body = @{name='Administrador';email='admin@sanem.com';password='admin123';role='ADMIN'} | ConvertTo-Json
+Invoke-RestMethod -Uri 'http://localhost:3000/auth/register' -Method POST -Body $body -ContentType 'application/json'
+```
+
+**Login:**
+- **Email:** `admin@sanem.com`
+- **Senha:** `admin123`
+
+### Doador Anônimo
+Para criar um doador anônimo (usado para doações sem identificação), use:
+
+**Via endpoint `/auth/register`:**
+```bash
+curl -X POST http://localhost:3000/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Doador Anônimo",
+    "email": "anonimo@solidarios.com",
+    "password": "anonimo123",
+    "role": "DOADOR"
+  }'
+```
+
+**PowerShell (Windows):**
+```powershell
+$body = @{name='Doador Anônimo';email='anonimo@solidarios.com';password='anonimo123';role='DOADOR'} | ConvertTo-Json
+Invoke-RestMethod -Uri 'http://localhost:3000/auth/register' -Method POST -Body $body -ContentType 'application/json'
+```
+
+**Uso:**
+- Este usuário é usado automaticamente quando você seleciona "Anônimo" no campo "Doador" ao cadastrar um item.
+- Não é necessário fazer login com este usuário.
+
+---
+
