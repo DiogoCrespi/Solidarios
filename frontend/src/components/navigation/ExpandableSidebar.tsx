@@ -60,6 +60,7 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
 }) => {
   const navigation = useNavigation();
   const { user, logout } = useAuth();
+  // Iniciar com a largura minimizada
   const [animatedWidth] = useState(new Animated.Value(SIDEBAR_WIDTH));
 
   React.useEffect(() => {

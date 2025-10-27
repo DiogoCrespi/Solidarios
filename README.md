@@ -44,7 +44,7 @@ docker compose up -d --build
 Após isso, você pode ir direto para a pasta do Front-end
 
 ```bash
-cd ../frontend
+cd ./frontend
 
 ```
 ```bash
@@ -79,7 +79,18 @@ curl -X POST http://localhost:3000/users \
     "address": "Rua da Administração, 123"
   }'
 ```
+**Windows:**
+```bash
+$body = @{
+    name = "Administrador2"
+    email = "admin2@sanem.com"
+    password = "admin123"
+    role = "ADMIN"
+    phone = "(11) 99999-9999"
+    address = "Rua da Administração, 123"
+} | ConvertTo-Json; $response = Invoke-RestMethod -Uri "http://localhost:3000/auth/register" -Method Post -Body $body -ContentType "application/json"; $response | ConvertTo-Json -Depth 3
 
+```
 **Via endpoint `/auth/register` (público):**
 ```bash
 curl -X POST http://localhost:3000/auth/register \

@@ -35,4 +35,22 @@ export class CreateUserDto {
 
   @IsOptional()
   isActive?: boolean;
+
+  @ApiProperty({
+    example: '(11) 99999-9999',
+    description: 'Telefone do usuário',
+    required: false,
+  })
+  @IsOptional()
+  @IsString({ message: 'O telefone deve ser uma string' })
+  phone?: string;
+
+  @ApiProperty({
+    example: 'Rua Exemplo, 123',
+    description: 'Endereço do usuário',
+    required: false,
+  })
+  @IsOptional()
+  @IsString({ message: 'O endereço deve ser uma string' })
+  address?: string;
 }
