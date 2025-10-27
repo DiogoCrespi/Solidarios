@@ -48,6 +48,9 @@ export class User {
   @Column({ nullable: true })
   address: string;
 
+  @Column({ nullable: true })
+  photo: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
