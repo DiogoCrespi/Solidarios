@@ -13,6 +13,7 @@ export enum UserRole {
 export interface User {
   phone: string;
   address: string;
+  photo?: string;
   id: string;
   name: string;
   email: string;

@@ -62,7 +62,8 @@ export class User {
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword() {
-    if (this.password) {
+    // Apenas hashar se a senha foi modificada e não está hashada
+    if (this.password && !this.password.startsWith('$2b$')) {
       this.password = await bcrypt.hash(this.password, 10);
     }
   }

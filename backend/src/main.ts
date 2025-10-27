@@ -1,5 +1,6 @@
 // src/main.ts (com CORS)
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -13,9 +14,15 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { useContainer } from 'class-validator';
 import { LoggingService } from './common/logging/logging.service';
+import { join } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  
+  // Servir arquivos estáticos da pasta uploads
+  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+    prefix: '/uploads/',
+  });
   const configService = app.get(ConfigService);
 
   // Injeção de dependência para validadores personalizados

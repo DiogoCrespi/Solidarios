@@ -92,6 +92,23 @@ const UsersService = {
     });
     return response.data;
   },
+
+  /**
+   * Fazer upload de foto de perfil
+   * @param id ID do usuário
+   * @param formData FormData contendo o arquivo
+   * @returns Usuário atualizado com nova foto
+   */
+  uploadPhoto: async (id: string, formData: FormData): Promise<User> => {
+    // Remover o Content-Type padrão para permitir que o navegador defina com boundary
+    const response = await api.post<User>(`/users/${id}/photo`, formData, {
+      headers: {
+        'Content-Type': undefined, // Remove o header padrão
+      },
+      transformRequest: (data) => data, // Não transformar o FormData
+    });
+    return response.data;
+  },
 };
 
 export default UsersService;

@@ -226,6 +226,26 @@ export class UsersService {
   }
 
   @LogMethod()
+  async updatePhoto(id: string, photoUrl: string): Promise<User> {
+    this.logger.log(`Atualizando foto do usuário: ${id}`);
+
+    try {
+      const user = await this.findOne(id);
+      user.photo = photoUrl;
+      const updatedUser = await this.usersRepository.save(user);
+      
+      this.logger.log(`Foto do usuário atualizada com sucesso: ${id}`);
+      return updatedUser;
+    } catch (error) {
+      this.logger.error(
+        `Erro ao atualizar foto do usuário: ${error.message}`,
+        error.stack,
+      );
+      throw error;
+    }
+  }
+
+  @LogMethod()
   async remove(id: string): Promise<void> {
     this.logger.log(`Removendo usuário: ${id}`);
 

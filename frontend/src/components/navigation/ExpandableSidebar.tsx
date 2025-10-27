@@ -6,9 +6,14 @@ import {
   Animated,
   Dimensions,
   ScrollView,
+  Alert,
+  Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../hooks/useAuth';
+import * as ImagePicker from 'expo-image-picker';
+import UsersService from '../../api/users';
+import { getApiBaseUrl } from '../../api/api';
 
 // Componentes
 import {
@@ -198,6 +203,117 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
     logout();
   };
 
+  const handleSelectPhoto = async () => {
+    try {
+      // Solicitar permissão para acessar a galeria
+      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      
+      if (permissionResult.granted === false) {
+        Alert.alert(
+          'Permissão necessária',
+          'É necessário permitir o acesso à galeria para alterar a foto de perfil.'
+        );
+        return;
+      }
+
+      // Abrir seletor de imagens
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const selectedImage = result.assets[0];
+        await handleUploadPhoto(selectedImage.uri);
+      }
+    } catch (error) {
+      console.error('Erro ao selecionar imagem:', error);
+      Alert.alert('Erro', 'Não foi possível selecionar a imagem.');
+    }
+  };
+
+  const handleUploadPhoto = async (imageUri: string) => {
+    if (!user?.id) return;
+
+    try {
+      console.log('📸 Iniciando upload da foto:', imageUri);
+      
+      // Criar FormData
+      const formData = new FormData();
+      
+      // Para Web, usar fetch para obter o blob
+      if (Platform.OS === 'web') {
+        console.log('🌐 Plataforma Web detectada');
+        
+        // Verificar se é uma data URL (base64)
+        if (imageUri.startsWith('data:')) {
+          console.log('📄 Data URL detectada, convertendo para blob');
+          
+          // Converter data URL para blob
+          const response = await fetch(imageUri);
+          const blob = await response.blob();
+          
+          console.log('📦 Blob criado:', blob.type, blob.size, 'bytes');
+          
+          // Determinar tipo do arquivo
+          const mimeType = blob.type || 'image/jpeg';
+          const extension = mimeType.split('/')[1] || 'jpg';
+          const fileName = `photo-${Date.now()}.${extension}`;
+          
+          console.log('📝 Nome do arquivo:', fileName);
+          
+          // Criar um novo File a partir do blob para garantir que tenha nome e tipo corretos
+          const file = new File([blob], fileName, { type: mimeType });
+          formData.append('file', file);
+          
+          console.log('✅ File anexado ao FormData:', file.name, file.type, file.size);
+        } else {
+          // URL normal de blob
+          console.log('🔗 URL blob detectada');
+          const response = await fetch(imageUri);
+          const blob = await response.blob();
+          
+          const extension = imageUri.split('.').pop()?.split('?')[0] || 'jpg';
+          const fileName = `photo-${Date.now()}.${extension}`;
+          const file = new File([blob], fileName, { type: blob.type || 'image/jpeg' });
+          
+          formData.append('file', file);
+          console.log('✅ File anexado ao FormData:', file.name, file.type, file.size);
+        }
+      } else {
+        // Para React Native (iOS/Android)
+        console.log('📱 Plataforma Mobile detectada');
+        const uriParts = imageUri.split('.');
+        const fileType = uriParts[uriParts.length - 1];
+        
+        const file: any = {
+          uri: imageUri,
+          name: `photo-${Date.now()}.${fileType}`,
+          type: `image/${fileType}`,
+        };
+        formData.append('file', file);
+        console.log('✅ File anexado ao FormData (mobile)');
+      }
+
+      console.log('🚀 Enviando FormData para o servidor...');
+      
+      // Fazer upload
+      const updatedUser = await UsersService.uploadPhoto(user.id, formData);
+      
+      console.log('✅ Upload bem-sucedido!', updatedUser);
+      
+      Alert.alert('Sucesso', 'Foto de perfil atualizada com sucesso! Recarregue a página para ver a nova foto.');
+      
+      // Não recarregar a página para não perder a autenticação
+      // A foto será atualizada no próximo login ou refresh manual
+    } catch (error) {
+      console.error('❌ Erro ao fazer upload da foto:', error);
+      Alert.alert('Erro', 'Não foi possível atualizar a foto de perfil.');
+    }
+  };
+
   return (
     <Animated.View 
       style={[styles.container, { width: animatedWidth }]}
@@ -232,11 +348,13 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
         {isExpanded && user && (
           <Card style={styles.userCard}>
             <View style={styles.userInfo}>
-              <Avatar
-                size={60}
-                source={user.photo ? { uri: user.photo } : undefined}
-                name={user.name}
-              />
+              <TouchableOpacity onPress={handleSelectPhoto} activeOpacity={0.7}>
+                <Avatar
+                  size={60}
+                  source={user.photo ? { uri: `${getApiBaseUrl()}${user.photo}` } : undefined}
+                  name={user.name}
+                />
+              </TouchableOpacity>
               <View style={styles.userDetails}>
                 <Typography variant="body" color={theme.colors.neutral.darkGray}>
                   Bem-vindo,

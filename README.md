@@ -82,8 +82,8 @@ curl -X POST http://localhost:3000/users \
 **Windows:**
 ```bash
 $body = @{
-    name = "Administrador2"
-    email = "admin2@sanem.com"
+    name = "Administrador3"
+    email = "admin3@sanem.com"
     password = "admin123"
     role = "ADMIN"
     phone = "(11) 99999-9999"

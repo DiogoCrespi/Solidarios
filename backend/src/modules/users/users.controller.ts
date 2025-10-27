@@ -12,7 +12,11 @@ import {
   ParseUUIDPipe,
   Query,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -26,10 +30,13 @@ import {
   ApiResponse,
   ApiBearerAuth,
   ApiQuery,
+  ApiConsumes,
+  ApiBody,
 } from '@nestjs/swagger';
 import { PageOptionsDto } from '../../common/pagination/dto/page-options.dto';
 import { PageDto } from '../../common/pagination/dto/page.dto';
 import { User } from './entities/user.entity';
+import { multerConfig } from '../../common/config/multer.config';
 
 @ApiTags('users')
 @Controller('users')
@@ -97,6 +104,39 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
   ) {
     return this.usersService.update(id, updateUserDto);
+  }
+
+  @Post(':id/photo')
+  @ApiOperation({ summary: 'Fazer upload de foto de perfil' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Foto de perfil atualizada com sucesso.',
+  })
+  @ApiResponse({ status: 400, description: 'Arquivo inválido.' })
+  @ApiResponse({ status: 404, description: 'Usuário não encontrado.' })
+  @UseInterceptors(FileInterceptor('file', multerConfig))
+  async uploadPhoto(
+    @Param('id', ParseUUIDPipe) id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) {
+      throw new BadRequestException('Nenhum arquivo foi enviado');
+    }
+
+    const photoUrl = `/uploads/profile-photos/${file.filename}`;
+    return this.usersService.updatePhoto(id, photoUrl);
   }
 
   @Delete(':id')

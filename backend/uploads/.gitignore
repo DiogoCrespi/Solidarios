@@ -1,0 +1,7 @@
+# Ignorar todas as fotos de perfil
+profile-photos/*
+
+# Mas manter a pasta
+!profile-photos/.gitkeep
+!.gitignore
+
