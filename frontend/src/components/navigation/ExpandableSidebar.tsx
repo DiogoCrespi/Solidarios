@@ -14,6 +14,7 @@ import { useAuth } from '../../hooks/useAuth';
 import * as ImagePicker from 'expo-image-picker';
 import UsersService from '../../api/users';
 import { getApiBaseUrl } from '../../api/api';
+import { useState as useReactState } from 'react';
 
 // Componentes
 import {
@@ -67,6 +68,7 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
   const { user, logout } = useAuth();
   // Iniciar com a largura minimizada
   const [animatedWidth] = useState(new Animated.Value(SIDEBAR_WIDTH));
+  const [photoUrl, setPhotoUrl] = useReactState<string | null>(user?.photo || null);
 
   React.useEffect(() => {
     Animated.timing(animatedWidth, {
@@ -75,6 +77,13 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
       useNativeDriver: false,
     }).start();
   }, [isExpanded, animatedWidth]);
+
+  // Atualizar photoUrl quando user.photo mudar (ex: ao fazer login)
+  React.useEffect(() => {
+    if (user?.photo) {
+      setPhotoUrl(user.photo);
+    }
+  }, [user?.photo]);
 
   const getMenuItems = (): MenuItem[] => {
     const baseItems: MenuItem[] = [
@@ -304,10 +313,13 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
       
       console.log('✅ Upload bem-sucedido!', updatedUser);
       
-      Alert.alert('Sucesso', 'Foto de perfil atualizada com sucesso! Recarregue a página para ver a nova foto.');
+      // Atualizar a URL da foto localmente para exibir imediatamente
+      if (updatedUser.data?.photo) {
+        setPhotoUrl(updatedUser.data.photo);
+        console.log('📸 Foto atualizada localmente:', updatedUser.data.photo);
+      }
       
-      // Não recarregar a página para não perder a autenticação
-      // A foto será atualizada no próximo login ou refresh manual
+      Alert.alert('Sucesso', 'Foto de perfil atualizada com sucesso!');
     } catch (error) {
       console.error('❌ Erro ao fazer upload da foto:', error);
       Alert.alert('Erro', 'Não foi possível atualizar a foto de perfil.');
@@ -351,7 +363,7 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
               <TouchableOpacity onPress={handleSelectPhoto} activeOpacity={0.7}>
                 <Avatar
                   size={60}
-                  source={user.photo ? { uri: `${getApiBaseUrl()}${user.photo}` } : undefined}
+                  source={(photoUrl || user.photo) ? { uri: `${getApiBaseUrl()}${photoUrl || user.photo}` } : undefined}
                   name={user.name}
                 />
               </TouchableOpacity>
