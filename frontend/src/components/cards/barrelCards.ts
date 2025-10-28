@@ -3,6 +3,7 @@ export { default as DistributionCard } from "./DistributionCard";
 export { default as InventoryCard } from "./InventoryCard";
 export { default as ItemCard } from "./ItemCard";
 export { default as StatsCard } from "./StatsCard";
+export { default as SimpleStatsCard } from "./SimpleStatsCard";
 export { default as UserCard } from "./UserCard";
 
 // Exportação de tipos

@@ -94,6 +94,21 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
         label: 'Dashboard',
         route: 'Dashboard',
       },
+    ];
+
+    // Adicionar Analytics apenas para ADMINs
+    if (user?.role === 'ADMIN') {
+      baseItems.push({
+        id: 'analytics',
+        icon: 'chart-line',
+        iconFamily: 'MaterialCommunityIcons',
+        label: 'Analytics',
+        route: 'Analytics',
+      });
+    }
+
+    // Continuar com os itens base
+    baseItems.push(
       {
         id: 'items',
         icon: 'package-variant',
@@ -133,8 +148,8 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
           searchPlaceholder: 'Buscar distribuições...',
           emptyMessage: 'Não há distribuições cadastradas.',
         },
-      },
-    ];
+      }
+    );
 
     // Adicionar itens específicos por role
     if (user?.role === 'ADMIN') {
@@ -519,7 +534,7 @@ const styles = StyleSheet.create({
     minHeight: 56,
   },
   activeMenuItem: {
-    backgroundColor: theme.colors.primary.light,
+    backgroundColor: theme.colors.neutral.mediumGray,
     borderRightWidth: 3,
     borderRightColor: theme.colors.primary.main,
   },

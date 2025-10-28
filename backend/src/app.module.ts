@@ -17,6 +17,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
 import { ItemsModule } from './modules/items/items.module';
 import { InventoryModule } from './modules/inventory/inventory.module';
 import { DistributionsModule } from './modules/distributions/distributions.module';
+import { AnalyticsModule } from './modules/analytics/analytics.module';
 
 // Guards e Providers
 import { APP_GUARD, APP_FILTER } from '@nestjs/core';
@@ -77,6 +78,7 @@ import { typeOrmSharedConfig } from './config/typeorm.shared';
     ItemsModule,
     InventoryModule,
     DistributionsModule,
+    AnalyticsModule,
   ],
   controllers: [AppController],
   providers: [

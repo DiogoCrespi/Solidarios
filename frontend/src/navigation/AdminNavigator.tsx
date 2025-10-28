@@ -29,6 +29,7 @@ import CreateUserScreen from "../screens/admin/CreateUserScreen";
 import CreateItemScreen from "../screens/admin/CreateItemScreen";
 import CreateDistributionScreen from "../screens/admin/CreateDistributionScreen";
 import SettingsScreen from "../screens/admin/SettingsScreen";
+import AnalyticsScreen from "../screens/admin/AnalyticsScreen";
 
 // Stack Navigators para cada tab
 const DashboardStack = createNativeStackNavigator();
@@ -164,10 +165,17 @@ const SettingsWithSidebar = () => (
   </ScreenWithSidebar>
 );
 
+const AnalyticsWithSidebar = () => (
+  <ScreenWithSidebar routeName="Analytics">
+    <AnalyticsScreen />
+  </ScreenWithSidebar>
+);
+
 const AdminNavigator: React.FC = () => {
   return (
     <MainStack.Navigator screenOptions={{ headerShown: false }}>
       <MainStack.Screen name="Dashboard" component={DashboardWithSidebar} />
+      <MainStack.Screen name="Analytics" component={AnalyticsWithSidebar} />
       <MainStack.Screen name="Items" component={ItemsWithSidebar} />
       <MainStack.Screen name="Categories" component={CategoriesWithSidebar} />
       <MainStack.Screen name="Inventory" component={InventoryWithSidebar} />
