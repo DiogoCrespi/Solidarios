@@ -32,7 +32,7 @@ const DonationHistoryScreen: React.FC = () => {
   // Carregar histórico de doações
   const loadDonationHistory = useCallback(
     async (page = 1) => {
-      if (user) {
+      if (user?.id) {
         await fetchItemsByDonor(user.id, {
           page,
           take: 20,

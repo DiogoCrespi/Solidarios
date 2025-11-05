@@ -143,6 +143,14 @@ export const useItems = () => {
   // Função para obter itens por doador
   const fetchItemsByDonor = useCallback(
     async (donorId: string, pageOptions?: PageOptionsDto) => {
+      // Validar se o donorId é válido
+      if (!donorId || donorId === 'undefined') {
+        console.warn('fetchItemsByDonor chamado com donorId inválido:', donorId);
+        setError('ID do doador inválido');
+        setIsLoading(false);
+        return { data: [], meta: { page: 1, pageCount: 0, itemCount: 0 } };
+      }
+
       setIsLoading(true);
       setError(null);
 

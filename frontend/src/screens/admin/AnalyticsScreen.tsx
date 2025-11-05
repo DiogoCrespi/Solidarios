@@ -23,10 +23,9 @@ import AnalyticsService, {
   TrendsData,
   TopDonor,
   CategoryDistribution,
-  AnalyticsFilters as AnalyticsFiltersType,
 } from '../../api/analytics';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import AnalyticsFilters from '../../components/filters/AnalyticsFilters';
+import AnalyticsFilters, { AnalyticsFiltersValues } from '../../components/filters/AnalyticsFilters';
 import ReportGenerator, { ReportConfig } from '../../components/reports/ReportGenerator';
 
 const { width: screenWidth } = Dimensions.get('window');
@@ -50,7 +49,7 @@ const AnalyticsScreen: React.FC = () => {
   const [trends, setTrends] = useState<TrendsData | null>(null);
 
   // Filtros
-  const [filters, setFilters] = useState<AnalyticsFiltersType>({
+  const [filters, setFilters] = useState<AnalyticsFiltersValues>({
     period: 'month',
   });
 
@@ -81,12 +80,12 @@ const AnalyticsScreen: React.FC = () => {
         AnalyticsService.getTrends(period || 'month'), // Period apenas para trends
       ]);
 
-      setDashboardStats(dashboard.data);
-      setUsersStats(users.data);
-      setItemsStats(items.data);
-      setTopDonors(donors.data);
-      setCategoriesDistribution(categories.data);
-      setTrends(trendsData.data);
+      setDashboardStats(dashboard);
+      setUsersStats(users);
+      setItemsStats(items);
+      setTopDonors(donors);
+      setCategoriesDistribution(categories);
+      setTrends(trendsData);
     } catch (err) {
       console.error('Erro ao carregar analytics:', err);
       setError('Não foi possível carregar as estatísticas.');
@@ -101,7 +100,7 @@ const AnalyticsScreen: React.FC = () => {
     loadAnalytics();
   };
 
-  const handleApplyFilters = (newFilters: AnalyticsFiltersType) => {
+  const handleApplyFilters = (newFilters: AnalyticsFiltersValues) => {
     setFilters(newFilters);
     setShowFilters(false);
   };
@@ -129,8 +128,9 @@ const AnalyticsScreen: React.FC = () => {
   if (error && !dashboardStats) {
     return (
       <ErrorState
-        message={error}
-        onRetry={loadAnalytics}
+        title="Erro ao carregar dados"
+        description={error}
+        onAction={loadAnalytics}
       />
     );
   }
@@ -228,14 +228,14 @@ const AnalyticsScreen: React.FC = () => {
       {/* Estatísticas de Usuários */}
       {usersStats && (
         <Card style={styles.card}>
-          <Typography variant="h5" color={theme.colors.neutral.darkGray}>
+          <Typography variant="h4" color={theme.colors.neutral.darkGray}>
             Usuários por Tipo
           </Typography>
           <View style={styles.listContainer}>
             {usersStats.usersByRole.map((item, index) => (
               <View key={index} style={styles.listItem}>
                 <Typography variant="body">{item.role}</Typography>
-                <Typography variant="h6" color={theme.colors.primary.main}>
+                <Typography variant="body" color={theme.colors.primary.main}>
                   {item.count}
                 </Typography>
               </View>
@@ -244,13 +244,13 @@ const AnalyticsScreen: React.FC = () => {
           <View style={styles.divider} />
           <View style={styles.listItem}>
             <Typography variant="body">Usuários Ativos</Typography>
-            <Typography variant="h6" color={theme.colors.status.success}>
+            <Typography variant="body" color={theme.colors.status.success}>
               {usersStats.activeUsers}
             </Typography>
           </View>
           <View style={styles.listItem}>
             <Typography variant="body">Novos (30 dias)</Typography>
-            <Typography variant="h6" color={theme.colors.status.info}>
+            <Typography variant="body" color={theme.colors.status.info}>
               {usersStats.recentUsers}
             </Typography>
           </View>
@@ -260,14 +260,14 @@ const AnalyticsScreen: React.FC = () => {
       {/* Estatísticas de Itens */}
       {itemsStats && (
         <Card style={styles.card}>
-          <Typography variant="h5" color={theme.colors.neutral.darkGray}>
+          <Typography variant="h4" color={theme.colors.neutral.darkGray}>
             Itens por Status
           </Typography>
           <View style={styles.listContainer}>
             {itemsStats.itemsByStatus.map((item, index) => (
               <View key={index} style={styles.listItem}>
                 <Typography variant="body">{item.status}</Typography>
-                <Typography variant="h6" color={theme.colors.primary.main}>
+                <Typography variant="body" color={theme.colors.primary.main}>
                   {item.count}
                 </Typography>
               </View>
@@ -285,7 +285,7 @@ const AnalyticsScreen: React.FC = () => {
               size={24}
               color={theme.colors.primary.accent}
             />
-            <Typography variant="h5" color={theme.colors.neutral.darkGray} style={styles.cardTitle}>
+            <Typography variant="h4" color={theme.colors.neutral.darkGray} style={styles.cardTitle}>
               Top 5 Doadores
             </Typography>
           </View>
@@ -299,7 +299,7 @@ const AnalyticsScreen: React.FC = () => {
                 </View>
                 <View style={styles.donorInfo}>
                   <Typography variant="body">{donor.donorName}</Typography>
-                  <Typography variant="caption" color={theme.colors.neutral.mediumGray}>
+                  <Typography variant="small" color={theme.colors.neutral.mediumGray}>
                     {donor.totalDonations} doações
                   </Typography>
                 </View>
@@ -312,7 +312,7 @@ const AnalyticsScreen: React.FC = () => {
       {/* Distribuição por Categorias */}
       {categoriesDistribution.length > 0 && (
         <Card style={styles.card}>
-          <Typography variant="h5" color={theme.colors.neutral.darkGray}>
+          <Typography variant="h4" color={theme.colors.neutral.darkGray}>
             Itens por Categoria
           </Typography>
           <View style={styles.listContainer}>
@@ -320,10 +320,10 @@ const AnalyticsScreen: React.FC = () => {
               <View key={category.categoryId} style={styles.categoryItem}>
                 <Typography variant="body">{category.categoryName}</Typography>
                 <View style={styles.categoryCount}>
-                  <Typography variant="h6" color={theme.colors.primary.main}>
+                  <Typography variant="body" color={theme.colors.primary.main}>
                     {category.count}
                   </Typography>
-                  <Typography variant="caption" color={theme.colors.neutral.mediumGray}>
+                  <Typography variant="small" color={theme.colors.neutral.mediumGray}>
                     itens
                   </Typography>
                 </View>

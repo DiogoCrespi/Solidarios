@@ -77,6 +77,11 @@ const ItemsService = {
     donorId: string,
     pageOptions?: PageOptionsDto
   ): Promise<ItemsApiResponse> => {
+    // Validar donorId antes de fazer a requisição
+    if (!donorId || donorId === 'undefined' || donorId === 'null') {
+      throw new Error('ID do doador inválido');
+    }
+    
     try {
       const response = await api.get<any>(`/items/donor/${donorId}`, {
         params: pageOptions,

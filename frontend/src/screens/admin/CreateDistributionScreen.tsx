@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -44,19 +44,14 @@ const CreateDistributionScreen: React.FC = () => {
     useNavigation<StackNavigationProp<AdminDistributionsStackParamList>>();
   const { createDistribution, isLoading, error, clearError } =
     useDistributions();
-  const { users, fetchUsersByRole, isLoading: usersLoading } = useUsers();
-  const { items, fetchItems, isLoading: itemsLoading } = useItems();
+  const { users, fetchUsersByRole } = useUsers();
+  const { items, fetchItems } = useItems();
   const [notification, setNotification] = useState({
     visible: false,
     type: "success" as "success" | "error",
     message: "",
     description: "",
   });
-
-  // Função para fechar notificação
-  const handleCloseNotification = useCallback(() => {
-    setNotification(prev => ({ ...prev, visible: false }));
-  }, []);
 
   useEffect(() => {
     fetchUsersByRole(UserRole.BENEFICIARIO);
@@ -91,32 +86,16 @@ const CreateDistributionScreen: React.FC = () => {
   };
 
   // Opções de beneficiários
-  const beneficiaryOptions = Array.isArray(users) ? users.map((user) => ({
+  const beneficiaryOptions = (users || []).map((user) => ({
     label: user.name,
     value: user.id,
-  })) : [];
+  }));
 
   // Opções de itens
-  const itemOptions = Array.isArray(items) ? items.map((item) => ({
+  const itemOptions = (items || []).map((item) => ({
     label: item.description,
     value: item.id,
-  })) : [];
-
-  // Mostrar loading enquanto carrega os dados
-  if (usersLoading || itemsLoading) {
-    return (
-      <View style={styles.container}>
-        <Header
-          title="Criar Nova Distribuição"
-          onBackPress={() => navigation.goBack()}
-          backgroundColor={theme.colors.primary.main}
-        />
-        <View style={styles.loadingContainer}>
-          <Typography variant="body1">Carregando dados...</Typography>
-        </View>
-      </View>
-    );
-  }
+  }));
 
   return (
     <KeyboardAvoidingView
@@ -135,7 +114,7 @@ const CreateDistributionScreen: React.FC = () => {
         type={notification.type}
         message={notification.message}
         description={notification.description}
-        onClose={handleCloseNotification}
+        onClose={() => setNotification({ ...notification, visible: false })}
       />
 
       <NotificationBanner
@@ -284,12 +263,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: theme.spacing.xs,
     backgroundColor: theme.colors.primary.secondary,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: theme.spacing.lg,
   },
 });
 

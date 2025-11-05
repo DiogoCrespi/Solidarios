@@ -12,9 +12,12 @@ import {
   ParseUUIDPipe,
   Query,
   UseGuards,
+  Request,
   UseInterceptors,
   UploadedFile,
-  BadRequestException,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  ForbiddenException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UsersService } from './users.service';
@@ -30,8 +33,6 @@ import {
   ApiResponse,
   ApiBearerAuth,
   ApiQuery,
-  ApiConsumes,
-  ApiBody,
 } from '@nestjs/swagger';
 import { PageOptionsDto } from '../../common/pagination/dto/page-options.dto';
 import { PageDto } from '../../common/pagination/dto/page.dto';
@@ -82,6 +83,37 @@ export class UsersController {
     return this.usersService.findByRole(role, pageOptionsDto);
   }
 
+  @Post(':id/photo')
+  @ApiOperation({ summary: 'Upload de foto de perfil do usuário' })
+  @ApiResponse({ status: 200, description: 'Foto de perfil atualizada com sucesso.' })
+  @ApiResponse({ status: 404, description: 'Usuário não encontrado.' })
+  @ApiResponse({ status: 400, description: 'Arquivo inválido.' })
+  @Roles(UserRole.ADMIN, UserRole.FUNCIONARIO, UserRole.DOADOR, UserRole.BENEFICIARIO)
+  @UseInterceptors(FileInterceptor('photo', multerConfig))
+  async uploadPhoto(
+    @Param('id', ParseUUIDPipe) id: string,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5MB
+        ],
+      }),
+    )
+    file: any,
+    @Request() req,
+  ) {
+    console.log('[UsersController] uploadPhoto chamado para userId:', id);
+    console.log('[UsersController] req.user:', req.user);
+    console.log('[UsersController] file:', file ? { filename: file.filename, size: file.size } : 'null');
+    
+    // Verificar se o usuário está atualizando seu próprio perfil ou é admin
+    if (req.user.id !== id && req.user.role !== UserRole.ADMIN) {
+      throw new ForbiddenException('Acesso negado');
+    }
+    
+    return this.usersService.uploadPhoto(id, file);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Buscar um usuário pelo ID' })
   @ApiResponse({ status: 200, description: 'Usuário encontrado.' })
@@ -104,39 +136,6 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
   ) {
     return this.usersService.update(id, updateUserDto);
-  }
-
-  @Post(':id/photo')
-  @ApiOperation({ summary: 'Fazer upload de foto de perfil' })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        file: {
-          type: 'string',
-          format: 'binary',
-        },
-      },
-    },
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Foto de perfil atualizada com sucesso.',
-  })
-  @ApiResponse({ status: 400, description: 'Arquivo inválido.' })
-  @ApiResponse({ status: 404, description: 'Usuário não encontrado.' })
-  @UseInterceptors(FileInterceptor('file', multerConfig))
-  async uploadPhoto(
-    @Param('id', ParseUUIDPipe) id: string,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
-    if (!file) {
-      throw new BadRequestException('Nenhum arquivo foi enviado');
-    }
-
-    const photoUrl = `/uploads/profile-photos/${file.filename}`;
-    return this.usersService.updatePhoto(id, photoUrl);
   }
 
   @Delete(':id')

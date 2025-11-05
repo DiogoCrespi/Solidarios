@@ -226,19 +226,40 @@ export class UsersService {
   }
 
   @LogMethod()
-  async updatePhoto(id: string, photoUrl: string): Promise<User> {
-    this.logger.log(`Atualizando foto do usuário: ${id}`);
+  async uploadPhoto(id: string, file: any): Promise<User> {
+    this.logger.log(`Fazendo upload de foto de perfil para usuário: ${id}`);
 
     try {
       const user = await this.findOne(id);
+
+      // Se já existe uma foto, remover o arquivo antigo
+      if (user.photo) {
+        const fs = require('fs');
+        const path = require('path');
+        const oldPhotoPath = path.join(
+          process.cwd(),
+          'uploads',
+          'profile-photos',
+          path.basename(user.photo),
+        );
+        
+        if (fs.existsSync(oldPhotoPath)) {
+          fs.unlinkSync(oldPhotoPath);
+        }
+      }
+
+      // Construir a URL da foto
+      const photoUrl = `/uploads/profile-photos/${file.filename}`;
+      
+      // Atualizar o campo photo do usuário
       user.photo = photoUrl;
       const updatedUser = await this.usersRepository.save(user);
-      
-      this.logger.log(`Foto do usuário atualizada com sucesso: ${id}`);
+
+      this.logger.log(`Foto de perfil atualizada com sucesso: ${id}`);
       return updatedUser;
     } catch (error) {
       this.logger.error(
-        `Erro ao atualizar foto do usuário: ${error.message}`,
+        `Erro ao fazer upload de foto de perfil: ${error.message}`,
         error.stack,
       );
       throw error;

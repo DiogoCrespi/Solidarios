@@ -94,19 +94,46 @@ const UsersService = {
   },
 
   /**
-   * Fazer upload de foto de perfil
+   * Upload de foto de perfil
    * @param id ID do usuário
-   * @param formData FormData contendo o arquivo
-   * @returns Usuário atualizado com nova foto
+   * @param photoFile Arquivo da foto
+   * @returns Usuário atualizado com URL da foto
    */
-  uploadPhoto: async (id: string, formData: FormData): Promise<User> => {
-    // Remover o Content-Type padrão para permitir que o navegador defina com boundary
+  uploadPhoto: async (id: string, photoFile: any): Promise<User> => {
+    console.log('[UsersService] Preparando FormData para upload');
+    console.log('[UsersService] photoFile:', { ...photoFile, uri: photoFile.uri?.substring(0, 50) + '...' });
+    
+    const formData = new FormData();
+    
+    // Para React Native, usar o formato específico
+    // Para web, pode precisar converter base64 para Blob
+    if (photoFile.uri.startsWith('data:')) {
+      // É base64 - converter para Blob no web
+      const response = await fetch(photoFile.uri);
+      const blob = await response.blob();
+      formData.append('photo', blob, photoFile.name || 'photo.jpg');
+    } else {
+      // URI normal (React Native)
+      formData.append('photo', {
+        uri: photoFile.uri,
+        type: photoFile.type || photoFile.mimeType || 'image/jpeg',
+        name: photoFile.name || 'photo.jpg',
+      } as any);
+    }
+
+    console.log('[UsersService] FormData preparado, fazendo requisição para:', `/users/${id}/photo`);
+    
+    // Não definir Content-Type manualmente - deixar o browser/axios definir com boundary
     const response = await api.post<User>(`/users/${id}/photo`, formData, {
       headers: {
-        'Content-Type': undefined, // Remove o header padrão
+        // Remover Content-Type para permitir que o axios/browser defina automaticamente com boundary
       },
-      transformRequest: (data) => data, // Não transformar o FormData
+      transformRequest: (data) => {
+        // Axios deve fazer isso automaticamente, mas garantindo
+        return data;
+      },
     });
+    console.log('[UsersService] Upload concluído com sucesso');
     return response.data;
   },
 };

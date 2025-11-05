@@ -74,26 +74,26 @@ const AnalyticsService = {
    * Obter estatísticas gerais do dashboard
    */
   getDashboardStats: async (): Promise<DashboardStats> => {
-    const response = await api.get<DashboardStats>("/analytics/dashboard");
-    return response.data;
+    const response = await api.get<{ data: DashboardStats }>("/analytics/dashboard");
+    return response.data.data;
   },
 
   /**
    * Obter estatísticas de usuários
    */
   getUsersStats: async (): Promise<UsersStats> => {
-    const response = await api.get<UsersStats>("/analytics/users-stats");
-    return response.data;
+    const response = await api.get<{ data: UsersStats }>("/analytics/users-stats");
+    return response.data.data;
   },
 
   /**
    * Obter estatísticas de itens
    */
   getItemsStats: async (filters?: AnalyticsFilters): Promise<ItemsStats> => {
-    const response = await api.get<ItemsStats>("/analytics/items-stats", {
+    const response = await api.get<{ data: ItemsStats }>("/analytics/items-stats", {
       params: filters,
     });
-    return response.data;
+    return response.data.data;
   },
 
   /**
@@ -102,51 +102,51 @@ const AnalyticsService = {
   getDistributionsStats: async (
     filters?: AnalyticsFilters
   ): Promise<DistributionsStats> => {
-    const response = await api.get<DistributionsStats>(
+    const response = await api.get<{ data: DistributionsStats }>(
       "/analytics/distributions-stats",
       {
         params: filters,
       }
     );
-    return response.data;
+    return response.data.data;
   },
 
   /**
    * Obter estatísticas de estoque
    */
   getInventoryStats: async (): Promise<InventoryStats> => {
-    const response = await api.get<InventoryStats>("/analytics/inventory-stats");
-    return response.data;
+    const response = await api.get<{ data: InventoryStats }>("/analytics/inventory-stats");
+    return response.data.data;
   },
 
   /**
    * Obter tendências ao longo do tempo
    */
   getTrends: async (period?: string): Promise<TrendsData> => {
-    const response = await api.get<TrendsData>("/analytics/trends", {
+    const response = await api.get<{ data: TrendsData }>("/analytics/trends", {
       params: { period },
     });
-    return response.data;
+    return response.data.data;
   },
 
   /**
    * Obter top doadores
    */
   getTopDonors: async (limit?: number): Promise<TopDonor[]> => {
-    const response = await api.get<TopDonor[]>("/analytics/top-donors", {
+    const response = await api.get<{ data: TopDonor[] }>("/analytics/top-donors", {
       params: { limit },
     });
-    return response.data;
+    return response.data.data;
   },
 
   /**
    * Obter distribuição por categorias
    */
   getCategoriesDistribution: async (): Promise<CategoryDistribution[]> => {
-    const response = await api.get<CategoryDistribution[]>(
+    const response = await api.get<{ data: CategoryDistribution[] }>(
       "/analytics/categories-distribution"
     );
-    return response.data;
+    return response.data.data;
   },
 };
 

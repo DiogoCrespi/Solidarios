@@ -10,11 +10,30 @@ export function createCorsConfig(configService: ConfigService): CorsOptions {
     .map((origin) => origin.trim())
     .filter((origin) => origin.length > 0);
 
-  // Se não houver origens configuradas, usar configuração padrão para desenvolvimento
-  const origins = ['http://localhost:8081', 'http://localhost:8082'];
+  // Função para validar origem
+  const originValidator = (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    // Se não houver origem (ex: requisições same-origin), permitir
+    if (!origin) {
+      callback(null, true);
+      return;
+    }
+
+    // Se houver origens configuradas, verificar se a origem está na lista
+    if (allowedOrigins.length > 0) {
+      callback(null, allowedOrigins.includes(origin));
+      return;
+    }
+
+    // Em desenvolvimento, permitir qualquer localhost em qualquer porta
+    const isLocalhost = /^http:\/\/localhost:\d+$/.test(origin) || 
+                       /^http:\/\/127\.0\.0\.1:\d+$/.test(origin) ||
+                       /^http:\/\/192\.168\.\d+\.\d+:\d+$/.test(origin); // Para redes locais
+    
+    callback(null, isLocalhost);
+  };
 
   return {
-    origin: origins,
+    origin: originValidator,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: [
       'Origin',

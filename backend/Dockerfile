@@ -31,8 +31,8 @@ COPY package*.json ./
 # Instalar apenas dependências de produção (sem devDependencies)
 RUN npm ci --omit=dev
 
-# Garantir acesso às logs
-RUN mkdir -p /app/logs && chmod -R 777 /app/logs
+# Garantir acesso às logs e uploads
+RUN mkdir -p /app/logs /app/uploads/profile-photos && chmod -R 777 /app/logs /app/uploads
 
 # Copiar apenas os arquivos compilados da etapa de build
 COPY --from=builder /app/dist ./dist

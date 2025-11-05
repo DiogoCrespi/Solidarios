@@ -48,7 +48,7 @@ const ImpactScreen: React.FC = () => {
   // Carregar estatísticas do usuário
   useEffect(() => {
     const loadImpactStats = async () => {
-      if (!user) return;
+      if (!user?.id) return;
 
       try {
         setLoading(true);

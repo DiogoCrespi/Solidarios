@@ -20,6 +20,7 @@ export const ROLE_ROUTES = {
 export const ADMIN_ROUTES = {
   // Tabs
   DASHBOARD: "Dashboard",
+  ANALYTICS: "Analytics",
   ITEMS: "Items",
   INVENTORY: "Inventory",
   DISTRIBUTIONS: "Distributions",

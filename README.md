@@ -52,7 +52,7 @@ http://localhost:8082
 
 ```
 
-Na pasta frontend, você pode executar usando:
+Na pasta frontend, você pode eadmin@sanem.comxecutar usando:
 ```bash
 npm start
 ```
@@ -81,14 +81,7 @@ curl -X POST http://localhost:3000/users \
 ```
 **Windows:**
 ```bash
-$body = @{
-    name = "Administrador3"
-    email = "admin3@sanem.com"
-    password = "admin123"
-    role = "ADMIN"
-    phone = "(11) 99999-9999"
-    address = "Rua da Administração, 123"
-} | ConvertTo-Json; $response = Invoke-RestMethod -Uri "http://localhost:3000/auth/register" -Method Post -Body $body -ContentType "application/json"; $response | ConvertTo-Json -Depth 3
+$body = @{ name = "Administrador3"; email = "admin3@sanem.com"; password = "admin123"; role = "ADMIN" } | ConvertTo-Json; $response = Invoke-RestMethod -Uri "http://localhost:3000/auth/register" -Method Post -Body $body -ContentType "application/json"; $response | ConvertTo-Json -Depth 3
 
 ```
 **Via endpoint `/auth/register` (público):**

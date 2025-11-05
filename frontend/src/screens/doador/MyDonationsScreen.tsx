@@ -67,7 +67,7 @@ const MyDonationsScreen: React.FC = () => {
   // Carregar doações do usuário
   const loadDonations = useCallback(
     async (page = 1) => {
-      if (user) {
+      if (user?.id) {
         try {
           console.log(
             `Carregando doações para o usuário ${user.id}, página ${page}`
