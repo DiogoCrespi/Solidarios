@@ -96,14 +96,15 @@ const UsersService = {
   /**
    * Upload de foto de perfil
    * @param id ID do usuário
-   * @param formData FormData contendo o arquivo (já deve ter 'file' como chave)
+   * @param formData FormData contendo o arquivo (já deve ter 'photo' como chave)
    * @returns Usuário atualizado com URL da foto
    */
-  uploadPhoto: async (id: string, formData: FormData): Promise<User> => {
+  uploadPhoto: async (id: string, formData: FormData): Promise<{ data: User; statusCode: number; message: string; timestamp: string }> => {
     console.log('[UsersService] Enviando FormData para upload de foto');
     
     // Remover o Content-Type padrão para permitir que o navegador defina com boundary
-    const response = await api.post<User>(`/users/${id}/photo`, formData, {
+    // O backend retorna { data: User, statusCode, message, timestamp } através do TransformResponseInterceptor
+    const response = await api.post<{ data: User; statusCode: number; message: string; timestamp: string }>(`/users/${id}/photo`, formData, {
       headers: {
         'Content-Type': undefined, // Remove o header padrão para multipart/form-data
       },
@@ -111,6 +112,7 @@ const UsersService = {
     });
     
     console.log('[UsersService] Upload concluído com sucesso');
+    console.log('[UsersService] Resposta completa:', response.data);
     return response.data;
   },
 };

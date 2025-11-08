@@ -248,6 +248,11 @@ const authSlice = createSlice({
       state.isAuthenticated = true;
       state.error = null;
     },
+    updateUserPhoto: (state, action: PayloadAction<string>) => {
+      if (state.user) {
+        state.user.photo = action.payload;
+      }
+    },
   },
   extraReducers: (builder) => {
     // Login
@@ -370,6 +375,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { clearErrors, updateTokens } = authSlice.actions;
+export const { clearErrors, updateTokens, updateUserPhoto } = authSlice.actions;
 
 export default authSlice.reducer;

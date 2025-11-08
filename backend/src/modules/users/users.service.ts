@@ -209,8 +209,16 @@ export class UsersService {
         }
       }
 
-      // Atualizar os campos
-      Object.assign(user, updateUserDto);
+      // Atualizar os campos, mas só incluir a senha se ela foi fornecida
+      // Isso evita que a senha seja hasheada novamente quando não está sendo alterada
+      const { password, ...updateData } = updateUserDto;
+      
+      Object.assign(user, updateData);
+      
+      // Só atualizar a senha se ela foi fornecida e não está vazia
+      if (password) {
+        user.password = password; // O hook BeforeUpdate irá hashear apenas se necessário
+      }
 
       const updatedUser = await this.usersRepository.save(user);
 

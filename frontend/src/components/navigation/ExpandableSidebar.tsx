@@ -13,6 +13,8 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../hooks/useAuth';
+import { useAppDispatch } from '../../store';
+import { updateUserPhoto } from '../../store/slices/authSlice';
 import * as ImagePicker from 'expo-image-picker';
 import UsersService from '../../api/users';
 import { getApiBaseUrl } from '../../api/api';
@@ -66,7 +68,8 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
   onNavigate,
 }) => {
   const navigation = useNavigation();
-  const { user, logout, getProfile } = useAuth();
+  const { user, logout } = useAuth();
+  const dispatch = useAppDispatch();
   const [animatedWidth] = useState(new Animated.Value(SIDEBAR_WIDTH));
   const [showPhotoModal, setShowPhotoModal] = useState(false);
   const [showCameraModal, setShowCameraModal] = useState(false);
@@ -452,7 +455,7 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
           const fileName = asset.fileName || `photo-${Date.now()}.${extension}`;
           
           const file = new File([blob], fileName, { type: mimeType });
-          formData.append('file', file);
+          formData.append('photo', file);
           
           console.log('[ExpandableSidebar] File criado:', { name: fileName, type: mimeType, size: blob.size });
         } else {
@@ -466,7 +469,7 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
           const fileName = asset.fileName || `photo-${Date.now()}.${extension}`;
           
           const file = new File([blob], fileName, { type: mimeType });
-          formData.append('file', file);
+          formData.append('photo', file);
           
           console.log('[ExpandableSidebar] File criado:', { name: fileName, type: mimeType, size: blob.size });
         }
@@ -484,19 +487,40 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
           type: mimeType,
           name: fileName,
         };
-        formData.append('file', file);
+        formData.append('photo', file);
         
         console.log('[ExpandableSidebar] File preparado para mobile:', { name: fileName, type: mimeType });
       }
 
       console.log('[ExpandableSidebar] Enviando FormData para o servidor...');
       const result = await UsersService.uploadPhoto(user.id, formData);
-      console.log('[ExpandableSidebar] Upload concluído, resultado:', result);
+      console.log('[ExpandableSidebar] Upload concluído, resultado completo:', JSON.stringify(result, null, 2));
       
-      console.log('[ExpandableSidebar] Recarregando perfil');
-      // Recarregar o perfil para atualizar a foto
-      await getProfile();
-      console.log('[ExpandableSidebar] Perfil recarregado');
+      // O backend retorna a resposta dentro de { data: User, statusCode, message, timestamp }
+      // O UsersService retorna response.data do axios, que já é o objeto transformado
+      // Então result = { data: User, statusCode, message, timestamp }
+      // E result.data = User (com photo)
+      const updatedUser = result?.data;
+      const photoUrl = updatedUser?.photo;
+      
+      console.log('[ExpandableSidebar] updatedUser:', updatedUser);
+      console.log('[ExpandableSidebar] photoUrl extraída:', photoUrl);
+      
+      if (photoUrl) {
+        console.log('[ExpandableSidebar] Foto URL recebida:', photoUrl);
+        
+        // Atualizar diretamente no Redux sem fazer nova requisição
+        // Isso evita re-renderizações que podem causar problemas de navegação
+        // O componente irá re-renderizar automaticamente quando o user.photo for atualizado
+        dispatch(updateUserPhoto(photoUrl));
+        console.log('[ExpandableSidebar] Foto atualizada no estado do Redux');
+      } else {
+        console.warn('[ExpandableSidebar] Foto URL não encontrada na resposta');
+        console.warn('[ExpandableSidebar] Estrutura do result:', Object.keys(result || {}));
+        if (result?.data) {
+          console.warn('[ExpandableSidebar] Estrutura do result.data:', Object.keys(result.data));
+        }
+      }
       
       Alert.alert('Sucesso', 'Foto de perfil atualizada com sucesso!');
     } catch (error: any) {

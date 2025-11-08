@@ -60,11 +60,24 @@ export class User {
   resetPasswordExpires: Date | null;
 
   @BeforeInsert()
-  @BeforeUpdate()
   async hashPassword() {
-    if (this.password) {
+    if (this.password && !this.isPasswordHashed(this.password)) {
       this.password = await bcrypt.hash(this.password, 10);
     }
+  }
+
+  @BeforeUpdate()
+  async hashPasswordIfChanged() {
+    // Verificar se a senha foi alterada comparando com o valor original
+    // Se a senha já estiver hasheada (começa com $2a$, $2b$ ou $2y$), não hashear novamente
+    if (this.password && !this.isPasswordHashed(this.password)) {
+      this.password = await bcrypt.hash(this.password, 10);
+    }
+  }
+
+  private isPasswordHashed(password: string): boolean {
+    // Bcrypt hashes sempre começam com $2a$, $2b$ ou $2y$ seguido de $ e mais caracteres
+    return /^\$2[ayb]\$.{56}$/.test(password);
   }
 
   async validatePassword(password: string): Promise<boolean> {

@@ -18,6 +18,7 @@ export interface User {
   email: string;
   role: UserRole;
   isActive: boolean;
+  photo?: string;
   createdAt: string;
   updatedAt: string;
 }
