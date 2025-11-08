@@ -96,43 +96,20 @@ const UsersService = {
   /**
    * Upload de foto de perfil
    * @param id ID do usuário
-   * @param photoFile Arquivo da foto
+   * @param formData FormData contendo o arquivo (já deve ter 'file' como chave)
    * @returns Usuário atualizado com URL da foto
    */
-  uploadPhoto: async (id: string, photoFile: any): Promise<User> => {
-    console.log('[UsersService] Preparando FormData para upload');
-    console.log('[UsersService] photoFile:', { ...photoFile, uri: photoFile.uri?.substring(0, 50) + '...' });
+  uploadPhoto: async (id: string, formData: FormData): Promise<User> => {
+    console.log('[UsersService] Enviando FormData para upload de foto');
     
-    const formData = new FormData();
-    
-    // Para React Native, usar o formato específico
-    // Para web, pode precisar converter base64 para Blob
-    if (photoFile.uri.startsWith('data:')) {
-      // É base64 - converter para Blob no web
-      const response = await fetch(photoFile.uri);
-      const blob = await response.blob();
-      formData.append('photo', blob, photoFile.name || 'photo.jpg');
-    } else {
-      // URI normal (React Native)
-      formData.append('photo', {
-        uri: photoFile.uri,
-        type: photoFile.type || photoFile.mimeType || 'image/jpeg',
-        name: photoFile.name || 'photo.jpg',
-      } as any);
-    }
-
-    console.log('[UsersService] FormData preparado, fazendo requisição para:', `/users/${id}/photo`);
-    
-    // Não definir Content-Type manualmente - deixar o browser/axios definir com boundary
+    // Remover o Content-Type padrão para permitir que o navegador defina com boundary
     const response = await api.post<User>(`/users/${id}/photo`, formData, {
       headers: {
-        // Remover Content-Type para permitir que o axios/browser defina automaticamente com boundary
+        'Content-Type': undefined, // Remove o header padrão para multipart/form-data
       },
-      transformRequest: (data) => {
-        // Axios deve fazer isso automaticamente, mas garantindo
-        return data;
-      },
+      transformRequest: (data) => data, // Não transformar o FormData
     });
+    
     console.log('[UsersService] Upload concluído com sucesso');
     return response.data;
   },

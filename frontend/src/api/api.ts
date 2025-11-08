@@ -117,6 +117,11 @@ api.interceptors.request.use(
       return config;
     }
 
+    // Se Content-Type for undefined, remover o header padrão (útil para FormData)
+    if (config.headers && config.headers['Content-Type'] === undefined) {
+      delete config.headers['Content-Type'];
+    }
+
     const token = await AsyncStorage.getItem("@auth_token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

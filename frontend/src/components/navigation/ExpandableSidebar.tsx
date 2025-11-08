@@ -435,20 +435,62 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
     }
 
     try {
-      const photoFile = {
-        uri: asset.uri,
-        type: asset.mimeType || 'image/jpeg',
-        mimeType: asset.mimeType || 'image/jpeg',
-        name: asset.fileName || asset.uri.split('/').pop() || 'photo.jpg',
-      };
+      const formData = new FormData();
 
-      console.log('[ExpandableSidebar] Preparando upload:', {
-        userId: user.id,
-        photoFile: { ...photoFile, uri: photoFile.uri.substring(0, 50) + '...' }
-      });
+      // Para Web - converter data URL ou blob para File
+      if (Platform.OS === 'web') {
+        console.log('[ExpandableSidebar] Processando upload para Web');
+        
+        // Se é uma data URL (base64)
+        if (asset.uri.startsWith('data:')) {
+          console.log('[ExpandableSidebar] Convertendo data URL para File');
+          const response = await fetch(asset.uri);
+          const blob = await response.blob();
+          
+          const mimeType = asset.mimeType || blob.type || 'image/jpeg';
+          const extension = mimeType.split('/')[1] || 'jpg';
+          const fileName = asset.fileName || `photo-${Date.now()}.${extension}`;
+          
+          const file = new File([blob], fileName, { type: mimeType });
+          formData.append('file', file);
+          
+          console.log('[ExpandableSidebar] File criado:', { name: fileName, type: mimeType, size: blob.size });
+        } else {
+          // URL blob ou file://
+          console.log('[ExpandableSidebar] Convertendo blob URL para File');
+          const response = await fetch(asset.uri);
+          const blob = await response.blob();
+          
+          const mimeType = asset.mimeType || blob.type || 'image/jpeg';
+          const extension = mimeType.split('/')[1] || 'jpg';
+          const fileName = asset.fileName || `photo-${Date.now()}.${extension}`;
+          
+          const file = new File([blob], fileName, { type: mimeType });
+          formData.append('file', file);
+          
+          console.log('[ExpandableSidebar] File criado:', { name: fileName, type: mimeType, size: blob.size });
+        }
+      } else {
+        // Para Mobile (React Native) - usar objeto com uri, type e name
+        console.log('[ExpandableSidebar] Processando upload para Mobile');
+        const uriParts = asset.uri.split('.');
+        const fileType = uriParts[uriParts.length - 1] || 'jpg';
+        const mimeType = asset.mimeType || `image/${fileType}`;
+        const fileName = asset.fileName || asset.uri.split('/').pop() || `photo-${Date.now()}.${fileType}`;
+        
+        // Para React Native, FormData aceita objetos com uri, type e name
+        const file: any = {
+          uri: asset.uri,
+          type: mimeType,
+          name: fileName,
+        };
+        formData.append('file', file);
+        
+        console.log('[ExpandableSidebar] File preparado para mobile:', { name: fileName, type: mimeType });
+      }
 
-      console.log('[ExpandableSidebar] Chamando UsersService.uploadPhoto');
-      const result = await UsersService.uploadPhoto(user.id, photoFile);
+      console.log('[ExpandableSidebar] Enviando FormData para o servidor...');
+      const result = await UsersService.uploadPhoto(user.id, formData);
       console.log('[ExpandableSidebar] Upload concluído, resultado:', result);
       
       console.log('[ExpandableSidebar] Recarregando perfil');
