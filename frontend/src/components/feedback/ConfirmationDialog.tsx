@@ -6,7 +6,7 @@ import {
   StyleProp,
   ViewStyle,
   TouchableOpacity,
-  TouchableWithoutFeedback,
+  Pressable,
   Platform,
 } from "react-native";
 import Typography from "../common/Typography";
@@ -80,64 +80,62 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
       animationType="fade"
       onRequestClose={onCancel}
     >
-      <TouchableWithoutFeedback onPress={onCancel}>
-        <View style={styles.overlay}>
-          <TouchableWithoutFeedback>
-            <View
-              style={[
-                styles.container,
-                Platform.OS === "web" ? containerWebStyle : containerMobileStyle,
-                style,
-              ]}
-            >
-              {/* Cabeçalho */}
-              <View
-                style={[styles.header, { backgroundColor: colors.primary }]}
-              >
-                {icon && <View style={styles.icon}>{icon}</View>}
-                <Typography
-                  variant="h3"
-                  color={colors.text}
-                  style={styles.title}
+      <View style={styles.overlay}>
+        <Pressable onPress={onCancel} style={StyleSheet.absoluteFill} />
+        <View
+          style={[
+            styles.container,
+            Platform.OS === "web" ? containerWebStyle : containerMobileStyle,
+            style,
+          ]}
+        >
+                {/* Cabeçalho */}
+                <View
+                  style={[styles.header, { backgroundColor: colors.primary }]}
                 >
-                  {title}
-                </Typography>
-              </View>
-
-              {/* Conteúdo */}
-              <View style={styles.content}>
-                {message && (
-                  <Typography variant="body" style={styles.message}>
-                    {message}
+                  {icon && <View style={styles.icon}>{icon}</View>}
+                  <Typography
+                    variant="h3"
+                    color={colors.text}
+                    style={styles.title}
+                  >
+                    {title}
                   </Typography>
-                )}
+                </View>
 
-                {/* Botões */}
-                <View style={styles.buttonsContainer}>
-                  <Button
-                    title={cancelLabel}
-                    onPress={onCancel}
-                    variant="secondary"
-                    style={styles.cancelButton}
-                  />
+                {/* Conteúdo */}
+                <View style={styles.content}>
+                  {message && (
+                    <Typography variant="body" style={styles.message}>
+                      {message}
+                    </Typography>
+                  )}
 
-                  <Button
-                    title={confirmLabel}
-                    onPress={onConfirm}
-                    variant={variant === "default" ? "primary" : "accent"}
-                    style={[
-                      styles.confirmButton,
-                      variant === "danger" && styles.dangerButton,
-                      variant === "success" && styles.successButton,
-                      variant === "warning" && styles.warningButton,
-                    ]}
-                  />
+                  {/* Botões */}
+                  <View style={styles.buttonsContainer}>
+                    <Button
+                      title={cancelLabel}
+                      onPress={onCancel}
+                      variant="secondary"
+                      style={styles.cancelButton}
+                    />
+
+                    <Button
+                      title={confirmLabel}
+                      onPress={onConfirm}
+                      variant={variant === "default" ? "primary" : "accent"}
+                      style={[
+                        styles.confirmButton,
+                        variant === "danger" && styles.dangerButton,
+                        variant === "success" && styles.successButton,
+                        variant === "warning" && styles.warningButton,
+                      ]}
+                    />
+                  </View>
                 </View>
               </View>
             </View>
-          </TouchableWithoutFeedback>
-        </View>
-      </TouchableWithoutFeedback>
+      </View>
     </Modal>
   );
 };

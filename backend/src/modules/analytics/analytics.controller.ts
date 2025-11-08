@@ -1,12 +1,17 @@
 import {
   Controller,
   Get,
+  Post,
   Query,
+  Body,
+  Res,
   UseGuards,
   ValidationPipe,
   UsePipes,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { AnalyticsService } from './analytics.service';
+import { ReportsService } from './reports.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -17,15 +22,20 @@ import {
   ApiResponse,
   ApiBearerAuth,
   ApiQuery,
+  ApiBody,
 } from '@nestjs/swagger';
 import { AnalyticsFilterDto } from './dto/analytics-filter.dto';
+import { GenerateReportDto } from './dto/generate-report.dto';
 
 @ApiTags('analytics')
 @Controller('analytics')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class AnalyticsController {
-  constructor(private readonly analyticsService: AnalyticsService) {}
+  constructor(
+    private readonly analyticsService: AnalyticsService,
+    private readonly reportsService: ReportsService,
+  ) {}
 
   @Get('dashboard')
   @ApiOperation({ summary: 'Obter estatísticas gerais do dashboard' })
@@ -145,6 +155,26 @@ export class AnalyticsController {
   @Roles(UserRole.ADMIN, UserRole.FUNCIONARIO)
   getCategoriesDistribution() {
     return this.analyticsService.getCategoriesDistribution();
+  }
+
+  @Post('generate-report')
+  @ApiOperation({ summary: 'Gerar relatório em PDF, CSV ou XLSX' })
+  @ApiResponse({
+    status: 200,
+    description: 'Relatório gerado com sucesso.',
+    content: {
+      'application/pdf': {
+        schema: { type: 'string', format: 'binary' },
+      },
+    },
+  })
+  @ApiBody({ type: GenerateReportDto })
+  @Roles(UserRole.ADMIN, UserRole.FUNCIONARIO)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async generateReport(@Body() dto: GenerateReportDto, @Res({ passthrough: false }) res: Response) {
+    // @Res({ passthrough: false }) garante que a resposta seja enviada diretamente
+    // sem passar pelo TransformResponseInterceptor
+    await this.reportsService.generateReport(dto, res);
   }
 }
 

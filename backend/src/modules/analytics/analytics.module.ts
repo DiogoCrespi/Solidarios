@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AnalyticsController } from './analytics.controller';
 import { AnalyticsService } from './analytics.service';
+import { ReportsService } from './reports.service';
 import { User } from '../users/entities/user.entity';
 import { Item } from '../items/entities/item.entity';
 import { Distribution } from '../distributions/entities/distribution.entity';
@@ -15,7 +16,7 @@ import { LoggingModule } from '../../common/logging/logging.module';
     LoggingModule,
   ],
   controllers: [AnalyticsController],
-  providers: [AnalyticsService],
+  providers: [AnalyticsService, ReportsService],
   exports: [AnalyticsService],
 })
 export class AnalyticsModule {}

@@ -60,7 +60,7 @@ export const initApiEnvironment = async () => {
 
 const api = axios.create({
   baseURL: API_URLS[currentEnvironment],
-  timeout: 15000,
+  timeout: 30000, // Aumentado para 30 segundos para dar mais margem
   headers: {
     "Content-Type": "application/json",
   },

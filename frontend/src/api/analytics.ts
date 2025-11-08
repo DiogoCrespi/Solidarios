@@ -148,6 +148,25 @@ const AnalyticsService = {
     );
     return response.data.data;
   },
+
+  /**
+   * Gerar relatório em PDF
+   */
+  generateReport: async (config: {
+    type: string;
+    format: string;
+    startDate?: string;
+    endDate?: string;
+  }): Promise<Blob> => {
+    const response = await api.post(
+      "/analytics/generate-report",
+      config,
+      {
+        responseType: 'blob', // Importante para receber arquivos binários
+      }
+    );
+    return response.data;
+  },
 };
 
 export default AnalyticsService;

@@ -6,6 +6,8 @@ import {
   RefreshControl,
   Dimensions,
   TouchableOpacity,
+  Platform,
+  Alert,
 } from 'react-native';
 import {
   Typography,
@@ -110,15 +112,48 @@ const AnalyticsScreen: React.FC = () => {
   };
 
   const handleGenerateReport = async (config: ReportConfig) => {
-    // Por enquanto, apenas simula a geração do relatório
-    // Em produção, isso chamaria um endpoint do backend para gerar o arquivo
-    console.log('Gerando relatório:', config);
-    
-    // Simular delay de geração
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Aqui você pode adicionar a lógica para baixar o arquivo gerado
-    // Por exemplo, usando expo-file-system ou react-native-fs
+    try {
+      setLoading(true);
+      console.log('Gerando relatório:', config);
+      
+      // Chamar o endpoint de geração de relatório
+      const blob = await AnalyticsService.generateReport({
+        type: config.type,
+        format: config.format,
+        startDate: config.startDate,
+        endDate: config.endDate,
+      });
+
+      // Download baseado na plataforma
+      if (Platform.OS === 'web') {
+        // Para web, usar download direto
+        const url = (window as any).URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `relatorio_${config.type}_${new Date().toISOString().split('T')[0]}.${config.format}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        (window as any).URL.revokeObjectURL(url);
+        Alert.alert('Sucesso', 'Relatório gerado e baixado com sucesso!');
+      } else {
+        // Para mobile, seria necessário usar expo-file-system ou similar
+        // Por enquanto, apenas mostra mensagem
+        Alert.alert(
+          'Sucesso',
+          'Relatório gerado com sucesso! Em dispositivos móveis, o download será implementado em breve.'
+        );
+      }
+
+      console.log('Relatório gerado e baixado com sucesso');
+    } catch (error) {
+      console.error('Erro ao gerar relatório:', error);
+      setError('Não foi possível gerar o relatório.');
+      Alert.alert('Erro', 'Não foi possível gerar o relatório. Verifique sua conexão e tente novamente.');
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading && !dashboardStats) {

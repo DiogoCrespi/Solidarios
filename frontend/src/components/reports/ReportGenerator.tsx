@@ -47,9 +47,10 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ onGenerate }) => {
         type: reportType,
         format,
       });
-      Alert.alert('Sucesso', 'Relatório gerado com sucesso!');
+      // Não precisa de Alert aqui, pois o download já acontece automaticamente
+      // O Alert será mostrado pelo componente pai se houver erro
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível gerar o relatório.');
+      Alert.alert('Erro', 'Não foi possível gerar o relatório. Verifique sua conexão e tente novamente.');
     } finally {
       setLoading(false);
     }
