@@ -346,8 +346,8 @@ const commonIconStyles = StyleSheet.create({
   },
 });
 
-// Estilos principais
-const styles = StyleSheet.create({
+// Estilos base
+const baseStyles = StyleSheet.create({
   container: {
     position: "absolute",
     left: theme.spacing.s,
@@ -355,18 +355,6 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.medium,
     padding: theme.spacing.s,
     zIndex: 9999,
-  },
-  containerWeb: {
-    // Para web, usar boxShadow ao invés de shadow* props
-    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.15)",
-  } as any,
-  containerMobile: {
-    // Sombras para mobile (Android/iOS) - definidas manualmente para evitar warning em web
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 2,
   },
   topPosition: {
     top: theme.spacing.l,
@@ -414,5 +402,24 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
+
+// Estilos condicionais para sombras (definidos fora do StyleSheet.create para evitar warnings)
+const containerWebStyle = Platform.OS === "web" ? {
+  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.15)",
+} : {};
+
+const containerMobileStyle = Platform.OS !== "web" ? {
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.15,
+  shadowRadius: 4,
+  elevation: 2,
+} : {};
+
+const styles = {
+  ...baseStyles,
+  containerWeb: containerWebStyle as any,
+  containerMobile: containerMobileStyle as any,
+};
 
 export default NotificationBanner;

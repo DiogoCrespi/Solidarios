@@ -142,7 +142,8 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+// Estilos base
+const baseStyles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -156,18 +157,25 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.medium,
     overflow: "hidden",
   },
-  containerWeb: {
-    // Para web, usar boxShadow ao invés de shadow* props
-    boxShadow: "0 3px 6px rgba(0, 0, 0, 0.2)",
-  } as any,
-  containerMobile: {
-    // Sombras para mobile (Android/iOS) - definidas manualmente para evitar warning em web
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 3,
-  },
+});
+
+// Estilos condicionais para sombras (definidos fora do StyleSheet.create para evitar warnings)
+const containerWebStyle = Platform.OS === "web" ? {
+  boxShadow: "0 3px 6px rgba(0, 0, 0, 0.2)",
+} : {};
+
+const containerMobileStyle = Platform.OS !== "web" ? {
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: 3 },
+  shadowOpacity: 0.2,
+  shadowRadius: 6,
+  elevation: 3,
+} : {};
+
+const styles = {
+  ...baseStyles,
+  containerWeb: containerWebStyle as any,
+  containerMobile: containerMobileStyle as any,
   header: {
     flexDirection: "row",
     alignItems: "center",
