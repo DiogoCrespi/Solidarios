@@ -233,7 +233,7 @@ const NotificationBanner: React.FC<NotificationBannerProps> = ({
     <Animated.View
       style={[
         styles.container,
-        Platform.OS === "web" ? styles.containerWeb : styles.containerMobile,
+        Platform.OS === "web" ? containerWebStyle : containerMobileStyle,
         position === "top" ? styles.topPosition : styles.bottomPosition,
         {
           backgroundColor: typeStyles.backgroundColor,
@@ -416,10 +416,7 @@ const containerMobileStyle = Platform.OS !== "web" ? {
   elevation: 2,
 } : {};
 
-const styles = {
-  ...baseStyles,
-  containerWeb: containerWebStyle as any,
-  containerMobile: containerMobileStyle as any,
-};
+// Exportar estilos junto com os condicionais
+const styles = baseStyles;
 
 export default NotificationBanner;
