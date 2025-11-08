@@ -161,8 +161,12 @@ const styles = StyleSheet.create({
     boxShadow: "0 3px 6px rgba(0, 0, 0, 0.2)",
   } as any,
   containerMobile: {
-    // Sombras para mobile (Android/iOS)
-    ...theme.shadows.large,
+    // Sombras para mobile (Android/iOS) - definidas manualmente para evitar warning em web
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 3,
   },
   header: {
     flexDirection: "row",

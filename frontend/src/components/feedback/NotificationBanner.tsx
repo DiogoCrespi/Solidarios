@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleProp,
   ViewStyle,
+  Platform,
 } from "react-native";
 import Typography from "../common/Typography";
 import theme from "../../theme";
@@ -125,17 +126,20 @@ const NotificationBanner: React.FC<NotificationBannerProps> = ({
   }, [opacity]);
 
   useEffect(() => {
+    // useNativeDriver não é suportado no React Native Web
+    const useNativeDriver = Platform.OS !== "web";
+
     if (visible) {
       Animated.parallel([
         Animated.timing(translateY, {
           toValue: 0,
           duration: 300,
-          useNativeDriver: true,
+          useNativeDriver,
         }),
         Animated.timing(opacity, {
           toValue: 1,
           duration: 300,
-          useNativeDriver: true,
+          useNativeDriver,
         }),
       ]).start();
 
@@ -149,12 +153,12 @@ const NotificationBanner: React.FC<NotificationBannerProps> = ({
         Animated.timing(translateY, {
           toValue: position === "top" ? -100 : 100,
           duration: 300,
-          useNativeDriver: true,
+          useNativeDriver,
         }),
         Animated.timing(opacity, {
           toValue: 0,
           duration: 300,
-          useNativeDriver: true,
+          useNativeDriver,
         }),
       ]).start(() => {
         if (onClose) {
@@ -181,16 +185,19 @@ const NotificationBanner: React.FC<NotificationBannerProps> = ({
       timerRef.current = null;
     }
 
+    // useNativeDriver não é suportado no React Native Web
+    const useNativeDriver = Platform.OS !== "web";
+
     Animated.parallel([
       Animated.timing(translateY, {
         toValue: position === "top" ? -100 : 100,
         duration: 300,
-        useNativeDriver: true,
+        useNativeDriver,
       }),
       Animated.timing(opacity, {
         toValue: 0,
         duration: 300,
-        useNativeDriver: true,
+        useNativeDriver,
       }),
     ]).start(() => {
       if (onClose) {
@@ -226,6 +233,7 @@ const NotificationBanner: React.FC<NotificationBannerProps> = ({
     <Animated.View
       style={[
         styles.container,
+        Platform.OS === "web" ? styles.containerWeb : styles.containerMobile,
         position === "top" ? styles.topPosition : styles.bottomPosition,
         {
           backgroundColor: typeStyles.backgroundColor,
@@ -346,8 +354,19 @@ const styles = StyleSheet.create({
     right: theme.spacing.s,
     borderRadius: theme.borderRadius.medium,
     padding: theme.spacing.s,
-    ...theme.shadows.medium,
     zIndex: 9999,
+  },
+  containerWeb: {
+    // Para web, usar boxShadow ao invés de shadow* props
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.15)",
+  } as any,
+  containerMobile: {
+    // Sombras para mobile (Android/iOS) - definidas manualmente para evitar warning em web
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 2,
   },
   topPosition: {
     top: theme.spacing.l,
