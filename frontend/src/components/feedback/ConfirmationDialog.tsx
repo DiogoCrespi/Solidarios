@@ -7,6 +7,7 @@ import {
   ViewStyle,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  Platform,
 } from "react-native";
 import Typography from "../common/Typography";
 import Button from "../common/Button";
@@ -82,7 +83,13 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
       <TouchableWithoutFeedback onPress={onCancel}>
         <View style={styles.overlay}>
           <TouchableWithoutFeedback>
-            <View style={[styles.container, style]}>
+            <View
+              style={[
+                styles.container,
+                Platform.OS === "web" ? styles.containerWeb : styles.containerMobile,
+                style,
+              ]}
+            >
               {/* Cabeçalho */}
               <View
                 style={[styles.header, { backgroundColor: colors.primary }]}
@@ -148,6 +155,13 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.neutral.white,
     borderRadius: theme.borderRadius.medium,
     overflow: "hidden",
+  },
+  containerWeb: {
+    // Para web, usar boxShadow ao invés de shadow* props
+    boxShadow: "0 3px 6px rgba(0, 0, 0, 0.2)",
+  } as any,
+  containerMobile: {
+    // Sombras para mobile (Android/iOS)
     ...theme.shadows.large,
   },
   header: {

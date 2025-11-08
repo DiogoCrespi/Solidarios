@@ -8,6 +8,7 @@ import {
   Animated,
   Dimensions,
   SafeAreaView,
+  Platform,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
@@ -28,13 +29,16 @@ const WelcomeScreen: React.FC = () => {
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
 
   useEffect(() => {
+    // useNativeDriver não é suportado no React Native Web
+    const useNativeDriver = Platform.OS !== "web";
+    
     // Executar animações em sequência
     Animated.sequence([
       // Primeiro anima o logo
       Animated.timing(scaleAnim, {
         toValue: 1,
         duration: 700,
-        useNativeDriver: true,
+        useNativeDriver,
       }),
 
       // Depois fade-in e slide do texto e botões
@@ -42,12 +46,12 @@ const WelcomeScreen: React.FC = () => {
         Animated.timing(fadeAnim, {
           toValue: 1,
           duration: 800,
-          useNativeDriver: true,
+          useNativeDriver,
         }),
         Animated.timing(slideAnim, {
           toValue: 0,
           duration: 800,
-          useNativeDriver: true,
+          useNativeDriver,
         }),
       ]),
     ]).start();
@@ -111,7 +115,12 @@ const WelcomeScreen: React.FC = () => {
           ]}
         >
           <TouchableOpacity
-            style={styles.loginButton}
+            style={[
+              styles.loginButton,
+              Platform.OS === "web"
+                ? styles.loginButtonWeb
+                : styles.loginButtonMobile,
+            ]}
             onPress={() => navigation.navigate(AUTH_ROUTES.LOGIN as any)}
             activeOpacity={0.8}
           >
@@ -201,6 +210,13 @@ const styles = StyleSheet.create({
     marginBottom: 18,
     borderRadius: 12,
     overflow: "hidden",
+  },
+  loginButtonWeb: {
+    // Para web, usar boxShadow ao invés de shadow* props
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.15)",
+  } as any,
+  loginButtonMobile: {
+    // Sombras para mobile (Android/iOS)
     elevation: 3,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
