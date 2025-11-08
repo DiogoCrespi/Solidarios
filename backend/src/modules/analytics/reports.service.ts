@@ -5,6 +5,9 @@ import { AnalyticsService } from './analytics.service';
 import { GenerateReportDto, ReportType, ReportFormat } from './dto/generate-report.dto';
 import { LoggingService } from '../../common/logging/logging.service';
 
+// Tipo para PDFDocument - InstanceType do PDFDocument constructor
+type PDFDocumentType = InstanceType<typeof PDFDocument>;
+
 @Injectable()
 export class ReportsService {
   constructor(
@@ -109,7 +112,7 @@ export class ReportsService {
     doc.end();
   }
 
-  private async generateDashboardPDF(doc: PDFDocument, yPosition: number): Promise<number> {
+  private async generateDashboardPDF(doc: PDFDocumentType, yPosition: number): Promise<number> {
     const stats = await this.analyticsService.getDashboardStats();
     let y = yPosition;
 
@@ -143,7 +146,7 @@ export class ReportsService {
     return y + 20;
   }
 
-  private async generateUsersPDF(doc: PDFDocument, yPosition: number): Promise<number> {
+  private async generateUsersPDF(doc: PDFDocumentType, yPosition: number): Promise<number> {
     const stats = await this.analyticsService.getUsersStats();
     let y = yPosition;
 
@@ -175,7 +178,7 @@ export class ReportsService {
   }
 
   private async generateItemsPDF(
-    doc: PDFDocument,
+    doc: PDFDocumentType,
     yPosition: number,
     dto: GenerateReportDto,
   ): Promise<number> {
@@ -223,7 +226,7 @@ export class ReportsService {
   }
 
   private async generateDistributionsPDF(
-    doc: PDFDocument,
+    doc: PDFDocumentType,
     yPosition: number,
     dto: GenerateReportDto,
   ): Promise<number> {
@@ -258,7 +261,7 @@ export class ReportsService {
     return y + 20;
   }
 
-  private async generateInventoryPDF(doc: PDFDocument, yPosition: number): Promise<number> {
+  private async generateInventoryPDF(doc: PDFDocumentType, yPosition: number): Promise<number> {
     const stats = await this.analyticsService.getInventoryStats();
     let y = yPosition;
 
@@ -295,7 +298,7 @@ export class ReportsService {
     return y + 20;
   }
 
-  private async generateDonorsPDF(doc: PDFDocument, yPosition: number): Promise<number> {
+  private async generateDonorsPDF(doc: PDFDocumentType, yPosition: number): Promise<number> {
     const topDonors = await this.analyticsService.getTopDonors(10);
     let y = yPosition;
 

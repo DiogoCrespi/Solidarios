@@ -81,60 +81,64 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
       onRequestClose={onCancel}
     >
       <View style={styles.overlay}>
-        <Pressable onPress={onCancel} style={StyleSheet.absoluteFill} />
-        <View
-          style={[
-            styles.container,
-            Platform.OS === "web" ? containerWebStyle : containerMobileStyle,
-            style,
-          ]}
-        >
-                {/* Cabeçalho */}
-                <View
-                  style={[styles.header, { backgroundColor: colors.primary }]}
-                >
-                  {icon && <View style={styles.icon}>{icon}</View>}
-                  <Typography
-                    variant="h3"
-                    color={colors.text}
-                    style={styles.title}
-                  >
-                    {title}
-                  </Typography>
-                </View>
+        <Pressable 
+          style={StyleSheet.absoluteFill} 
+          onPress={onCancel}
+        />
+        <Pressable onPress={() => {}}>
+          <View
+            style={[
+              styles.container,
+              Platform.OS === "web" ? containerWebStyle : containerMobileStyle,
+              style,
+            ]}
+          >
+          {/* Cabeçalho */}
+          <View
+            style={[styles.header, { backgroundColor: colors.primary }]}
+          >
+            {icon && <View style={styles.icon}>{icon}</View>}
+            <Typography
+              variant="h3"
+              color={colors.text}
+              style={styles.title}
+            >
+              {title}
+            </Typography>
+          </View>
 
-                {/* Conteúdo */}
-                <View style={styles.content}>
-                  {message && (
-                    <Typography variant="body" style={styles.message}>
-                      {message}
-                    </Typography>
-                  )}
+          {/* Conteúdo */}
+          <View style={styles.content}>
+            {message && (
+              <Typography variant="body" style={styles.message}>
+                {message}
+              </Typography>
+            )}
 
-                  {/* Botões */}
-                  <View style={styles.buttonsContainer}>
-                    <Button
-                      title={cancelLabel}
-                      onPress={onCancel}
-                      variant="secondary"
-                      style={styles.cancelButton}
-                    />
+            {/* Botões */}
+            <View style={styles.buttonsContainer}>
+              <Button
+                title={cancelLabel}
+                onPress={onCancel}
+                variant="secondary"
+                style={styles.cancelButton}
+              />
 
-                    <Button
-                      title={confirmLabel}
-                      onPress={onConfirm}
-                      variant={variant === "default" ? "primary" : "accent"}
-                      style={[
-                        styles.confirmButton,
-                        variant === "danger" && styles.dangerButton,
-                        variant === "success" && styles.successButton,
-                        variant === "warning" && styles.warningButton,
-                      ]}
-                    />
-                  </View>
-                </View>
-              </View>
+              <Button
+                title={confirmLabel}
+                onPress={onConfirm}
+                variant={variant === "default" ? "primary" : "accent"}
+                style={[
+                  styles.confirmButton,
+                  variant === "danger" && styles.dangerButton,
+                  variant === "success" && styles.successButton,
+                  variant === "warning" && styles.warningButton,
+                ]}
+              />
             </View>
+          </View>
+          </View>
+        </Pressable>
       </View>
     </Modal>
   );
