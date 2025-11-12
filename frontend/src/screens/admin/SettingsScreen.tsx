@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -17,13 +17,14 @@ import {
   Checkbox,
   NotificationBanner,
 } from '../../components/barrelComponents';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
 
 // Hooks
 import { useAuth } from '../../hooks/useAuth';
 
 const SettingsScreen: React.FC = () => {
   const { user } = useAuth();
+  const theme = useTheme();
   const [notification, setNotification] = useState({
     visible: false,
     message: '',
@@ -32,9 +33,21 @@ const SettingsScreen: React.FC = () => {
 
   // Estados para configurações
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
   const [autoSync, setAutoSync] = useState(true);
   const [biometricAuth, setBiometricAuth] = useState(false);
+
+  // Sincronizar darkMode com o tema
+  const darkMode = theme.isDark;
+
+  const handleToggleDarkMode = () => {
+    const newMode = theme.isDark ? 'claro' : 'escuro';
+    theme.toggleTheme();
+    setNotification({
+      visible: true,
+      message: `Modo ${newMode} ativado!`,
+      type: 'success',
+    });
+  };
 
   const handleSaveSettings = () => {
     setNotification({
@@ -55,7 +68,7 @@ const SettingsScreen: React.FC = () => {
           style: 'destructive',
           onPress: () => {
             setNotificationsEnabled(true);
-            setDarkMode(false);
+            theme.setTheme('light');
             setAutoSync(true);
             setBiometricAuth(false);
             setNotification({
@@ -70,19 +83,21 @@ const SettingsScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.neutral.lightGray }]}>
       <Header title="Configurações" showBackButton />
       
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Configurações de Notificações */}
         <Card style={styles.sectionCard}>
-          <Typography variant="h6" style={styles.sectionTitle}>
+          <Typography variant="h6" style={[styles.sectionTitle, { color: theme.colors.primary.main }]}>
             Notificações
           </Typography>
           
           <View style={styles.settingItem}>
             <View style={styles.settingInfo}>
-              <Typography variant="body">Notificações Push</Typography>
+              <Typography variant="body" color={theme.colors.neutral.black}>
+                Notificações Push
+              </Typography>
               <Typography variant="caption" color={theme.colors.neutral.mediumGray}>
                 Receber notificações sobre doações e distribuições
               </Typography>
@@ -96,33 +111,37 @@ const SettingsScreen: React.FC = () => {
 
         {/* Configurações de Aparência */}
         <Card style={styles.sectionCard}>
-          <Typography variant="h6" style={styles.sectionTitle}>
+          <Typography variant="h6" style={[styles.sectionTitle, { color: theme.colors.primary.main }]}>
             Aparência
           </Typography>
           
           <View style={styles.settingItem}>
             <View style={styles.settingInfo}>
-              <Typography variant="body">Modo Escuro</Typography>
+              <Typography variant="body" color={theme.colors.neutral.black}>
+                Modo Escuro
+              </Typography>
               <Typography variant="caption" color={theme.colors.neutral.mediumGray}>
                 Usar tema escuro na interface
               </Typography>
             </View>
             <Checkbox
               checked={darkMode}
-              onToggle={() => setDarkMode(!darkMode)}
+              onToggle={handleToggleDarkMode}
             />
           </View>
         </Card>
 
         {/* Configurações de Sistema */}
         <Card style={styles.sectionCard}>
-          <Typography variant="h6" style={styles.sectionTitle}>
+          <Typography variant="h6" style={[styles.sectionTitle, { color: theme.colors.primary.main }]}>
             Sistema
           </Typography>
           
           <View style={styles.settingItem}>
             <View style={styles.settingInfo}>
-              <Typography variant="body">Sincronização Automática</Typography>
+              <Typography variant="body" color={theme.colors.neutral.black}>
+                Sincronização Automática
+              </Typography>
               <Typography variant="caption" color={theme.colors.neutral.mediumGray}>
                 Sincronizar dados automaticamente
               </Typography>
@@ -137,7 +156,9 @@ const SettingsScreen: React.FC = () => {
 
           <View style={styles.settingItem}>
             <View style={styles.settingInfo}>
-              <Typography variant="body">Autenticação Biométrica</Typography>
+              <Typography variant="body" color={theme.colors.neutral.black}>
+                Autenticação Biométrica
+              </Typography>
               <Typography variant="caption" color={theme.colors.neutral.mediumGray}>
                 Usar impressão digital ou reconhecimento facial
               </Typography>
@@ -151,30 +172,36 @@ const SettingsScreen: React.FC = () => {
 
         {/* Configurações de Conta */}
         <Card style={styles.sectionCard}>
-          <Typography variant="h6" style={styles.sectionTitle}>
+          <Typography variant="h6" style={[styles.sectionTitle, { color: theme.colors.primary.main }]}>
             Conta
           </Typography>
           
           <TouchableOpacity style={styles.settingButton}>
-            <Typography variant="body">Alterar Senha</Typography>
+            <Typography variant="body" color={theme.colors.neutral.black}>
+              Alterar Senha
+            </Typography>
           </TouchableOpacity>
           
           <Divider style={styles.settingDivider} />
           
           <TouchableOpacity style={styles.settingButton}>
-            <Typography variant="body">Editar Perfil</Typography>
+            <Typography variant="body" color={theme.colors.neutral.black}>
+              Editar Perfil
+            </Typography>
           </TouchableOpacity>
           
           <Divider style={styles.settingDivider} />
           
           <TouchableOpacity style={styles.settingButton}>
-            <Typography variant="body">Exportar Dados</Typography>
+            <Typography variant="body" color={theme.colors.neutral.black}>
+              Exportar Dados
+            </Typography>
           </TouchableOpacity>
         </Card>
 
         {/* Informações do Sistema */}
         <Card style={styles.sectionCard}>
-          <Typography variant="h6" style={styles.sectionTitle}>
+          <Typography variant="h6" style={[styles.sectionTitle, { color: theme.colors.primary.main }]}>
             Informações
           </Typography>
           
@@ -182,7 +209,9 @@ const SettingsScreen: React.FC = () => {
             <Typography variant="body" color={theme.colors.neutral.mediumGray}>
               Versão do App
             </Typography>
-            <Typography variant="body">1.0.0</Typography>
+            <Typography variant="body" color={theme.colors.neutral.black}>
+              1.0.0
+            </Typography>
           </View>
           
           <Divider style={styles.settingDivider} />
@@ -191,7 +220,9 @@ const SettingsScreen: React.FC = () => {
             <Typography variant="body" color={theme.colors.neutral.mediumGray}>
               Usuário Logado
             </Typography>
-            <Typography variant="body">{user?.name}</Typography>
+            <Typography variant="body" color={theme.colors.neutral.black}>
+              {user?.name}
+            </Typography>
           </View>
           
           <Divider style={styles.settingDivider} />
@@ -200,7 +231,9 @@ const SettingsScreen: React.FC = () => {
             <Typography variant="body" color={theme.colors.neutral.mediumGray}>
               Tipo de Conta
             </Typography>
-            <Typography variant="body">{user?.role}</Typography>
+            <Typography variant="body" color={theme.colors.neutral.black}>
+              {user?.role}
+            </Typography>
           </View>
         </Card>
 
@@ -232,50 +265,49 @@ const SettingsScreen: React.FC = () => {
   );
 };
 
+// Estilos dinâmicos serão aplicados inline usando o hook useTheme
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.neutral.lightGray,
   },
   scrollView: {
     flex: 1,
-    padding: theme.spacing.m,
+    padding: 24,
   },
   sectionCard: {
-    marginBottom: theme.spacing.m,
+    marginBottom: 24,
   },
   sectionTitle: {
-    marginBottom: theme.spacing.m,
-    color: theme.colors.primary.main,
+    marginBottom: 16,
   },
   settingItem: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: theme.spacing.s,
+    paddingVertical: 16,
   },
   settingInfo: {
     flex: 1,
-    marginRight: theme.spacing.m,
+    marginRight: 24,
   },
   settingDivider: {
-    marginVertical: theme.spacing.sm,
+    marginVertical: 8,
   },
   settingButton: {
-    paddingVertical: theme.spacing.md,
+    paddingVertical: 16,
   },
   infoItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: theme.spacing.s,
+    paddingVertical: 16,
   },
   actionButtons: {
-    marginTop: theme.spacing.l,
-    marginBottom: theme.spacing.xl,
+    marginTop: 32,
+    marginBottom: 48,
   },
   saveButton: {
-    marginBottom: theme.spacing.m,
+    marginBottom: 24,
   },
   resetButton: {
     // Estilos específicos se necessário

@@ -7,7 +7,7 @@ import {
   ViewStyle,
 } from "react-native";
 import Typography from "./Typography";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 export interface CardProps {
   title?: string;
@@ -36,6 +36,7 @@ const Card: React.FC<CardProps> = ({
   elevation = "small",
   fullWidth = false,
 }) => {
+  const theme = useTheme();
   const Container = onPress ? TouchableOpacity : View;
 
   type ElevationStyleKey =
@@ -47,9 +48,30 @@ const Card: React.FC<CardProps> = ({
     elevation.charAt(0).toUpperCase() + elevation.slice(1)
   }` as ElevationStyleKey;
 
+  const dynamicStyles = {
+    card: {
+      backgroundColor: theme.colors.neutral.white,
+      borderRadius: theme.borderRadius.medium,
+      borderWidth: 1,
+      borderColor: theme.colors.neutral.mediumGray,
+      overflow: "hidden" as const,
+    },
+    header: {
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.neutral.mediumGray,
+    },
+    footer: {
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.neutral.mediumGray,
+    },
+    elevationSmall: theme.shadows.small,
+    elevationMedium: theme.shadows.medium,
+    elevationLarge: theme.shadows.large,
+  };
+
   const cardStyles = [
-    styles.card,
-    styles[elevationKey],
+    dynamicStyles.card,
+    dynamicStyles[elevationKey],
     fullWidth && styles.fullWidth,
     style,
   ];
@@ -61,7 +83,7 @@ const Card: React.FC<CardProps> = ({
       activeOpacity={onPress ? 0.7 : 1}
     >
       {(title || subtitle || rightHeaderContent) && (
-        <View style={[styles.header, headerStyle]}>
+        <View style={[styles.header, dynamicStyles.header, headerStyle]}>
           <View style={styles.headerTextContainer}>
             {title && (
               <Typography variant="h4" style={styles.title}>
@@ -82,31 +104,12 @@ const Card: React.FC<CardProps> = ({
 
       <View style={[styles.content, contentStyle]}>{children}</View>
 
-      {footer && <View style={styles.footer}>{footer}</View>}
+      {footer && <View style={[styles.footer, dynamicStyles.footer]}>{footer}</View>}
     </Container>
   );
 };
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: theme.colors.neutral.white,
-    borderRadius: theme.borderRadius.medium,
-    borderWidth: 1,
-    borderColor: theme.colors.neutral.mediumGray,
-    overflow: "hidden",
-  },
-  elevationNone: {
-    // Sem sombra
-  },
-  elevationSmall: {
-    ...theme.shadows.small,
-  },
-  elevationMedium: {
-    ...theme.shadows.medium,
-  },
-  elevationLarge: {
-    ...theme.shadows.large,
-  },
   fullWidth: {
     width: "100%",
   },
@@ -114,9 +117,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    padding: theme.spacing.s,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.neutral.mediumGray,
+    padding: 16,
   },
   headerTextContainer: {
     flex: 1,
@@ -128,15 +129,13 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   rightHeaderContent: {
-    marginLeft: theme.spacing.xs,
+    marginLeft: 8,
   },
   content: {
-    padding: theme.spacing.s,
+    padding: 16,
   },
   footer: {
-    padding: theme.spacing.s,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.neutral.mediumGray,
+    padding: 16,
   },
 });
 

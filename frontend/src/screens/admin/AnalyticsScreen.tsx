@@ -30,13 +30,12 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AnalyticsFilters, { AnalyticsFiltersValues } from '../../components/filters/AnalyticsFilters';
 import ReportGenerator, { ReportConfig } from '../../components/reports/ReportGenerator';
 
-const { width: screenWidth } = Dimensions.get('window');
-
 const AnalyticsScreen: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [screenData, setScreenData] = useState(Dimensions.get('window'));
 
   // Estados para diferentes tipos de dados
   const [dashboardStats, setDashboardStats] = useState<DashboardStats | null>(
@@ -58,6 +57,13 @@ const AnalyticsScreen: React.FC = () => {
   useEffect(() => {
     loadAnalytics();
   }, [filters]);
+
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener('change', ({ window }) => {
+      setScreenData(window);
+    });
+    return () => subscription?.remove();
+  }, []);
 
   const loadAnalytics = async () => {
     try {
@@ -160,6 +166,23 @@ const AnalyticsScreen: React.FC = () => {
     return <Loading />;
   }
 
+  // Calcular largura do card para o carrossel (responsivo)
+  const getCardWidth = (): number => {
+    const width = screenData.width;
+    if (width < 600) {
+      // Mobile: card ocupa ~85% da largura
+      return width * 0.85;
+    } else if (width < 1024) {
+      // Tablet: card menor
+      return 280;
+    } else {
+      // Desktop: card fixo
+      return 220;
+    }
+  };
+
+  const cardWidth = getCardWidth();
+
   if (error && !dashboardStats) {
     return (
       <ErrorState
@@ -212,15 +235,21 @@ const AnalyticsScreen: React.FC = () => {
         />
       )}
 
-      {/* Cards de Estatísticas Principais */}
+      {/* Cards de Estatísticas Principais - Carrossel */}
       {dashboardStats && (
-        <View style={styles.statsGrid}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={[styles.statsCarousel, { paddingRight: theme.spacing.l }]}
+          style={styles.carouselContainer}
+        >
           <SimpleStatsCard
             title="Total de Usuários"
             value={dashboardStats.totalUsers}
             icon="account-group"
             color={theme.colors.primary.main}
             iconFamily="MaterialCommunityIcons"
+            style={[styles.statCard, { width: cardWidth }]}
           />
           <SimpleStatsCard
             title="Doadores"
@@ -228,6 +257,7 @@ const AnalyticsScreen: React.FC = () => {
             icon="hand-heart"
             color={theme.colors.status.success}
             iconFamily="MaterialCommunityIcons"
+            style={[styles.statCard, { width: cardWidth }]}
           />
           <SimpleStatsCard
             title="Beneficiários"
@@ -235,6 +265,7 @@ const AnalyticsScreen: React.FC = () => {
             icon="account-heart"
             color={theme.colors.status.info}
             iconFamily="MaterialCommunityIcons"
+            style={[styles.statCard, { width: cardWidth }]}
           />
           <SimpleStatsCard
             title="Total de Itens"
@@ -242,6 +273,7 @@ const AnalyticsScreen: React.FC = () => {
             icon="package-variant"
             color={theme.colors.status.warning}
             iconFamily="MaterialCommunityIcons"
+            style={[styles.statCard, { width: cardWidth }]}
           />
           <SimpleStatsCard
             title="Distribuições"
@@ -249,6 +281,7 @@ const AnalyticsScreen: React.FC = () => {
             icon="truck-delivery"
             color={theme.colors.primary.secondary}
             iconFamily="MaterialCommunityIcons"
+            style={[styles.statCard, { width: cardWidth }]}
           />
           <SimpleStatsCard
             title="Estoque Baixo"
@@ -256,8 +289,9 @@ const AnalyticsScreen: React.FC = () => {
             icon="alert"
             color={theme.colors.status.error}
             iconFamily="MaterialCommunityIcons"
+            style={[styles.statCard, { width: cardWidth }]}
           />
-        </View>
+        </ScrollView>
       )}
 
       {/* Estatísticas de Usuários */}
@@ -401,11 +435,17 @@ const styles = StyleSheet.create({
     borderRadius: theme.spacing.s,
     backgroundColor: theme.colors.neutral.lightGray,
   },
-  statsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    padding: theme.spacing.m,
-    justifyContent: 'space-between',
+  carouselContainer: {
+    marginVertical: theme.spacing.s,
+  },
+  statsCarousel: {
+    paddingLeft: theme.spacing.m,
+    paddingVertical: theme.spacing.s,
+    alignItems: 'center',
+  },
+  statCard: {
+    minHeight: 120,
+    marginRight: theme.spacing.m,
   },
   card: {
     margin: theme.spacing.m,

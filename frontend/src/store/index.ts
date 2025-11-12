@@ -6,10 +6,13 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import authReducer from "./slices/authSlice";
 import { setDispatchReference } from "./slices/authHelpers";
 
+import themeReducer from "./slices/themeSlice";
+
 // Configuração da store com os reducers
 export const store = configureStore({
   reducer: {
     auth: authReducer,
+    theme: themeReducer,
     // Adicione outros reducers aqui conforme necessário
   },
   // Middleware personalizado pode ser adicionado aqui

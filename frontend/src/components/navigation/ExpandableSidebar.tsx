@@ -549,7 +549,7 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
             {renderIcon(
               { id: 'menu', icon: 'menu', iconFamily: 'MaterialIcons', label: 'Menu' },
               theme.colors.neutral.darkGray,
-              24
+              22
             )}
           </TouchableOpacity>
           
@@ -577,7 +577,7 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
                 style={{ zIndex: 10 }}
               >
                 <Avatar
-                  size={60}
+                  size={48}
                   source={user.photo ? { uri: user.photo.startsWith('http') ? user.photo : `${getApiBaseUrl()}${user.photo}` } : undefined}
                   name={user.name}
                 />
@@ -616,7 +616,7 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
                     {renderIcon(
                       item,
                       isActive ? theme.colors.primary.main : theme.colors.neutral.darkGray,
-                      24
+                      22
                     )}
                     
                     {isExpanded && (
@@ -665,7 +665,7 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
                 {renderIcon(
                   { id: 'logout', icon: 'logout', iconFamily: 'MaterialIcons', label: 'Sair' },
                   theme.colors.status.error,
-                  24
+                  22
                 )}
                 <Animated.View style={styles.menuItemText}>
                   <Typography variant="body" color={theme.colors.status.error}>
@@ -828,36 +828,38 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: theme.spacing.m,
-    minHeight: 60,
+    paddingHorizontal: theme.spacing.s,
+    paddingVertical: theme.spacing.s,
+    minHeight: 56,
   },
   toggleButton: {
-    padding: theme.spacing.s,
+    padding: theme.spacing.xs,
     borderRadius: theme.borderRadius.small,
   },
   headerText: {
-    marginLeft: theme.spacing.m,
+    marginLeft: theme.spacing.s,
     flex: 1,
   },
   userCard: {
-    margin: theme.spacing.m,
-    padding: theme.spacing.m,
+    marginHorizontal: theme.spacing.s,
+    marginVertical: theme.spacing.s,
+    padding: theme.spacing.s,
   },
   userInfo: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   userDetails: {
-    marginLeft: theme.spacing.m,
+    marginLeft: theme.spacing.s,
     flex: 1,
   },
   menuContainer: {
-    paddingVertical: theme.spacing.s,
+    paddingVertical: theme.spacing.xs,
   },
   menuItem: {
-    paddingHorizontal: theme.spacing.m,
-    paddingVertical: theme.spacing.m,
-    minHeight: 56,
+    paddingHorizontal: theme.spacing.s,
+    paddingVertical: theme.spacing.s,
+    minHeight: 48,
   },
   activeMenuItem: {
     backgroundColor: theme.colors.neutral.lightGray,
@@ -869,23 +871,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   menuItemText: {
-    marginLeft: theme.spacing.m,
+    marginLeft: theme.spacing.s,
     flex: 1,
   },
   statsContainer: {
     marginTop: theme.spacing.xs,
   },
   itemDivider: {
-    marginHorizontal: theme.spacing.m,
+    marginHorizontal: theme.spacing.s,
   },
   logoutContainer: {
     marginTop: 'auto',
-    paddingTop: theme.spacing.m,
+    paddingTop: theme.spacing.s,
   },
   logoutButton: {
-    paddingHorizontal: theme.spacing.m,
-    paddingVertical: theme.spacing.m,
-    minHeight: 56,
+    paddingHorizontal: theme.spacing.s,
+    paddingVertical: theme.spacing.s,
+    minHeight: 48,
   },
   modalOverlay: {
     flex: 1,

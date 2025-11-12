@@ -3,7 +3,8 @@
  * Baseado no guia de estilo visual fornecido
  */
 
-export const colors = {
+// Cores do tema claro
+export const lightColors = {
   // Cores Primárias
   primary: {
     main: "#173F5F", // Azul Marinho - cor principal
@@ -72,5 +73,79 @@ export const colors = {
     },
   },
 };
+
+// Cores do tema escuro
+export const darkColors = {
+  // Cores Primárias (mantidas, mas podem ser ajustadas)
+  primary: {
+    main: "#4A90E2", // Azul mais claro para contraste
+    secondary: "#00C896", // Verde mais claro
+    accent: "#FFD700", // Amarelo mais vibrante
+  },
+
+  // Cores Neutras (invertidas)
+  neutral: {
+    white: "#1E293B", // Fundo principal escuro
+    lightGray: "#0F172A", // Fundo secundário mais escuro
+    mediumGray: "#334155", // Bordas, linhas divisórias
+    darkGray: "#94A3B8", // Textos secundários mais claros
+    black: "#F1F5F9", // Textos principais claros
+  },
+
+  // Cores de Status (mantidas, mas podem ser ajustadas)
+  status: {
+    success: "#10B981",
+    error: "#EF4444",
+    warning: "#F59E0B",
+    info: "#3B82F6",
+  },
+
+  // Badges de Status (ajustados para tema escuro)
+  badges: {
+    available: {
+      background: "#064E3B",
+      text: "#6EE7B7",
+    },
+    reserved: {
+      background: "#78350F",
+      text: "#FDE68A",
+    },
+    distributed: {
+      background: "#7F1D1D",
+      text: "#FCA5A5",
+    },
+    lowStock: {
+      background: "#78350F",
+      text: "#FDE68A",
+    },
+  },
+
+  // Notificações (ajustadas para tema escuro)
+  notifications: {
+    success: {
+      background: "#064E3B",
+      icon: "#6EE7B7",
+      text: "#6EE7B7",
+    },
+    error: {
+      background: "#7F1D1D",
+      icon: "#FCA5A5",
+      text: "#FCA5A5",
+    },
+    warning: {
+      background: "#78350F",
+      icon: "#FDE68A",
+      text: "#FDE68A",
+    },
+    info: {
+      background: "#1E3A8A",
+      icon: "#93C5FD",
+      text: "#93C5FD",
+    },
+  },
+};
+
+// Exportar cores padrão (tema claro) para compatibilidade
+export const colors = lightColors;
 
 export default colors;

@@ -1,9 +1,10 @@
 /**
  * Exportação principal do tema da aplicação Solidários
  */
-import colors from "./colors";
+import { lightColors, darkColors, colors } from "./colors";
 import spacing from "./spacing";
 import typography, { applyTextStyle, fontFamily } from "./typography";
+import type { ThemeMode } from "../store/slices/themeSlice";
 
 // Definição de bordas
 const borderRadius = {
