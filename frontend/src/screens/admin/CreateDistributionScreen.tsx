@@ -21,7 +21,7 @@ import {
   Select,
   NotificationBanner,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useDistributions } from "../../hooks/useDistributions";
@@ -40,6 +40,7 @@ const CreateDistributionSchema = Yup.object().shape({
 });
 
 const CreateDistributionScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation =
     useNavigation<StackNavigationProp<AdminDistributionsStackParamList>>();
   const { createDistribution, isLoading, error, clearError } =
@@ -52,6 +53,7 @@ const CreateDistributionScreen: React.FC = () => {
     message: "",
     description: "",
   });
+  const styles = CreateDistributionScreenStyles(theme);
 
   useEffect(() => {
     fetchUsersByRole(UserRole.BENEFICIARIO);
@@ -106,7 +108,6 @@ const CreateDistributionScreen: React.FC = () => {
       <Header
         title="Criar Nova Distribuição"
         onBackPress={() => navigation.goBack()}
-        backgroundColor={theme.colors.primary.main}
       />
 
       <NotificationBanner
@@ -222,7 +223,7 @@ const CreateDistributionScreen: React.FC = () => {
                   title="Criar Distribuição"
                   onPress={() => handleSubmit()}
                   loading={isLoading}
-                  style={styles.buttonSubmit}
+                  style={[styles.buttonSubmit, { backgroundColor: theme.colors.primary.secondary }]}
                 />
               </View>
             </View>
@@ -233,19 +234,21 @@ const CreateDistributionScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const CreateDistributionScreenStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.neutral.white,
   },
   content: {
     flex: 1,
+    backgroundColor: theme.colors.neutral.white,
   },
   contentContainer: {
     padding: theme.spacing.m,
   },
   title: {
     marginBottom: theme.spacing.m,
+    color: theme.colors.neutral.black,
   },
   form: {
     width: "100%",
@@ -262,7 +265,6 @@ const styles = StyleSheet.create({
   buttonSubmit: {
     flex: 1,
     marginLeft: theme.spacing.xs,
-    backgroundColor: theme.colors.primary.secondary,
   },
 });
 

@@ -14,7 +14,7 @@ import Badge from "../common/Badge";
 import Divider from "../common/Divider";
 import { formatDateTime } from "../../utils/formatters";
 import { Distribution } from "../../types/distributions.types";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 export interface DistributionCardProps {
   distribution: Distribution;
@@ -35,11 +35,14 @@ const DistributionCard: React.FC<DistributionCardProps> = ({
   compact = false,
   showItems = true,
 }) => {
+  const theme = useTheme();
+  
   // Renderizar cabeçalho com data e ID
   const renderHeader = () => (
     <View style={styles.headerContainer}>
       <Typography
         variant={compact ? "bodySecondary" : "h4"}
+        color={theme.colors.neutral.black}
         style={styles.headerTitle}
       >
         Distribuição
@@ -81,7 +84,7 @@ const DistributionCard: React.FC<DistributionCardProps> = ({
         />
 
         <View style={styles.beneficiaryInfo}>
-          <Typography variant="body" numberOfLines={1}>
+          <Typography variant="body" color={theme.colors.neutral.black} numberOfLines={1}>
             {distribution.beneficiary.name}
           </Typography>
 
@@ -117,7 +120,7 @@ const DistributionCard: React.FC<DistributionCardProps> = ({
             style={styles.avatar}
           />
 
-          <Typography variant="bodySecondary" numberOfLines={1}>
+          <Typography variant="bodySecondary" color={theme.colors.neutral.black} numberOfLines={1}>
             {distribution.employee.name}
           </Typography>
         </View>
@@ -133,7 +136,7 @@ const DistributionCard: React.FC<DistributionCardProps> = ({
       activeOpacity={0.7}
     >
       <View style={styles.itemInfo}>
-        <Typography variant="bodySecondary" numberOfLines={1}>
+        <Typography variant="bodySecondary" color={theme.colors.neutral.black} numberOfLines={1}>
           {item.description}
         </Typography>
 
@@ -160,7 +163,7 @@ const DistributionCard: React.FC<DistributionCardProps> = ({
     showItems &&
     !compact && (
       <View style={styles.itemsContainer}>
-        <Typography variant="bodySecondary" style={styles.itemsTitle}>
+        <Typography variant="bodySecondary" color={theme.colors.neutral.black} style={styles.itemsTitle}>
           Itens distribuídos ({distribution.items.length})
         </Typography>
 
@@ -169,7 +172,7 @@ const DistributionCard: React.FC<DistributionCardProps> = ({
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
           scrollEnabled={false}
-          ItemSeparatorComponent={() => <Divider spacing={theme.spacing.xs} />}
+          ItemSeparatorComponent={() => <Divider spacing={8} />}
           style={styles.itemsList}
         />
       </View>
@@ -187,7 +190,7 @@ const DistributionCard: React.FC<DistributionCardProps> = ({
           Observações:
         </Typography>
 
-        <Typography variant="bodySecondary" style={styles.observationsText}>
+        <Typography variant="bodySecondary" color={theme.colors.neutral.black} style={styles.observationsText}>
           {distribution.observations}
         </Typography>
       </View>
@@ -225,31 +228,31 @@ const DistributionCard: React.FC<DistributionCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    marginBottom: theme.spacing.s,
+    marginBottom: 16,
   },
   compactCard: {
     minHeight: 100,
   },
   cardContent: {
-    padding: theme.spacing.s,
+    padding: 16,
   },
   headerContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: theme.spacing.xs,
+    marginBottom: 8,
   },
   headerTitle: {
     flex: 1,
   },
   beneficiaryContainer: {
-    marginBottom: theme.spacing.s,
+    marginBottom: 16,
   },
   beneficiaryHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: theme.spacing.xxs,
+    marginBottom: 4,
   },
   beneficiaryContent: {
     flexDirection: "row",
@@ -259,21 +262,21 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   avatar: {
-    marginRight: theme.spacing.xs,
+    marginRight: 8,
   },
   employeeContainer: {
-    marginBottom: theme.spacing.s,
+    marginBottom: 16,
   },
   employeeContent: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: theme.spacing.xxs,
+    marginTop: 4,
   },
   itemsContainer: {
-    marginBottom: theme.spacing.s,
+    marginBottom: 16,
   },
   itemsTitle: {
-    marginBottom: theme.spacing.xs,
+    marginBottom: 8,
   },
   itemsList: {
     maxHeight: 200,
@@ -282,22 +285,22 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: theme.spacing.xs,
+    paddingVertical: 8,
   },
   itemInfo: {
     flex: 1,
   },
   sizeBadge: {
-    marginLeft: theme.spacing.s,
+    marginLeft: 16,
   },
   observationsContainer: {
-    marginTop: theme.spacing.xs,
+    marginTop: 8,
   },
   observationsText: {
-    marginTop: theme.spacing.xxs,
+    marginTop: 4,
   },
   compactSummaryContainer: {
-    marginTop: theme.spacing.xs,
+    marginTop: 8,
     alignItems: "flex-end",
   },
 });

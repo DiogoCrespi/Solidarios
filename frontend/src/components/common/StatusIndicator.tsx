@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
 import Typography from "./Typography";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 import { ItemStatus } from "../../types/items.types";
 
 export type StatusType = "success" | "warning" | "error" | "info" | "neutral";
@@ -23,29 +23,33 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
   style,
   showLabel = true,
 }) => {
+  const theme = useTheme();
+  let currentType = type;
+  let currentLabel = label;
+
   // Se status for fornecido, derivar o tipo a partir dele
   if (status) {
     switch (status) {
       case ItemStatus.DISPONIVEL:
-        type = "success";
-        label = label || "Disponível";
+        currentType = "success";
+        currentLabel = currentLabel || "Disponível";
         break;
       case ItemStatus.RESERVADO:
-        type = "warning";
-        label = label || "Reservado";
+        currentType = "warning";
+        currentLabel = currentLabel || "Reservado";
         break;
       case ItemStatus.DISTRIBUIDO:
-        type = "info";
-        label = label || "Distribuído";
+        currentType = "info";
+        currentLabel = currentLabel || "Distribuído";
         break;
       default:
-        type = "neutral";
+        currentType = "neutral";
     }
   }
 
   // Determinar cor com base no tipo
   let backgroundColor;
-  switch (type) {
+  switch (currentType) {
     case "success":
       backgroundColor = theme.colors.status.success;
       break;
@@ -95,9 +99,9 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
         ]}
       />
 
-      {showLabel && label && (
-        <Typography variant={textVariant} style={styles.label}>
-          {label}
+      {showLabel && currentLabel && (
+        <Typography variant={textVariant} color={theme.colors.neutral.black} style={styles.label}>
+          {currentLabel}
         </Typography>
       )}
     </View>
@@ -113,7 +117,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   label: {
-    marginLeft: theme.spacing.xs,
+    marginLeft: 8,
   },
 });
 

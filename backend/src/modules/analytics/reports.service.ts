@@ -185,6 +185,7 @@ export class ReportsService {
     const stats = await this.analyticsService.getItemsStats({
       startDate: dto.startDate,
       endDate: dto.endDate,
+      categoryId: dto.categoryId,
     });
     let y = yPosition;
 

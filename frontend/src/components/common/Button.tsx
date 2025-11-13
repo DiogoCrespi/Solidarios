@@ -10,7 +10,7 @@ import {
   ViewStyle,
   TextStyle
 } from 'react-native';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'accent';
 export type ButtonSize = 'small' | 'medium' | 'large';
@@ -41,9 +41,35 @@ const Button: React.FC<ButtonProps> = ({
   textStyle,
   ...rest
 }) => {
+  const theme = useTheme();
+
+  // Estilos dinâmicos baseados no tema
+  const dynamicStyles = {
+    primary: {
+      backgroundColor: theme.colors.primary.secondary,
+    },
+    secondary: {
+      backgroundColor: 'transparent',
+      borderWidth: 1,
+      borderColor: theme.colors.primary.main,
+    },
+    accent: {
+      backgroundColor: theme.colors.primary.accent,
+    },
+    primaryText: {
+      color: theme.colors.neutral.white,
+    },
+    secondaryText: {
+      color: theme.colors.primary.main,
+    },
+    accentText: {
+      color: theme.colors.neutral.black,
+    },
+  };
+
   const buttonStyles = [
     styles.base,
-    styles[variant],
+    dynamicStyles[variant],
     styles[size],
     fullWidth && styles.fullWidth,
     disabled && styles.disabled,
@@ -52,11 +78,18 @@ const Button: React.FC<ButtonProps> = ({
 
   const textStyles = [
     styles.text,
-    styles[`${variant}Text`],
+    dynamicStyles[`${variant}Text` as keyof typeof dynamicStyles],
     styles[`${size}Text`],
     disabled && styles.disabledText,
     textStyle,
   ];
+
+  const activityIndicatorColor = 
+    variant === 'secondary' 
+      ? theme.colors.primary.main 
+      : variant === 'accent'
+      ? theme.colors.neutral.black
+      : theme.colors.neutral.white;
 
   return (
     <TouchableOpacity
@@ -70,7 +103,7 @@ const Button: React.FC<ButtonProps> = ({
         
         {loading ? (
           <ActivityIndicator 
-            color={variant === 'secondary' ? theme.colors.primary.main : theme.colors.neutral.white} 
+            color={activityIndicatorColor} 
             size="small" 
           />
         ) : (
@@ -85,7 +118,7 @@ const Button: React.FC<ButtonProps> = ({
 
 const styles = StyleSheet.create({
   base: {
-    borderRadius: theme.borderRadius.medium,
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -94,30 +127,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  primary: {
-    backgroundColor: theme.colors.primary.secondary, // Verde Turquesa
-  },
-  secondary: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: theme.colors.primary.main, // Azul Marinho
-  },
-  accent: {
-    backgroundColor: theme.colors.primary.accent, // Amarelo
-  },
   small: {
-    paddingVertical: theme.spacing.xxs,
-    paddingHorizontal: theme.spacing.s,
+    paddingVertical: 4,
+    paddingHorizontal: 16,
     minHeight: 32,
   },
   medium: {
-    paddingVertical: theme.spacing.xs,
-    paddingHorizontal: theme.spacing.m,
+    paddingVertical: 8,
+    paddingHorizontal: 24,
     minHeight: 40,
   },
   large: {
-    paddingVertical: theme.spacing.s,
-    paddingHorizontal: theme.spacing.l,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
     minHeight: 48,
   },
   fullWidth: {
@@ -127,17 +149,8 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   text: {
-    fontFamily: theme.fontFamily.primary,
+    fontFamily: 'System',
     fontWeight: '600',
-  },
-  primaryText: {
-    color: theme.colors.neutral.white,
-  },
-  secondaryText: {
-    color: theme.colors.primary.main,
-  },
-  accentText: {
-    color: theme.colors.neutral.black,
   },
   smallText: {
     fontSize: 12,
@@ -152,10 +165,10 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   leftIcon: {
-    marginRight: theme.spacing.xs,
+    marginRight: 8,
   },
   rightIcon: {
-    marginLeft: theme.spacing.xs,
+    marginLeft: 8,
   },
 });
 

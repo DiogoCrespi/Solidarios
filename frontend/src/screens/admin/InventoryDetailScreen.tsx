@@ -13,13 +13,14 @@ import {
   Loading,
   ErrorState,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
 import { useInventory } from "../../hooks/useInventory";
 
 const InventoryDetailScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation =
     useNavigation<StackNavigationProp<AdminInventoryStackParamList>>();
   const route = useRoute();
@@ -37,6 +38,7 @@ const InventoryDetailScreen: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [quantity, setQuantity] = useState("");
   const [alertLevel, setAlertLevel] = useState("");
+  const styles = InventoryDetailScreenStyles(theme);
 
   useEffect(() => {
     fetchInventoryById(id);
@@ -92,7 +94,6 @@ const InventoryDetailScreen: React.FC = () => {
       <Header
         title={inventoryItem.item.description}
         subtitle={`Local: ${inventoryItem.location || "Não especificado"}`}
-        backgroundColor={theme.colors.primary.accent}
         onBackPress={() => navigation.goBack()}
       />
       <ScrollView style={styles.content}>
@@ -179,7 +180,7 @@ const InventoryDetailScreen: React.FC = () => {
               <Button
                 title="Salvar"
                 onPress={handleSave}
-                style={styles.saveButton}
+                style={[styles.saveButton, { backgroundColor: theme.colors.status.success }]}
               />
               <Button
                 title="Cancelar"
@@ -196,7 +197,7 @@ const InventoryDetailScreen: React.FC = () => {
             <Button
               title="Editar"
               onPress={() => setIsEditing(true)}
-              style={styles.editButton}
+              style={[styles.editButton, { backgroundColor: theme.colors.primary.accent }]}
             />
           )}
         </View>
@@ -205,7 +206,7 @@ const InventoryDetailScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const InventoryDetailScreenStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.neutral.white,
@@ -213,6 +214,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: theme.spacing.m,
+    backgroundColor: theme.colors.neutral.white,
   },
   infoCard: {
     backgroundColor: theme.colors.neutral.white,
@@ -228,9 +230,11 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: "bold",
     marginBottom: theme.spacing.xxs,
+    color: theme.colors.neutral.black,
   },
   value: {
     marginBottom: theme.spacing.s,
+    color: theme.colors.neutral.black,
   },
   lowStock: {
     color: theme.colors.status.error,
@@ -243,10 +247,10 @@ const styles = StyleSheet.create({
     marginTop: theme.spacing.m,
   },
   editButton: {
-    backgroundColor: theme.colors.primary.accent,
+    // backgroundColor será aplicado inline
   },
   saveButton: {
-    backgroundColor: theme.colors.status.success,
+    // backgroundColor será aplicado inline
     marginBottom: theme.spacing.s,
   },
   cancelButton: {

@@ -14,7 +14,7 @@ import {
   ErrorState,
   DistributionCard,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -24,6 +24,7 @@ import { useDistributions } from "../../hooks/useDistributions";
 import { BENEFICIARIO_ROUTES } from "../../navigation/routes";
 
 const ReceiptHistoryScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation =
     useNavigation<StackNavigationProp<BeneficiarioStackParamList>>();
   const { user } = useAuth();
@@ -38,6 +39,7 @@ const ReceiptHistoryScreen: React.FC = () => {
 
   // Estados locais
   const [refreshing, setRefreshing] = useState(false);
+  const styles = ReceiptHistoryScreenStyles(theme);
 
   // Carregar histórico de recebimentos
   const loadReceiptHistory = useCallback(
@@ -100,7 +102,6 @@ const ReceiptHistoryScreen: React.FC = () => {
       <Header
         title="Histórico de Recebimentos"
         onBackPress={() => navigation.goBack()}
-        backgroundColor={theme.colors.primary.main}
       />
 
       {/* Conteúdo */}
@@ -127,7 +128,7 @@ const ReceiptHistoryScreen: React.FC = () => {
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.5}
           ListHeaderComponent={
-            <Typography variant="h3" style={styles.title} center>
+            <Typography variant="h3" style={styles.title} center color={theme.colors.neutral.black}>
               Seu Histórico de Recebimentos
             </Typography>
           }
@@ -147,13 +148,14 @@ const ReceiptHistoryScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const ReceiptHistoryScreenStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.neutral.white,
   },
   content: {
     flex: 1,
+    backgroundColor: theme.colors.neutral.white,
   },
   title: {
     marginVertical: theme.spacing.m,

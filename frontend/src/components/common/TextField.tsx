@@ -12,7 +12,7 @@ import {
   TextInputFocusEventData,
 } from "react-native";
 import Typography from "./Typography";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 export interface TextFieldProps extends TextInputProps {
   label?: string;
@@ -49,6 +49,7 @@ const TextField: React.FC<TextFieldProps> = ({
   editable = true,
   ...rest
 }) => {
+  const theme = useTheme();
   const [isFocused, setIsFocused] = useState(false);
 
   const handleFocus = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
@@ -70,7 +71,7 @@ const TextField: React.FC<TextFieldProps> = ({
   return (
     <View style={[styles.container, containerStyle]}>
       {label && (
-        <Typography variant="bodySecondary" style={[styles.label, labelStyle]}>
+        <Typography variant="bodySecondary" color={theme.colors.neutral.black} style={[styles.label, labelStyle]}>
           {label}
         </Typography>
       )}
@@ -138,34 +139,34 @@ const TextField: React.FC<TextFieldProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: theme.spacing.s,
+    marginBottom: 16,
   },
   label: {
-    marginBottom: theme.spacing.xxs,
+    marginBottom: 4,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderRadius: theme.borderRadius.medium,
-    paddingHorizontal: theme.spacing.xs,
+    borderRadius: 8,
+    paddingHorizontal: 8,
     height: 48,
   },
   input: {
     flex: 1,
-    fontFamily: theme.fontFamily.primary,
+    fontFamily: 'System',
     fontSize: 16,
     height: "100%",
     paddingVertical: 0,
   },
   leftIcon: {
-    marginRight: theme.spacing.xs,
+    marginRight: 8,
   },
   rightIcon: {
-    marginLeft: theme.spacing.xs,
+    marginLeft: 8,
   },
   helperText: {
-    marginTop: theme.spacing.xxs,
+    marginTop: 4,
   },
 });
 

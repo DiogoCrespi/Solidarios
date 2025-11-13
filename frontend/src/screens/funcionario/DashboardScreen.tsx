@@ -22,7 +22,7 @@ import {
   Loading,
   ErrorState,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -56,11 +56,13 @@ type DashboardScreenProps = CompositeScreenProps<
 >;
 
 const DashboardScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation = useNavigation<DashboardScreenProps["navigation"]>();
   const { user } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const styles = DashboardScreenStyles(theme);
 
   // Hooks para dados
   const itemsHook = useItems();
@@ -207,7 +209,6 @@ const DashboardScreen: React.FC = () => {
       <Header
         title="Dashboard"
         subtitle={`Olá, ${user?.name?.split(" ")[0] || "Funcionário"}`}
-        backgroundColor={theme.colors.primary.main}
       />
 
       {/* Conteúdo */}
@@ -260,7 +261,7 @@ const DashboardScreen: React.FC = () => {
                 />
               ))
             ) : (
-              <Typography variant="bodySecondary" style={styles.emptyText}>
+              <Typography variant="bodySecondary" style={styles.emptyText} color={theme.colors.neutral.darkGray}>
                 Nenhum item cadastrado recentemente.
               </Typography>
             )}
@@ -318,7 +319,7 @@ const DashboardScreen: React.FC = () => {
                 />
               ))
             ) : (
-              <Typography variant="bodySecondary" style={styles.emptyText}>
+              <Typography variant="bodySecondary" style={styles.emptyText} color={theme.colors.neutral.darkGray}>
                 Nenhuma distribuição realizada recentemente.
               </Typography>
             )}
@@ -371,7 +372,7 @@ const DashboardScreen: React.FC = () => {
                   }}
                 >
                   <View style={styles.lowStockInfo}>
-                    <Typography variant="body" numberOfLines={1}>
+                    <Typography variant="body" numberOfLines={1} color={theme.colors.neutral.black}>
                       {inv.item.description}
                     </Typography>
                     <Typography
@@ -392,7 +393,7 @@ const DashboardScreen: React.FC = () => {
                 </TouchableOpacity>
               ))
             ) : (
-              <Typography variant="bodySecondary" style={styles.emptyText}>
+              <Typography variant="bodySecondary" style={styles.emptyText} color={theme.colors.neutral.darkGray}>
                 Não há itens com estoque baixo.
               </Typography>
             )}
@@ -403,13 +404,14 @@ const DashboardScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const DashboardScreenStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.neutral.lightGray,
   },
   content: {
     flex: 1,
+    backgroundColor: theme.colors.neutral.lightGray,
   },
   contentContainer: {
     padding: theme.spacing.s,
@@ -429,7 +431,7 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing.xs,
     marginTop: theme.spacing.xs,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.neutral.lightGray,
+    borderTopColor: theme.colors.neutral.mediumGray,
   },
   lowStockItem: {
     flexDirection: "row",
@@ -437,7 +439,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: theme.spacing.xs,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.neutral.lightGray,
+    borderBottomColor: theme.colors.neutral.mediumGray,
   },
   lowStockInfo: {
     flex: 1,

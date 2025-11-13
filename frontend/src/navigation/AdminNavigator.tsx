@@ -30,6 +30,8 @@ import CreateItemScreen from "../screens/admin/CreateItemScreen";
 import CreateDistributionScreen from "../screens/admin/CreateDistributionScreen";
 import SettingsScreen from "../screens/admin/SettingsScreen";
 import AnalyticsScreen from "../screens/admin/AnalyticsScreen";
+import AuditScreen from "../screens/admin/AuditScreen";
+import DevScreen from "../screens/dev/DevScreen";
 
 // Stack Navigators para cada tab
 const DashboardStack = createNativeStackNavigator();
@@ -171,6 +173,18 @@ const AnalyticsWithSidebar = () => (
   </ScreenWithSidebar>
 );
 
+const AuditWithSidebar = () => (
+  <ScreenWithSidebar routeName="Audit">
+    <AuditScreen />
+  </ScreenWithSidebar>
+);
+
+const DevWithSidebar = () => (
+  <ScreenWithSidebar routeName="Dev">
+    <DevScreen />
+  </ScreenWithSidebar>
+);
+
 const AdminNavigator: React.FC = () => {
   return (
     <MainStack.Navigator screenOptions={{ headerShown: false }}>
@@ -182,6 +196,8 @@ const AdminNavigator: React.FC = () => {
       <MainStack.Screen name="Distributions" component={DistributionsWithSidebar} />
       <MainStack.Screen name="Users" component={UsersWithSidebar} />
       <MainStack.Screen name="Settings" component={SettingsWithSidebar} />
+      <MainStack.Screen name="Audit" component={AuditWithSidebar} />
+      <MainStack.Screen name="Dev" component={DevWithSidebar} />
     </MainStack.Navigator>
   );
 };

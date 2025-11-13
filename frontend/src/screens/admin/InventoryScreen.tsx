@@ -15,7 +15,7 @@ import {
   Select,
   Badge,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -41,6 +41,7 @@ const SORT_OPTIONS = [
 ];
 
 const InventoryScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation =
     useNavigation<StackNavigationProp<AdminInventoryStackParamList>>();
   useAuth();
@@ -167,8 +168,14 @@ const InventoryScreen: React.FC = () => {
     );
   }
 
+  const dynamicStyles = {
+    container: {
+      backgroundColor: theme.colors.neutral.lightGray,
+    },
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, dynamicStyles.container]}>
       {/* Cabeçalho */}
       <Header
         title="Inventário"
@@ -261,17 +268,16 @@ const InventoryScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.neutral.white,
   },
   content: {
     flex: 1,
-    paddingHorizontal: theme.spacing.s,
+    paddingHorizontal: 16,
   },
   searchBar: {
-    marginVertical: theme.spacing.s,
+    marginVertical: 16,
   },
   filtersContainer: {
-    marginBottom: theme.spacing.s,
+    marginBottom: 16,
   },
   filterRow: {
     flexDirection: "row",
@@ -279,12 +285,12 @@ const styles = StyleSheet.create({
   },
   filterSelect: {
     flex: 1,
-    marginHorizontal: theme.spacing.xxs,
+    marginHorizontal: 4,
     marginBottom: 0,
   },
   listContent: {
     flexGrow: 1,
-    paddingBottom: theme.spacing.m,
+    paddingBottom: 24,
   },
 });
 

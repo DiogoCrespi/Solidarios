@@ -25,7 +25,7 @@ import {
   FileUpload,
   NotificationBanner,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -105,6 +105,7 @@ const conservationStateOptions = [
 ];
 
 const NewDonationScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation = useNavigation();
   const { user } = useAuth();
   const { createItem, isLoading, error, clearError } = useItems();
@@ -178,6 +179,27 @@ const NewDonationScreen: React.FC = () => {
     setNotification((prev) => ({ ...prev, visible: false }));
   }, []);
 
+  const dynamicStyles = {
+    container: {
+      backgroundColor: theme.colors.neutral.white,
+    },
+    headerGradient: {
+      ...theme.shadows.medium,
+    },
+    formContainer: {
+      backgroundColor: theme.colors.neutral.white,
+    },
+    headerTitle: {
+      color: theme.colors.primary.main,
+    },
+    formSubtitle: {
+      color: theme.colors.neutral.darkGray,
+    },
+    buttonSubmit: {
+      backgroundColor: theme.colors.primary.secondary,
+    },
+  };
+
   // Componente renderizador de formulário - Evitando renderização aninhada de VirtualizedLists
   const renderFormContent = useCallback(
     (formikProps: FormikProps<DonationFormValues>): React.ReactElement => {
@@ -193,11 +215,11 @@ const NewDonationScreen: React.FC = () => {
 
       return (
         <View style={styles.form}>
-          <Typography variant="h3" style={styles.formTitle}>
+          <Typography variant="h3" style={styles.formTitle} color={theme.colors.neutral.black}>
             Informações do Item
           </Typography>
 
-          <Typography variant="bodySecondary" style={styles.formSubtitle}>
+          <Typography variant="bodySecondary" style={[styles.formSubtitle, dynamicStyles.formSubtitle]}>
             Preencha os detalhes abaixo para cadastrar sua doação
           </Typography>
 
@@ -284,29 +306,37 @@ const NewDonationScreen: React.FC = () => {
               title="Cadastrar"
               onPress={() => handleSubmit()}
               loading={isLoading}
-              style={styles.buttonSubmit}
+              style={[styles.buttonSubmit, dynamicStyles.buttonSubmit]}
             />
           </View>
         </View>
       );
     },
-    [isLoading, navigation]
+    [isLoading, navigation, theme]
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, dynamicStyles.container]}>
       {/* StatusBar e Header com Gradiente */}
       <StatusBar
-        barStyle="dark-content"
+        barStyle={theme.isDark ? "light-content" : "dark-content"}
         backgroundColor="transparent"
         translucent
       />
       <LinearGradient
-        colors={["#b0e6f2", "#e3f7ff", "#ffffff"]}
+        colors={
+          theme.isDark
+            ? [
+                theme.colors.neutral.darkGray,
+                theme.colors.neutral.mediumGray,
+                theme.colors.neutral.lightGray,
+              ]
+            : ["#b0e6f2", "#e3f7ff", "#ffffff"]
+        }
         locations={[0, 0.3, 0.6]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={styles.headerGradient}
+        style={[styles.headerGradient, dynamicStyles.headerGradient]}
       >
         <View style={styles.header}>
           <TouchableOpacity
@@ -320,10 +350,10 @@ const NewDonationScreen: React.FC = () => {
             />
           </TouchableOpacity>
           <View style={styles.headerContent}>
-            <Typography variant="h1" style={styles.headerTitle}>
+            <Typography variant="h1" style={[styles.headerTitle, dynamicStyles.headerTitle]}>
               Nova Doação
             </Typography>
-            <Typography variant="bodySecondary">
+            <Typography variant="bodySecondary" color={theme.colors.neutral.darkGray}>
               Olá, {user?.name?.split(" ")[0] || "Doador"}
             </Typography>
           </View>
@@ -353,7 +383,7 @@ const NewDonationScreen: React.FC = () => {
         style={styles.keyboardAvoidContainer}
         keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       >
-        <View style={styles.formContainer}>
+        <View style={[styles.formContainer, dynamicStyles.formContainer]}>
           <Formik<DonationFormValues>
             initialValues={{
               type: ItemType.ROUPA,
@@ -385,7 +415,6 @@ const NewDonationScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.neutral.white,
   },
   headerGradient: {
     paddingTop:
@@ -393,16 +422,15 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-    ...theme.shadows.medium,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: theme.spacing.m,
+    paddingHorizontal: 16,
   },
   backButton: {
-    padding: theme.spacing.xs,
-    marginRight: theme.spacing.xs,
+    padding: 4,
+    marginRight: 4,
   },
   headerContent: {
     flex: 1,
@@ -411,7 +439,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 28,
     marginBottom: 5,
-    color: theme.colors.primary.main,
   },
   keyboardAvoidContainer: {
     flex: 1,
@@ -421,35 +448,32 @@ const styles = StyleSheet.create({
     marginTop: -20,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    backgroundColor: theme.colors.neutral.white,
   },
   scrollContent: {
-    padding: theme.spacing.m,
-    paddingBottom: theme.spacing.xxl,
+    padding: 16,
+    paddingBottom: 48,
   },
   form: {
     width: "100%",
   },
   formTitle: {
-    marginBottom: theme.spacing.xs,
+    marginBottom: 4,
   },
   formSubtitle: {
-    marginBottom: theme.spacing.m,
-    color: theme.colors.neutral.darkGray,
+    marginBottom: 16,
   },
   buttonsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: theme.spacing.m,
+    marginTop: 16,
   },
   buttonCancel: {
     flex: 1,
-    marginRight: theme.spacing.xs,
+    marginRight: 4,
   },
   buttonSubmit: {
     flex: 1,
-    marginLeft: theme.spacing.xs,
-    backgroundColor: theme.colors.primary.secondary,
+    marginLeft: 4,
   },
 });
 

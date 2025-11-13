@@ -9,11 +9,12 @@ import {
   TouchableWithoutFeedback,
   StatusBar,
 } from "react-native";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 const { width, height } = Dimensions.get("window");
 
 const SplashScreen: React.FC<{ onFinish?: () => void }> = ({ onFinish }) => {
+  const theme = useTheme();
   // Animações principais
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.8)).current;
@@ -158,9 +159,15 @@ const SplashScreen: React.FC<{ onFinish?: () => void }> = ({ onFinish }) => {
     }
   };
 
+  const dynamicStyles = {
+    container: {
+      backgroundColor: theme.colors.primary.main,
+    },
+  };
+
   return (
     <TouchableWithoutFeedback onPress={skipAnimation}>
-      <View style={styles.container}>
+      <View style={[styles.container, dynamicStyles.container]}>
         <StatusBar hidden />
 
         {/* Conteúdo animado */}
@@ -196,7 +203,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: theme.colors.primary.main, // Fundo escuro para contraste com a logo
   },
   contentContainer: {
     justifyContent: "center",

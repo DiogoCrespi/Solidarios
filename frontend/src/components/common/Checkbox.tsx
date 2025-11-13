@@ -7,7 +7,7 @@ import {
   ViewStyle,
 } from "react-native";
 import Typography from "./Typography";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 export interface CheckboxProps {
   checked: boolean;
@@ -26,6 +26,8 @@ const Checkbox: React.FC<CheckboxProps> = ({
   style,
   size = "medium",
 }) => {
+  const theme = useTheme();
+  
   // Definir tamanhos com base no parâmetro size
   const getSize = () => {
     switch (size) {
@@ -91,10 +93,8 @@ const Checkbox: React.FC<CheckboxProps> = ({
       {label && (
         <Typography
           variant="body"
-          style={[
-            styles.label,
-            disabled && { color: theme.colors.neutral.darkGray },
-          ]}
+          color={disabled ? theme.colors.neutral.darkGray : theme.colors.neutral.black}
+          style={styles.label}
         >
           {label}
         </Typography>
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: theme.spacing.xxs,
+    marginVertical: 4,
   },
   checkbox: {
     borderWidth: 2,
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   label: {
-    marginLeft: theme.spacing.xs,
+    marginLeft: 8,
   },
 });
 

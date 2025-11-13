@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import Typography from "../common/Typography";
 import Button from "../common/Button";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 export type ConfirmationVariant = "default" | "success" | "danger" | "warning";
 
@@ -40,6 +40,8 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   style,
   icon,
 }) => {
+  const theme = useTheme();
+  
   // Determinar cores com base na variante
   const getColors = (): { primary: string; text: string } => {
     switch (variant) {
@@ -68,6 +70,12 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   };
 
   const colors = getColors();
+  
+  const dynamicStyles = {
+    container: {
+      backgroundColor: theme.colors.neutral.white,
+    },
+  };
 
   if (!visible) {
     return null;
@@ -89,6 +97,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
           <View
             style={[
               styles.container,
+              dynamicStyles.container,
               Platform.OS === "web" ? containerWebStyle : containerMobileStyle,
               style,
             ]}
@@ -110,7 +119,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
           {/* Conteúdo */}
           <View style={styles.content}>
             {message && (
-              <Typography variant="body" style={styles.message}>
+              <Typography variant="body" color={theme.colors.neutral.black} style={styles.message}>
                 {message}
               </Typography>
             )}
@@ -154,45 +163,44 @@ const styles = StyleSheet.create({
   container: {
     width: "85%",
     maxWidth: 400,
-    backgroundColor: theme.colors.neutral.white,
-    borderRadius: theme.borderRadius.medium,
+    borderRadius: 8,
     overflow: "hidden",
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    padding: theme.spacing.s,
+    padding: 16,
   },
   icon: {
-    marginRight: theme.spacing.s,
+    marginRight: 16,
   },
   title: {
     flex: 1,
   },
   content: {
-    padding: theme.spacing.s,
+    padding: 16,
   },
   message: {
-    marginBottom: theme.spacing.m,
+    marginBottom: 24,
   },
   buttonsContainer: {
     flexDirection: "row",
     justifyContent: "flex-end",
   },
   cancelButton: {
-    marginRight: theme.spacing.s,
+    marginRight: 16,
   },
   confirmButton: {
     minWidth: 100,
   },
   dangerButton: {
-    backgroundColor: theme.colors.status.error,
+    backgroundColor: "#DC3545",
   },
   successButton: {
-    backgroundColor: theme.colors.status.success,
+    backgroundColor: "#28A745",
   },
   warningButton: {
-    backgroundColor: theme.colors.status.warning,
+    backgroundColor: "#FFC107",
   },
 });
 

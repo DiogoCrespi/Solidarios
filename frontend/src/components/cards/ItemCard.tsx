@@ -15,7 +15,7 @@ import StatusIndicator from "../common/StatusIndicator";
 import { formatDate } from "../../utils/formatters";
 import { Item, ItemType } from "../../types/items.types";
 import { mapStatusToBadgeVariant } from "../common/Badge";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 export interface ItemCardProps {
   item: Item;
@@ -44,6 +44,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
   showCategory = true,
   compact = false,
 }) => {
+  const theme = useTheme();
   const hasImage = item.photos && item.photos.length > 0;
 
   // Renderizar conteúdo do card
@@ -72,6 +73,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
         {/* Descrição do item */}
         <Typography
           variant="body"
+          color={theme.colors.neutral.black}
           style={styles.description}
           numberOfLines={compact ? 1 : 2}
         >
@@ -85,7 +87,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
               <Typography variant="small" color={theme.colors.neutral.darkGray}>
                 Tamanho:
               </Typography>
-              <Typography variant="small">{item.size}</Typography>
+              <Typography variant="small" color={theme.colors.neutral.black}>{item.size}</Typography>
             </View>
           )}
 
@@ -94,7 +96,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
               <Typography variant="small" color={theme.colors.neutral.darkGray}>
                 Estado:
               </Typography>
-              <Typography variant="small">{item.conservationState}</Typography>
+              <Typography variant="small" color={theme.colors.neutral.black}>{item.conservationState}</Typography>
             </View>
           )}
 
@@ -103,7 +105,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
               <Typography variant="small" color={theme.colors.neutral.darkGray}>
                 Recebido em:
               </Typography>
-              <Typography variant="small">
+              <Typography variant="small" color={theme.colors.neutral.black}>
                 {formatDate(item.receivedDate)}
               </Typography>
             </View>
@@ -132,7 +134,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
   const renderCardFooter = () =>
     showDonor &&
     item.donor && (
-      <View style={styles.footer}>
+      <View style={[styles.footer, { borderTopColor: theme.colors.neutral.lightGray }]}>
         <Typography variant="small" color={theme.colors.neutral.darkGray}>
           Doado por:
         </Typography>
@@ -142,7 +144,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
             size="small"
             style={styles.donorAvatar}
           />
-          <Typography variant="bodySecondary">{item.donor.name}</Typography>
+          <Typography variant="bodySecondary" color={theme.colors.neutral.black}>{item.donor.name}</Typography>
         </View>
       </View>
     );
@@ -161,13 +163,13 @@ const ItemCard: React.FC<ItemCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    marginBottom: theme.spacing.s,
+    marginBottom: 16,
   },
   compactCard: {
     minHeight: 80,
   },
   cardContent: {
-    padding: theme.spacing.xs,
+    padding: 8,
   },
   contentContainer: {
     flexDirection: "row",
@@ -175,8 +177,8 @@ const styles = StyleSheet.create({
   image: {
     width: 80,
     height: 80,
-    borderRadius: theme.borderRadius.small,
-    marginRight: theme.spacing.s,
+    borderRadius: 4,
+    marginRight: 16,
   },
   detailsContainer: {
     flex: 1,
@@ -185,13 +187,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: theme.spacing.xxs,
+    marginBottom: 4,
   },
   description: {
-    marginBottom: theme.spacing.xxs,
+    marginBottom: 4,
   },
   infoContainer: {
-    marginBottom: theme.spacing.xxs,
+    marginBottom: 4,
   },
   infoItem: {
     flexDirection: "row",
@@ -201,23 +203,22 @@ const styles = StyleSheet.create({
   categoryContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: theme.spacing.xxs,
+    marginTop: 4,
   },
   categoryBadge: {
-    marginLeft: theme.spacing.xxs,
+    marginLeft: 4,
   },
   footer: {
     borderTopWidth: 1,
-    borderTopColor: theme.colors.neutral.lightGray,
-    paddingTop: theme.spacing.xs,
+    paddingTop: 8,
   },
   donorContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: theme.spacing.xxs,
+    marginTop: 4,
   },
   donorAvatar: {
-    marginRight: theme.spacing.xs,
+    marginRight: 8,
   },
 });
 

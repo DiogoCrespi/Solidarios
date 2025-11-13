@@ -28,7 +28,7 @@ import {
   Avatar,
   NotificationBanner,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -44,6 +44,7 @@ type UserDetailScreenRouteProp = RouteProp<
 >;
 
 const UserDetailScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation =
     useNavigation<StackNavigationProp<AdminUsersStackParamList>>();
   const route = useRoute<UserDetailScreenRouteProp>();
@@ -61,6 +62,7 @@ const UserDetailScreen: React.FC = () => {
     type: "success",
     message: "",
   });
+  const styles = UserDetailScreenStyles(theme);
 
   // Carregar detalhes do usuário
   const loadUser = useCallback(async () => {
@@ -174,11 +176,10 @@ const UserDetailScreen: React.FC = () => {
       <Header
         title="Detalhes do Usuário"
         onBackPress={() => navigation.goBack()}
-        backgroundColor={theme.colors.primary.main}
         rightComponent={
           <View style={styles.headerActions}>
             <TouchableOpacity
-              style={styles.headerButton}
+              style={[styles.headerButton, { backgroundColor: theme.colors.primary.secondary }]}
               onPress={handleEditUser}
             >
               <Typography variant="small" color={theme.colors.neutral.white}>
@@ -186,7 +187,7 @@ const UserDetailScreen: React.FC = () => {
               </Typography>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.headerButton, styles.deleteButton]}
+              style={[styles.headerButton, styles.deleteButton, { backgroundColor: theme.colors.status.error }]}
               onPress={() => setShowDeleteConfirmation(true)}
             >
               <Typography variant="small" color={theme.colors.neutral.white}>
@@ -236,7 +237,7 @@ const UserDetailScreen: React.FC = () => {
               >
                 Telefone:
               </Typography>
-              <Typography variant="body">{user.phone}</Typography>
+              <Typography variant="body" color={theme.colors.neutral.black}>{user.phone}</Typography>
             </View>
           )}
 
@@ -248,7 +249,7 @@ const UserDetailScreen: React.FC = () => {
               >
                 Endereço:
               </Typography>
-              <Typography variant="body">{user.address}</Typography>
+              <Typography variant="body" color={theme.colors.neutral.black}>{user.address}</Typography>
             </View>
           )}
 
@@ -259,7 +260,7 @@ const UserDetailScreen: React.FC = () => {
             >
               Data de Cadastro:
             </Typography>
-            <Typography variant="body">
+            <Typography variant="body" color={theme.colors.neutral.black}>
               {new Date(user.createdAt).toLocaleDateString()}
             </Typography>
           </View>
@@ -276,7 +277,7 @@ const UserDetailScreen: React.FC = () => {
             title="Excluir Usuário"
             variant="secondary"
             onPress={() => setShowDeleteConfirmation(true)}
-            style={[styles.actionButton, styles.deleteButton]}
+            style={[styles.actionButton, styles.deleteButton, { backgroundColor: theme.colors.status.error }]}
           />
         </View>
       </ScrollView>
@@ -284,13 +285,14 @@ const UserDetailScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const UserDetailScreenStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.neutral.white,
   },
   content: {
     flex: 1,
+    backgroundColor: theme.colors.neutral.white,
   },
   contentContainer: {
     padding: theme.spacing.s,
@@ -300,13 +302,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   headerButton: {
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
     padding: theme.spacing.xs,
     borderRadius: theme.borderRadius.small,
     marginLeft: theme.spacing.xs,
   },
   deleteButton: {
-    backgroundColor: theme.colors.status.error,
+    // backgroundColor será aplicado inline
   },
   card: {
     marginBottom: theme.spacing.s,

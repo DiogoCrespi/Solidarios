@@ -22,7 +22,7 @@ import {
   Badge,
   Card,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useUsers } from "../../hooks/useUsers";
@@ -32,6 +32,7 @@ import { User, UserRole } from "../../types/users.types";
 import { ADMIN_ROUTES } from "../../navigation/routes";
 
 const UsersScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation =
     useNavigation<StackNavigationProp<AdminUsersStackParamList>>();
   const { users, isLoading, error, fetchUsers, pagination, clearError } =
@@ -123,8 +124,18 @@ const UsersScreen: React.FC = () => {
     );
   }
 
+  const dynamicStyles = {
+    container: {
+      backgroundColor: theme.colors.neutral.lightGray,
+    },
+    floatingButton: {
+      backgroundColor: theme.colors.primary.main,
+      ...theme.shadows.medium,
+    },
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, dynamicStyles.container]}>
       {/* Cabeçalho */}
       <Header
         title="Gerenciamento de Usuários"
@@ -164,7 +175,7 @@ const UsersScreen: React.FC = () => {
 
         {/* Resumo dos resultados */}
         <View style={styles.resultsHeader}>
-          <Typography variant="bodySecondary">
+          <Typography variant="bodySecondary" color={theme.colors.neutral.black}>
             {filteredUsers.length}{" "}
             {filteredUsers.length === 1 ? "usuário" : "usuários"} encontrados
           </Typography>
@@ -191,7 +202,7 @@ const UsersScreen: React.FC = () => {
               }
             >
               <View style={styles.userInfo}>
-                <Typography variant="body" style={styles.userName}>
+                <Typography variant="body" color={theme.colors.neutral.black} style={styles.userName}>
                   {item.name}
                 </Typography>
                 <Typography
@@ -249,7 +260,7 @@ const UsersScreen: React.FC = () => {
 
         {/* Botão flutuante para novo usuário */}
         <TouchableOpacity
-          style={styles.floatingButton}
+          style={[styles.floatingButton, dynamicStyles.floatingButton]}
           onPress={() => navigation.navigate(ADMIN_ROUTES.CREATE_USER as any)}
         >
           <Typography
@@ -267,17 +278,16 @@ const UsersScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.neutral.white,
   },
   content: {
     flex: 1,
-    paddingHorizontal: theme.spacing.s,
+    paddingHorizontal: 16,
   },
   searchBar: {
-    marginVertical: theme.spacing.s,
+    marginVertical: 16,
   },
   filtersContainer: {
-    marginBottom: theme.spacing.s,
+    marginBottom: 16,
   },
   filterSelect: {
     marginBottom: 0,
@@ -286,40 +296,38 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: theme.spacing.xs,
+    marginBottom: 8,
   },
   listContent: {
     flexGrow: 1,
-    paddingBottom: theme.spacing.xl + 60, // Espaço extra para o botão flutuante
+    paddingBottom: 108, // Espaço extra para o botão flutuante
   },
   addButton: {
     backgroundColor: "rgba(255, 255, 255, 0.2)",
-    padding: theme.spacing.xs,
-    borderRadius: theme.borderRadius.small,
+    padding: 8,
+    borderRadius: 4,
   },
   floatingButton: {
     position: "absolute",
-    right: theme.spacing.m,
-    bottom: theme.spacing.m,
-    backgroundColor: theme.colors.primary.main,
-    paddingHorizontal: theme.spacing.m,
-    paddingVertical: theme.spacing.s,
-    borderRadius: theme.borderRadius.round,
-    ...theme.shadows.medium,
+    right: 24,
+    bottom: 24,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    borderRadius: 50,
   },
   userCard: {
-    marginBottom: theme.spacing.s,
-    padding: theme.spacing.s,
+    marginBottom: 16,
+    padding: 16,
   },
   userInfo: {
     flex: 1,
   },
   userName: {
     fontWeight: "bold",
-    marginBottom: theme.spacing.xxs,
+    marginBottom: 4,
   },
   roleBadge: {
-    marginTop: theme.spacing.xxs,
+    marginTop: 4,
   },
 });
 

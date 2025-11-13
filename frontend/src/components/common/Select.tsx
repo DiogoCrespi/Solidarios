@@ -10,7 +10,7 @@ import {
   TextStyle,
 } from "react-native";
 import Typography from "./Typography";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 export interface SelectOption {
   label: string;
@@ -46,6 +46,7 @@ const Select: React.FC<SelectProps> = ({
   optionStyle,
   optionTextStyle,
 }) => {
+  const theme = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
 
   const selectedOption = options.find(
@@ -60,11 +61,32 @@ const Select: React.FC<SelectProps> = ({
   const selectBorderColor = error
     ? theme.colors.status.error
     : theme.colors.neutral.mediumGray;
+  
+  const dynamicStyles = {
+    select: {
+      backgroundColor: disabled ? theme.colors.neutral.lightGray : theme.colors.neutral.white,
+    },
+    modalContent: {
+      backgroundColor: theme.colors.neutral.white,
+    },
+    modalHeader: {
+      borderBottomColor: theme.colors.neutral.mediumGray,
+    },
+    option: {
+      borderBottomColor: theme.colors.neutral.lightGray,
+    },
+    arrowDown: {
+      borderTopColor: theme.colors.neutral.darkGray,
+    },
+    checkmark: {
+      borderColor: theme.colors.primary.secondary,
+    },
+  };
 
   return (
     <View style={[styles.container, containerStyle]}>
       {label && (
-        <Typography variant="bodySecondary" style={[styles.label, labelStyle]}>
+        <Typography variant="bodySecondary" color={theme.colors.neutral.black} style={[styles.label, labelStyle]}>
           {label}
         </Typography>
       )}
@@ -72,6 +94,7 @@ const Select: React.FC<SelectProps> = ({
       <TouchableOpacity
         style={[
           styles.select,
+          dynamicStyles.select,
           { borderColor: selectBorderColor },
           disabled && styles.disabled,
           selectStyle,
@@ -92,7 +115,7 @@ const Select: React.FC<SelectProps> = ({
         </Typography>
 
         <View style={styles.arrow}>
-          <View style={styles.arrowDown} />
+          <View style={[styles.arrowDown, dynamicStyles.arrowDown]} />
         </View>
       </TouchableOpacity>
 
@@ -117,9 +140,9 @@ const Select: React.FC<SelectProps> = ({
           activeOpacity={1}
           onPress={() => setModalVisible(false)}
         >
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Typography variant="h4">{label || placeholder}</Typography>
+          <View style={[styles.modalContent, dynamicStyles.modalContent]}>
+            <View style={[styles.modalHeader, dynamicStyles.modalHeader]}>
+              <Typography variant="h4" color={theme.colors.neutral.black}>{label || placeholder}</Typography>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
                 <Typography
                   variant="body"
@@ -135,11 +158,12 @@ const Select: React.FC<SelectProps> = ({
               keyExtractor={(item) => String(item.value)}
               renderItem={({ item }) => (
                 <TouchableOpacity
-                  style={[styles.option, optionStyle]}
+                  style={[styles.option, dynamicStyles.option, optionStyle]}
                   onPress={() => handleSelect(item.value)}
                 >
                   <Typography
                     variant="body"
+                    color={item.value === selectedValue ? theme.colors.primary.secondary : theme.colors.neutral.black}
                     style={[
                       optionTextStyle,
                       item.value === selectedValue && styles.selectedOption,
@@ -148,7 +172,7 @@ const Select: React.FC<SelectProps> = ({
                     {item.label}
                   </Typography>
                   {item.value === selectedValue && (
-                    <View style={styles.checkmark} />
+                    <View style={[styles.checkmark, dynamicStyles.checkmark]} />
                   )}
                 </TouchableOpacity>
               )}
@@ -162,23 +186,21 @@ const Select: React.FC<SelectProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: theme.spacing.s,
+    marginBottom: 16,
   },
   label: {
-    marginBottom: theme.spacing.xxs,
+    marginBottom: 4,
   },
   select: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     borderWidth: 1,
-    borderRadius: theme.borderRadius.medium,
-    padding: theme.spacing.xs,
+    borderRadius: 8,
+    padding: 8,
     height: 48,
-    backgroundColor: theme.colors.neutral.white,
   },
   disabled: {
-    backgroundColor: theme.colors.neutral.lightGray,
     opacity: 0.7,
   },
   selectedText: {
@@ -200,10 +222,9 @@ const styles = StyleSheet.create({
     borderTopWidth: 6,
     borderLeftColor: "transparent",
     borderRightColor: "transparent",
-    borderTopColor: theme.colors.neutral.darkGray,
   },
   errorText: {
-    marginTop: theme.spacing.xxs,
+    marginTop: 4,
   },
   modalOverlay: {
     flex: 1,
@@ -214,28 +235,24 @@ const styles = StyleSheet.create({
   modalContent: {
     width: "80%",
     maxHeight: "70%",
-    backgroundColor: theme.colors.neutral.white,
-    borderRadius: theme.borderRadius.medium,
+    borderRadius: 8,
     overflow: "hidden",
   },
   modalHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: theme.spacing.s,
+    padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.neutral.mediumGray,
   },
   option: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: theme.spacing.s,
+    padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.neutral.lightGray,
   },
   selectedOption: {
-    color: theme.colors.primary.secondary,
     fontWeight: "600",
   },
   checkmark: {
@@ -243,7 +260,6 @@ const styles = StyleSheet.create({
     height: 12,
     borderBottomWidth: 2,
     borderRightWidth: 2,
-    borderColor: theme.colors.primary.secondary,
     transform: [{ rotate: "45deg" }],
   },
 });

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
 import Typography from "./Typography";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 export interface DividerProps {
   orientation?: "horizontal" | "vertical";
@@ -16,19 +16,22 @@ export interface DividerProps {
 const Divider: React.FC<DividerProps> = ({
   orientation = "horizontal",
   thickness = 1,
-  color = theme.colors.neutral.mediumGray,
+  color,
   label,
-  spacing = theme.spacing.m,
+  spacing,
   style,
   labelStyle,
 }) => {
+  const theme = useTheme();
+  const defaultColor = color || theme.colors.neutral.mediumGray;
+  const defaultSpacing = spacing !== undefined ? spacing : theme.spacing.m;
   const dividerStyle = {
-    backgroundColor: color,
+    backgroundColor: defaultColor,
     ...(orientation === "horizontal"
-      ? { height: thickness, marginVertical: spacing }
+      ? { height: thickness, marginVertical: defaultSpacing }
       : {
           width: thickness,
-          marginHorizontal: spacing,
+          marginHorizontal: defaultSpacing,
           height: "100%" as unknown as number,
         }),
   };
@@ -39,7 +42,7 @@ const Divider: React.FC<DividerProps> = ({
       <View style={[styles.labelContainer, style]}>
         <View style={[styles.divider, dividerStyle, styles.labelDivider]} />
         <View style={[styles.labelWrapper, labelStyle]}>
-          <Typography variant="bodySecondary">{label}</Typography>
+          <Typography variant="bodySecondary" color={theme.colors.neutral.darkGray}>{label}</Typography>
         </View>
         <View style={[styles.divider, dividerStyle, styles.labelDivider]} />
       </View>
@@ -63,7 +66,7 @@ const styles = StyleSheet.create({
     marginVertical: 0,
   },
   labelWrapper: {
-    paddingHorizontal: theme.spacing.xs,
+    paddingHorizontal: 8,
   },
 });
 

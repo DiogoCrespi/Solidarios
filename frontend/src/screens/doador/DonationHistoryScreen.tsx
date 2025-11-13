@@ -12,7 +12,7 @@ import {
   Loading,
   ErrorState,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -20,6 +20,7 @@ import { useItems } from "../../hooks/useItems";
 import { Order } from "../../types/common.types";
 
 const DonationHistoryScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation =
     useNavigation<StackNavigationProp<DoadorDonationsStackParamList>>();
   const { user } = useAuth();
@@ -93,8 +94,14 @@ const DonationHistoryScreen: React.FC = () => {
     );
   }
 
+  const dynamicStyles = {
+    container: {
+      backgroundColor: theme.colors.neutral.white,
+    },
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, dynamicStyles.container]}>
       {/* Cabeçalho */}
       <Header
         title="Histórico de Doações"
@@ -136,11 +143,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 0,
-    backgroundColor: theme.colors.neutral.white,
   },
   listContent: {
-    padding: theme.spacing.m,
-    paddingBottom: theme.spacing.xl,
+    padding: 16,
+    paddingBottom: 32,
   },
 });
 

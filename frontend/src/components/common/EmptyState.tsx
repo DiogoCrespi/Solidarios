@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import Typography from "./Typography";
 import Button from "./Button";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 export interface EmptyStateProps {
   title: string;
@@ -30,6 +30,8 @@ const EmptyState: React.FC<EmptyStateProps> = ({
   onAction,
   style,
 }) => {
+  const theme = useTheme();
+  
   return (
     <View style={[styles.container, style]}>
       {image && (
@@ -38,12 +40,12 @@ const EmptyState: React.FC<EmptyStateProps> = ({
 
       {icon && <View style={styles.iconContainer}>{icon}</View>}
 
-      <Typography variant="h3" style={styles.title}>
+      <Typography variant="h3" color={theme.colors.neutral.black} style={styles.title}>
         {title}
       </Typography>
 
       {description && (
-        <Typography variant="bodySecondary" style={styles.description}>
+        <Typography variant="bodySecondary" color={theme.colors.neutral.darkGray} style={styles.description}>
           {description}
         </Typography>
       )}
@@ -64,26 +66,26 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     justifyContent: "center",
-    padding: theme.spacing.l,
+    padding: 32,
   },
   image: {
     width: 120,
     height: 120,
-    marginBottom: theme.spacing.m,
+    marginBottom: 24,
   },
   iconContainer: {
-    marginBottom: theme.spacing.m,
+    marginBottom: 24,
   },
   title: {
     textAlign: "center",
-    marginBottom: theme.spacing.xs,
+    marginBottom: 8,
   },
   description: {
     textAlign: "center",
-    marginBottom: theme.spacing.m,
+    marginBottom: 24,
   },
   button: {
-    marginTop: theme.spacing.s,
+    marginTop: 16,
   },
 });
 

@@ -18,6 +18,7 @@ import CreateDistributionScreen from "../screens/admin/CreateDistributionScreen"
 import BeneficiariesScreen from "../screens/funcionario/BeneficiariesScreen";
 import BeneficiaryDetailScreen from "../screens/funcionario/BeneficiaryDetailScreen";
 import SettingsScreen from "../screens/admin/SettingsScreen";
+import DevScreen from "../screens/dev/DevScreen";
 
 // Stack Navigators para cada tab
 const DashboardStack = createNativeStackNavigator();
@@ -156,6 +157,12 @@ const SettingsWithSidebar = () => (
   </ScreenWithSidebar>
 );
 
+const DevWithSidebar = () => (
+  <ScreenWithSidebar routeName="Dev">
+    <DevScreen />
+  </ScreenWithSidebar>
+);
+
 const FuncionarioNavigator: React.FC = () => {
   return (
     <MainStack.Navigator screenOptions={{ headerShown: false }}>
@@ -166,6 +173,7 @@ const FuncionarioNavigator: React.FC = () => {
       <MainStack.Screen name="Distributions" component={DistributionsWithSidebar} />
       <MainStack.Screen name="Beneficiaries" component={BeneficiariesWithSidebar} />
       <MainStack.Screen name="Settings" component={SettingsWithSidebar} />
+      <MainStack.Screen name="Dev" component={DevWithSidebar} />
     </MainStack.Navigator>
   );
 };

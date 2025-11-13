@@ -7,7 +7,7 @@ import {
   TextField,
   Select,
 } from '../barrelComponents';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
 import { useCategories } from '../../hooks/useCategories';
 
 export interface AnalyticsFiltersValues {
@@ -27,6 +27,7 @@ const AnalyticsFilters: React.FC<AnalyticsFiltersProps> = ({
   onApply,
   onClear,
 }) => {
+  const theme = useTheme();
   const { categories } = useCategories();
   
   const [startDate, setStartDate] = useState('');
@@ -176,28 +177,28 @@ const AnalyticsFilters: React.FC<AnalyticsFiltersProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    margin: theme.spacing.m,
-    padding: theme.spacing.l,
+    margin: 24,
+    padding: 32,
   },
   filtersRow: {
     flexDirection: 'row',
-    gap: theme.spacing.m,
-    paddingVertical: theme.spacing.m,
+    gap: 24,
+    paddingVertical: 24,
   },
   filterItem: {
     minWidth: 200,
   },
   input: {
-    marginTop: theme.spacing.xs,
+    marginTop: 8,
   },
   select: {
-    marginTop: theme.spacing.xs,
+    marginTop: 8,
   },
   buttonsRow: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    gap: theme.spacing.m,
-    marginTop: theme.spacing.m,
+    gap: 24,
+    marginTop: 24,
   },
   button: {
     minWidth: 120,

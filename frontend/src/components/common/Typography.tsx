@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, TextProps, StyleSheet, StyleProp, TextStyle } from 'react-native';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
 
 export type TypographyVariant = 
   | 'h1' 
@@ -27,9 +27,43 @@ const Typography: React.FC<TypographyProps> = ({
   children,
   ...rest
 }) => {
+  const theme = useTheme();
+  
+  // Verificar se o tema e typography estão disponíveis
+  if (!theme || !theme.typography) {
+    console.warn('Theme or typography not available in Typography component');
+    // Fallback básico se o tema não estiver disponível
+    return (
+      <Text style={[{ fontSize: 16, color: color || '#000' }, center && styles.center, style]} {...rest}>
+        {children}
+      </Text>
+    );
+  }
+  
+  // Obter estilo de tipografia do tema com fallback para 'body' se a variante não existir
+  const typographyStyle = theme.typography[variant] || theme.typography.body;
+  
+  // Se typographyStyle ainda for undefined, usar valores padrão
+  if (!typographyStyle) {
+    console.warn(`Typography style for variant '${variant}' not found, using defaults`);
+    return (
+      <Text style={[{ fontSize: 16, color: color || (theme.colors?.neutral?.black || '#000000') }, center && styles.center, style]} {...rest}>
+        {children}
+      </Text>
+    );
+  }
+  
+  // Se não houver cor especificada, usar a cor padrão do tema baseado na variante
+  const textColor = color || typographyStyle.color || (theme.colors?.neutral?.black || '#000000');
+  
   const textStyles = [
-    styles[variant],
-    color && { color },
+    {
+      fontSize: typographyStyle.fontSize || 16,
+      fontFamily: typographyStyle.fontFamily || (theme.fontFamily?.primary || 'System'),
+      fontWeight: typographyStyle.fontWeight || 'normal',
+      lineHeight: typographyStyle.lineHeight || 24,
+      color: textColor,
+    },
     center && styles.center,
     style,
   ];
@@ -41,56 +75,8 @@ const Typography: React.FC<TypographyProps> = ({
   );
 };
 
+// Estilos base
 const styles = StyleSheet.create({
-  h1: {
-    fontSize: theme.typography.h1.fontSize,
-    fontFamily: theme.fontFamily.primary,
-    fontWeight: theme.typography.h1.fontWeight,
-    color: theme.typography.h1.color,
-    lineHeight: theme.typography.h1.lineHeight,
-  },
-  h2: {
-    fontSize: theme.typography.h2.fontSize,
-    fontFamily: theme.fontFamily.primary,
-    fontWeight: theme.typography.h2.fontWeight,
-    color: theme.typography.h2.color,
-    lineHeight: theme.typography.h2.lineHeight,
-  },
-  h3: {
-    fontSize: theme.typography.h3.fontSize,
-    fontFamily: theme.fontFamily.primary,
-    fontWeight: theme.typography.h3.fontWeight,
-    color: theme.typography.h3.color,
-    lineHeight: theme.typography.h3.lineHeight,
-  },
-  h4: {
-    fontSize: theme.typography.h4.fontSize,
-    fontFamily: theme.fontFamily.primary,
-    fontWeight: theme.typography.h4.fontWeight,
-    color: theme.typography.h4.color,
-    lineHeight: theme.typography.h4.lineHeight,
-  },
-  body: {
-    fontSize: theme.typography.body.fontSize,
-    fontFamily: theme.fontFamily.primary,
-    fontWeight: theme.typography.body.fontWeight,
-    color: theme.typography.body.color,
-    lineHeight: theme.typography.body.lineHeight,
-  },
-  bodySecondary: {
-    fontSize: theme.typography.bodySecondary.fontSize,
-    fontFamily: theme.fontFamily.primary,
-    fontWeight: theme.typography.bodySecondary.fontWeight,
-    color: theme.typography.bodySecondary.color,
-    lineHeight: theme.typography.bodySecondary.lineHeight,
-  },
-  small: {
-    fontSize: theme.typography.small.fontSize,
-    fontFamily: theme.fontFamily.primary,
-    fontWeight: theme.typography.small.fontWeight,
-    color: theme.typography.small.color,
-    lineHeight: theme.typography.small.lineHeight,
-  },
   center: {
     textAlign: 'center',
   },

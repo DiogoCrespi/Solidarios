@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
 import Typography from "./Typography";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 import { ItemStatus } from "../../types/items.types";
 
 export const BADGE_VARIANTS = {
@@ -44,6 +44,8 @@ const Badge: React.FC<BadgeProps> = ({
   size = "medium",
   style,
 }) => {
+  const theme = useTheme();
+  
   // Determinar as cores baseadas na variante
   let backgroundColor, textColor;
 
@@ -98,17 +100,17 @@ const Badge: React.FC<BadgeProps> = ({
 const styles = StyleSheet.create({
   container: {
     borderRadius: 16,
-    paddingHorizontal: theme.spacing.xs,
+    paddingHorizontal: 8,
     alignItems: "center",
     justifyContent: "center",
   },
   small: {
     paddingVertical: 2,
-    paddingHorizontal: theme.spacing.xxs,
+    paddingHorizontal: 4,
   },
   medium: {
     paddingVertical: 4,
-    paddingHorizontal: theme.spacing.xs,
+    paddingHorizontal: 8,
   },
   text: {
     fontWeight: "500",

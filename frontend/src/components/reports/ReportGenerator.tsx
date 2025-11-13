@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
 import {
   Typography,
   Card,
   Button,
   Select,
+  TextField,
 } from '../barrelComponents';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
+import { useCategories } from '../../hooks/useCategories';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export interface ReportConfig {
@@ -14,15 +16,26 @@ export interface ReportConfig {
   format: string;
   startDate?: string;
   endDate?: string;
+  categoryId?: string;
 }
 
 interface ReportGeneratorProps {
   onGenerate: (config: ReportConfig) => Promise<void>;
+  initialFilters?: {
+    startDate?: string;
+    endDate?: string;
+    categoryId?: string;
+  };
 }
 
-const ReportGenerator: React.FC<ReportGeneratorProps> = ({ onGenerate }) => {
+const ReportGenerator: React.FC<ReportGeneratorProps> = ({ onGenerate, initialFilters }) => {
+  const theme = useTheme();
+  const { categories } = useCategories();
   const [reportType, setReportType] = useState('dashboard');
   const [format, setFormat] = useState('pdf');
+  const [startDate, setStartDate] = useState(initialFilters?.startDate || '');
+  const [endDate, setEndDate] = useState(initialFilters?.endDate || '');
+  const [categoryId, setCategoryId] = useState(initialFilters?.categoryId || '');
   const [loading, setLoading] = useState(false);
 
   const reportTypes = [
@@ -46,6 +59,9 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ onGenerate }) => {
       await onGenerate({
         type: reportType,
         format,
+        startDate: startDate || undefined,
+        endDate: endDate || undefined,
+        categoryId: categoryId || undefined,
       });
       // Não precisa de Alert aqui, pois o download já acontece automaticamente
       // O Alert será mostrado pelo componente pai se houver erro
@@ -55,6 +71,26 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ onGenerate }) => {
       setLoading(false);
     }
   };
+
+  const categoryOptions = [
+    { label: 'Todas as Categorias', value: '' },
+    ...categories.map((cat) => ({
+      label: cat.name,
+      value: cat.id,
+    })),
+  ];
+
+  // Sincronizar filtros iniciais quando mudarem
+  useEffect(() => {
+    if (initialFilters) {
+      if (initialFilters.startDate) setStartDate(initialFilters.startDate);
+      if (initialFilters.endDate) setEndDate(initialFilters.endDate);
+      if (initialFilters.categoryId) setCategoryId(initialFilters.categoryId);
+    }
+  }, [initialFilters]);
+
+  // Determinar se os campos de filtro devem ser mostrados
+  const showFilters = reportType === 'items' || reportType === 'distributions' || reportType === 'donors';
 
   return (
     <Card style={styles.container}>
@@ -101,6 +137,53 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ onGenerate }) => {
             selectStyle={styles.select}
           />
         </View>
+
+        {/* Filtros - Mostrar apenas para relatórios relevantes */}
+        {showFilters && (
+          <>
+            {/* Data Inicial */}
+            <View style={styles.field}>
+              <Typography variant="caption" color={theme.colors.neutral.mediumGray}>
+                Data Inicial (Opcional)
+              </Typography>
+              <TextField
+                value={startDate}
+                onChangeText={setStartDate}
+                placeholder="AAAA-MM-DD"
+                style={styles.input}
+              />
+            </View>
+
+            {/* Data Final */}
+            <View style={styles.field}>
+              <Typography variant="caption" color={theme.colors.neutral.mediumGray}>
+                Data Final (Opcional)
+              </Typography>
+              <TextField
+                value={endDate}
+                onChangeText={setEndDate}
+                placeholder="AAAA-MM-DD"
+                style={styles.input}
+              />
+            </View>
+
+            {/* Categoria - Apenas para relatório de itens */}
+            {reportType === 'items' && (
+              <View style={styles.field}>
+                <Typography variant="caption" color={theme.colors.neutral.mediumGray}>
+                  Categoria (Opcional)
+                </Typography>
+                <Select
+                  selectedValue={categoryId}
+                  onSelect={setCategoryId}
+                  options={categoryOptions}
+                  placeholder="Selecione a categoria"
+                  selectStyle={styles.select}
+                />
+              </View>
+            )}
+          </>
+        )}
       </View>
 
       {/* Botão de Gerar */}
@@ -119,7 +202,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ onGenerate }) => {
       />
 
       {/* Informações sobre formatos */}
-      <View style={styles.info}>
+      <View style={[styles.info, { backgroundColor: theme.colors.notifications.info.background }]}>
         <MaterialCommunityIcons
           name="information"
           size={16}
@@ -135,42 +218,44 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ onGenerate }) => {
 
 const styles = StyleSheet.create({
   container: {
-    margin: theme.spacing.m,
-    padding: theme.spacing.l,
+    margin: 24,
+    padding: 32,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: theme.spacing.m,
+    marginBottom: 24,
   },
   title: {
-    marginLeft: theme.spacing.m,
+    marginLeft: 24,
   },
   description: {
-    marginBottom: theme.spacing.l,
+    marginBottom: 32,
   },
   form: {
-    marginBottom: theme.spacing.l,
+    marginBottom: 32,
   },
   field: {
-    marginBottom: theme.spacing.m,
+    marginBottom: 24,
   },
   select: {
-    marginTop: theme.spacing.xs,
+    marginTop: 8,
+  },
+  input: {
+    marginTop: 8,
   },
   generateButton: {
-    marginTop: theme.spacing.m,
+    marginTop: 24,
   },
   info: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: theme.spacing.l,
-    padding: theme.spacing.m,
-    backgroundColor: theme.colors.notifications.info.background,
-    borderRadius: theme.spacing.s,
+    marginTop: 32,
+    padding: 24,
+    borderRadius: 16,
   },
   infoText: {
-    marginLeft: theme.spacing.s,
+    marginLeft: 16,
     flex: 1,
   },
 });

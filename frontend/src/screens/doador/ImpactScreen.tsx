@@ -11,7 +11,7 @@ import {
   Card,
   ErrorState,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -29,6 +29,7 @@ type ImpactStats = {
 };
 
 const ImpactScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation =
     useNavigation<StackNavigationProp<DoadorProfileStackParamList, "Impact">>();
   const { user } = useAuth();
@@ -136,8 +137,29 @@ const ImpactScreen: React.FC = () => {
     );
   }
 
+  const dynamicStyles = {
+    container: {
+      backgroundColor: theme.colors.neutral.lightGray,
+    },
+    subtitle: {
+      color: theme.colors.neutral.darkGray,
+    },
+    loadingText: {
+      color: theme.colors.neutral.darkGray,
+    },
+    detailRow: {
+      borderBottomColor: theme.colors.neutral.lightGray,
+    },
+    messageCard: {
+      backgroundColor: theme.colors.primary.secondary + "20",
+    },
+    messageText: {
+      color: theme.colors.primary.secondary,
+    },
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, dynamicStyles.container]}>
       <Header
         title="Meu Impacto Social"
         onBackPress={() => navigation.goBack()}
@@ -148,11 +170,11 @@ const ImpactScreen: React.FC = () => {
         style={styles.content}
         contentContainerStyle={styles.contentContainer}
       >
-        <Typography variant="h3" style={styles.title}>
+        <Typography variant="h3" style={styles.title} color={theme.colors.neutral.black}>
           Seu impacto como doador
         </Typography>
 
-        <Typography variant="bodySecondary" style={styles.subtitle}>
+        <Typography variant="bodySecondary" style={[styles.subtitle, dynamicStyles.subtitle]}>
           Veja como suas doações estão fazendo a diferença
         </Typography>
 
@@ -162,7 +184,7 @@ const ImpactScreen: React.FC = () => {
               size="large"
               color={theme.colors.primary.secondary}
             />
-            <Typography variant="bodySecondary" style={styles.loadingText}>
+            <Typography variant="bodySecondary" style={[styles.loadingText, dynamicStyles.loadingText]}>
               Carregando suas estatísticas...
             </Typography>
           </View>
@@ -178,7 +200,7 @@ const ImpactScreen: React.FC = () => {
                   >
                     {stats.totalDonations}
                   </Typography>
-                  <Typography variant="bodySecondary">
+                  <Typography variant="bodySecondary" color={theme.colors.neutral.darkGray}>
                     Doações realizadas
                   </Typography>
                 </View>
@@ -190,7 +212,7 @@ const ImpactScreen: React.FC = () => {
                   >
                     {stats.distributedItems}
                   </Typography>
-                  <Typography variant="bodySecondary">
+                  <Typography variant="bodySecondary" color={theme.colors.neutral.darkGray}>
                     Itens distribuídos
                   </Typography>
                 </View>
@@ -202,7 +224,7 @@ const ImpactScreen: React.FC = () => {
                   >
                     {stats.peopleHelped}
                   </Typography>
-                  <Typography variant="bodySecondary">
+                  <Typography variant="bodySecondary" color={theme.colors.neutral.darkGray}>
                     Pessoas ajudadas
                   </Typography>
                 </View>
@@ -211,27 +233,27 @@ const ImpactScreen: React.FC = () => {
 
             {/* Detalhes por tipo de item */}
             <Card title="Tipos de itens doados" style={styles.detailsCard}>
-              <View style={styles.detailRow}>
-                <Typography variant="bodySecondary">Roupas:</Typography>
-                <Typography variant="body">{stats.clothesDonated}</Typography>
+              <View style={[styles.detailRow, dynamicStyles.detailRow]}>
+                <Typography variant="bodySecondary" color={theme.colors.neutral.darkGray}>Roupas:</Typography>
+                <Typography variant="body" color={theme.colors.neutral.black}>{stats.clothesDonated}</Typography>
               </View>
-              <View style={styles.detailRow}>
-                <Typography variant="bodySecondary">Calçados:</Typography>
-                <Typography variant="body">{stats.shoesDonated}</Typography>
+              <View style={[styles.detailRow, dynamicStyles.detailRow]}>
+                <Typography variant="bodySecondary" color={theme.colors.neutral.darkGray}>Calçados:</Typography>
+                <Typography variant="body" color={theme.colors.neutral.black}>{stats.shoesDonated}</Typography>
               </View>
-              <View style={styles.detailRow}>
-                <Typography variant="bodySecondary">Utensílios:</Typography>
-                <Typography variant="body">{stats.utensilsDonated}</Typography>
+              <View style={[styles.detailRow, dynamicStyles.detailRow]}>
+                <Typography variant="bodySecondary" color={theme.colors.neutral.darkGray}>Utensílios:</Typography>
+                <Typography variant="body" color={theme.colors.neutral.black}>{stats.utensilsDonated}</Typography>
               </View>
-              <View style={styles.detailRow}>
-                <Typography variant="bodySecondary">Outros:</Typography>
-                <Typography variant="body">{stats.othersDonated}</Typography>
+              <View style={[styles.detailRow, dynamicStyles.detailRow]}>
+                <Typography variant="bodySecondary" color={theme.colors.neutral.darkGray}>Outros:</Typography>
+                <Typography variant="body" color={theme.colors.neutral.black}>{stats.othersDonated}</Typography>
               </View>
             </Card>
 
             {/* Mensagem de agradecimento */}
-            <Card style={styles.messageCard}>
-              <Typography variant="body" style={styles.messageText}>
+            <Card style={[styles.messageCard, dynamicStyles.messageCard]}>
+              <Typography variant="body" style={[styles.messageText, dynamicStyles.messageText]}>
                 Obrigado por suas doações! Cada item faz a diferença na vida de
                 quem precisa.
               </Typography>
@@ -246,64 +268,58 @@ const ImpactScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.neutral.lightGray,
   },
   content: {
     flex: 1,
   },
   contentContainer: {
-    padding: theme.spacing.m,
+    padding: 16,
   },
   title: {
     textAlign: "center",
-    marginBottom: theme.spacing.xs,
+    marginBottom: 4,
   },
   subtitle: {
     textAlign: "center",
-    marginBottom: theme.spacing.m,
-    color: theme.colors.neutral.darkGray,
+    marginBottom: 16,
   },
   loadingContainer: {
     alignItems: "center",
     justifyContent: "center",
-    padding: theme.spacing.xl,
+    padding: 32,
   },
   loadingText: {
-    marginTop: theme.spacing.m,
-    color: theme.colors.neutral.darkGray,
+    marginTop: 16,
   },
   impactCard: {
-    marginBottom: theme.spacing.m,
-    padding: theme.spacing.s,
+    marginBottom: 16,
+    padding: 8,
   },
   mainStats: {
     flexDirection: "row",
     justifyContent: "space-around",
-    padding: theme.spacing.m,
+    padding: 16,
   },
   statItem: {
     alignItems: "center",
   },
   detailsCard: {
-    marginBottom: theme.spacing.m,
-    padding: theme.spacing.s,
+    marginBottom: 16,
+    padding: 8,
   },
   detailRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: theme.spacing.xs,
+    paddingVertical: 4,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.neutral.lightGray,
   },
   messageCard: {
-    marginBottom: theme.spacing.m,
-    padding: theme.spacing.m,
-    backgroundColor: theme.colors.primary.secondary + "20", // Adiciona transparência à cor
+    marginBottom: 16,
+    padding: 16,
   },
   messageText: {
     textAlign: "center",
-    color: theme.colors.primary.secondary,
     fontWeight: "bold",
   },
 });

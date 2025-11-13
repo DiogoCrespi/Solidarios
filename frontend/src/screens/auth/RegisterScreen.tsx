@@ -20,7 +20,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 import { useAuth } from "../../hooks/useAuth";
 import { AuthStackParamList } from "../../navigation/AuthNavigator";
 import { AUTH_ROUTES } from "../../navigation/routes";
@@ -68,6 +68,7 @@ const roles = [
 ];
 
 const RegisterScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation =
     useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
   const { register, isLoading, error, clearErrors } = useAuth();
@@ -219,13 +220,21 @@ const RegisterScreen: React.FC = () => {
       style={styles.container}
     >
       <StatusBar
-        barStyle="dark-content"
+        barStyle={theme.isDark ? "light-content" : "dark-content"}
         backgroundColor="transparent"
         translucent
       />
 
       <LinearGradient
-        colors={["#b0e6f2", "#e3f7ff", "#ffffff"]}
+        colors={
+          theme.isDark
+            ? [
+                theme.colors.neutral.darkGray,
+                theme.colors.neutral.mediumGray,
+                theme.colors.neutral.lightGray,
+              ]
+            : ["#b0e6f2", "#e3f7ff", "#ffffff"]
+        }
         locations={[0, 0.6, 1]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -276,8 +285,8 @@ const RegisterScreen: React.FC = () => {
               },
             ]}
           >
-            <Text style={styles.welcomeText}>Crie sua conta</Text>
-            <Text style={styles.subtitle}>
+            <Text style={[styles.welcomeText, { color: theme.colors.primary.main }]}>Crie sua conta</Text>
+            <Text style={[styles.subtitle, { color: theme.colors.neutral.darkGray }]}>
               Preencha os campos abaixo para começar
             </Text>
           </Animated.View>
@@ -296,9 +305,9 @@ const RegisterScreen: React.FC = () => {
             ]}
           >
             {errorMessage && (
-              <View style={styles.errorContainer}>
-                <MaterialIcons name="error-outline" size={20} color="#FF3B30" />
-                <Text style={styles.errorText}>{errorMessage}</Text>
+              <View style={[styles.errorContainer, { backgroundColor: theme.colors.notifications.error.background }]}>
+                <MaterialIcons name="error-outline" size={20} color={theme.colors.status.error} />
+                <Text style={[styles.errorText, { color: theme.colors.status.error }]}>{errorMessage}</Text>
               </View>
             )}
 
@@ -326,38 +335,44 @@ const RegisterScreen: React.FC = () => {
               }) => (
                 <>
                   {/* Campo de nome */}
-                  <View style={styles.inputContainer}>
+                  <View style={[styles.inputContainer, { 
+                    backgroundColor: theme.colors.neutral.white,
+                    borderColor: theme.colors.neutral.mediumGray 
+                  }]}>
                     <MaterialIcons
                       name="person"
                       size={22}
-                      color="#666"
+                      color={theme.colors.neutral.darkGray}
                       style={styles.inputIcon}
                     />
                     <TextInput
-                      style={styles.input}
+                      style={[styles.input, { color: theme.colors.neutral.black }]}
                       placeholder="Nome completo"
-                      placeholderTextColor="#999"
+                      placeholderTextColor={theme.colors.neutral.mediumGray}
                       value={values.name}
                       onChangeText={handleChange("name")}
                       onBlur={handleBlur("name")}
                     />
                   </View>
                   {touched.name && errors.name && (
-                    <Text style={styles.validationError}>{errors.name}</Text>
+                    <Text style={[styles.validationError, { color: theme.colors.status.error }]}>{errors.name}</Text>
                   )}
 
                   {/* Campo de email */}
-                  <View style={styles.inputContainer}>
+                  <View style={[styles.inputContainer, { 
+                    backgroundColor: theme.colors.neutral.white,
+                    borderColor: theme.colors.neutral.mediumGray 
+                  }]}>
                     <MaterialIcons
                       name="email"
                       size={22}
-                      color="#666"
+                      color={theme.colors.neutral.darkGray}
                       style={styles.inputIcon}
                     />
                     <TextInput
-                      style={styles.input}
+                      style={[styles.input, { color: theme.colors.neutral.black }]}
                       placeholder="Email"
-                      placeholderTextColor="#999"
+                      placeholderTextColor={theme.colors.neutral.mediumGray}
                       keyboardType="email-address"
                       autoCapitalize="none"
                       value={values.email}
@@ -366,21 +381,24 @@ const RegisterScreen: React.FC = () => {
                     />
                   </View>
                   {touched.email && errors.email && (
-                    <Text style={styles.validationError}>{errors.email}</Text>
+                    <Text style={[styles.validationError, { color: theme.colors.status.error }]}>{errors.email}</Text>
                   )}
 
                   {/* Campo de telefone */}
-                  <View style={styles.inputContainer}>
+                  <View style={[styles.inputContainer, { 
+                    backgroundColor: theme.colors.neutral.white,
+                    borderColor: theme.colors.neutral.mediumGray 
+                  }]}>
                     <MaterialIcons
                       name="phone"
                       size={22}
-                      color="#666"
+                      color={theme.colors.neutral.darkGray}
                       style={styles.inputIcon}
                     />
                     <TextInput
-                      style={styles.input}
+                      style={[styles.input, { color: theme.colors.neutral.black }]}
                       placeholder="Telefone (ex: 11 99999-9999)"
-                      placeholderTextColor="#999"
+                      placeholderTextColor={theme.colors.neutral.mediumGray}
                       keyboardType="phone-pad"
                       value={values.phone}
                       onChangeText={(text) => {
@@ -391,42 +409,48 @@ const RegisterScreen: React.FC = () => {
                     />
                   </View>
                   {touched.phone && errors.phone && (
-                    <Text style={styles.validationError}>{errors.phone}</Text>
+                    <Text style={[styles.validationError, { color: theme.colors.status.error }]}>{errors.phone}</Text>
                   )}
 
                   {/* Campo de endereço */}
-                  <View style={styles.inputContainer}>
+                  <View style={[styles.inputContainer, { 
+                    backgroundColor: theme.colors.neutral.white,
+                    borderColor: theme.colors.neutral.mediumGray 
+                  }]}>
                     <MaterialIcons
                       name="location-on"
                       size={22}
-                      color="#666"
+                      color={theme.colors.neutral.darkGray}
                       style={styles.inputIcon}
                     />
                     <TextInput
-                      style={styles.input}
+                      style={[styles.input, { color: theme.colors.neutral.black }]}
                       placeholder="Endereço completo"
-                      placeholderTextColor="#999"
+                      placeholderTextColor={theme.colors.neutral.mediumGray}
                       value={values.address}
                       onChangeText={handleChange("address")}
                       onBlur={handleBlur("address")}
                     />
                   </View>
                   {touched.address && errors.address && (
-                    <Text style={styles.validationError}>{errors.address}</Text>
+                    <Text style={[styles.validationError, { color: theme.colors.status.error }]}>{errors.address}</Text>
                   )}
 
                   {/* Campo de senha */}
-                  <View style={styles.inputContainer}>
+                  <View style={[styles.inputContainer, { 
+                    backgroundColor: theme.colors.neutral.white,
+                    borderColor: theme.colors.neutral.mediumGray 
+                  }]}>
                     <MaterialIcons
                       name="lock"
                       size={22}
-                      color="#666"
+                      color={theme.colors.neutral.darkGray}
                       style={styles.inputIcon}
                     />
                     <TextInput
-                      style={styles.input}
+                      style={[styles.input, { color: theme.colors.neutral.black }]}
                       placeholder="Senha"
-                      placeholderTextColor="#999"
+                      placeholderTextColor={theme.colors.neutral.mediumGray}
                       secureTextEntry={!passwordVisible}
                       value={values.password}
                       onChangeText={handleChange("password")}
@@ -439,28 +463,31 @@ const RegisterScreen: React.FC = () => {
                       <MaterialIcons
                         name={passwordVisible ? "visibility" : "visibility-off"}
                         size={22}
-                        color="#666"
+                        color={theme.colors.neutral.darkGray}
                       />
                     </TouchableOpacity>
                   </View>
                   {touched.password && errors.password && (
-                    <Text style={styles.validationError}>
+                    <Text style={[styles.validationError, { color: theme.colors.status.error }]}>
                       {errors.password}
                     </Text>
                   )}
 
                   {/* Campo de confirmação de senha */}
-                  <View style={styles.inputContainer}>
+                  <View style={[styles.inputContainer, { 
+                    backgroundColor: theme.colors.neutral.white,
+                    borderColor: theme.colors.neutral.mediumGray 
+                  }]}>
                     <MaterialIcons
                       name="lock"
                       size={22}
-                      color="#666"
+                      color={theme.colors.neutral.darkGray}
                       style={styles.inputIcon}
                     />
                     <TextInput
-                      style={styles.input}
+                      style={[styles.input, { color: theme.colors.neutral.black }]}
                       placeholder="Confirmar senha"
-                      placeholderTextColor="#999"
+                      placeholderTextColor={theme.colors.neutral.mediumGray}
                       secureTextEntry={!confirmPasswordVisible}
                       value={values.confirmPassword}
                       onChangeText={handleChange("confirmPassword")}
@@ -479,23 +506,37 @@ const RegisterScreen: React.FC = () => {
                             : "visibility-off"
                         }
                         size={22}
-                        color="#666"
+                        color={theme.colors.neutral.darkGray}
                       />
                     </TouchableOpacity>
                   </View>
                   {touched.confirmPassword && errors.confirmPassword && (
-                    <Text style={styles.validationError}>
+                    <Text style={[styles.validationError, { color: theme.colors.status.error }]}>
                       {errors.confirmPassword}
                     </Text>
                   )}
 
                   {/* Seleção de papel com cards */}
                   <View style={styles.roleContainer}>
-                    <Text style={styles.roleLabel}>Você quer:</Text>
+                    <Text style={[styles.roleLabel, { color: theme.colors.neutral.black }]}>Você quer:</Text>
 
                     <View style={styles.roleRow}>
                       {roles.map((role) => {
                         const isSelected = values.role === role.value;
+                        const dynamicRoleStyles = {
+                          roleCard: {
+                            backgroundColor: theme.colors.neutral.white,
+                            borderColor: theme.colors.neutral.mediumGray,
+                          },
+                          roleCardSelected: {
+                            borderColor: theme.colors.primary.main,
+                            backgroundColor: theme.colors.primary.main + "10",
+                          },
+                          roleIconContainer: {
+                            backgroundColor: theme.colors.neutral.white,
+                            borderColor: theme.colors.neutral.mediumGray,
+                          },
+                        };
                         return (
                           <Animated.View
                             key={role.value}
@@ -511,24 +552,28 @@ const RegisterScreen: React.FC = () => {
                               activeOpacity={0.8}
                               style={[
                                 styles.roleCard,
+                                dynamicRoleStyles.roleCard,
                                 isSelected && styles.roleCardSelected,
+                                isSelected && dynamicRoleStyles.roleCardSelected,
                               ]}
                               onPress={() => {
                                 setFieldValue("role", role.value);
                                 animateSelection();
                               }}
                             >
-                              <View style={styles.roleIconContainer}>
+                              <View style={[styles.roleIconContainer, dynamicRoleStyles.roleIconContainer]}>
                                 <MaterialIcons
                                   name={role.icon}
                                   size={24}
-                                  color={isSelected ? "#006E58" : "#666"}
+                                  color={isSelected ? theme.colors.primary.main : theme.colors.neutral.darkGray}
                                 />
                               </View>
                               <Text
                                 style={[
                                   styles.roleText,
+                                  { color: theme.colors.neutral.black },
                                   isSelected && styles.roleTextSelected,
+                                  isSelected && { color: theme.colors.primary.main },
                                 ]}
                               >
                                 {role.label}
@@ -540,7 +585,7 @@ const RegisterScreen: React.FC = () => {
                     </View>
 
                     {touched.role && errors.role && (
-                      <Text style={styles.validationError}>{errors.role}</Text>
+                      <Text style={[styles.validationError, { color: theme.colors.status.error }]}>{errors.role}</Text>
                     )}
                   </View>
 
@@ -579,7 +624,7 @@ const RegisterScreen: React.FC = () => {
               },
             ]}
           >
-            <Text style={styles.loginText}>Já tem uma conta?</Text>
+            <Text style={[styles.loginText, { color: theme.colors.neutral.darkGray }]}>Já tem uma conta?</Text>
             <TouchableOpacity
               onPress={() =>
                 navigation.navigate(
@@ -587,7 +632,7 @@ const RegisterScreen: React.FC = () => {
                 )
               }
             >
-              <Text style={styles.loginLink}>Faça login</Text>
+              <Text style={[styles.loginLink, { color: theme.colors.primary.secondary }]}>Faça login</Text>
             </TouchableOpacity>
           </Animated.View>
         </ScrollView>
@@ -632,16 +677,12 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   welcomeText: {
-    fontFamily: theme.fontFamily.primary,
     fontSize: 24,
     fontWeight: "bold",
-    color: theme.colors.primary.main,
     marginBottom: 8,
   },
   subtitle: {
-    fontFamily: theme.fontFamily.primary,
     fontSize: 16,
-    color: theme.colors.neutral.darkGray,
   },
   formContainer: {
     width: "100%",
@@ -650,13 +691,11 @@ const styles = StyleSheet.create({
   errorContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFEBEE",
     padding: 12,
     borderRadius: 8,
     marginBottom: 16,
   },
   errorText: {
-    color: "#FF3B30",
     marginLeft: 8,
     flex: 1,
     fontSize: 14,
@@ -664,28 +703,23 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F5F8FF",
     borderRadius: 12,
     paddingHorizontal: 16,
     marginBottom: 12,
     height: 56,
     borderWidth: 1,
-    borderColor: "#E0E7FF",
   },
   inputIcon: {
     marginRight: 12,
   },
   input: {
     flex: 1,
-    fontFamily: theme.fontFamily.primary,
     fontSize: 16,
-    color: "#333",
   },
   passwordToggle: {
     padding: 8,
   },
   validationError: {
-    color: "#FF3B30",
     fontSize: 12,
     marginTop: -8,
     marginBottom: 12,
@@ -695,10 +729,8 @@ const styles = StyleSheet.create({
     marginVertical: 16,
   },
   roleLabel: {
-    fontFamily: theme.fontFamily.primary,
     fontSize: 16,
     fontWeight: "500",
-    color: "#333",
     marginBottom: 12,
   },
   roleRow: {
@@ -708,10 +740,8 @@ const styles = StyleSheet.create({
   },
   roleCard: {
     marginHorizontal: 4,
-    backgroundColor: "#FFFFFF",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#E0E7FF",
     paddingVertical: 16,
     paddingHorizontal: 8,
     alignItems: "center",
@@ -719,29 +749,22 @@ const styles = StyleSheet.create({
     height: 120,
   },
   roleCardSelected: {
-    borderColor: "#006E58",
     borderWidth: 2,
-    backgroundColor: "rgba(0,110,88,0.05)",
   },
   roleIconContainer: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: "#FFFFFF",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: "#E0E7FF",
   },
   roleText: {
-    fontFamily: theme.fontFamily.primary,
     fontSize: 14,
-    color: "#333",
     textAlign: "center",
   },
   roleTextSelected: {
-    color: "#006E58",
     fontWeight: "500",
   },
   registerButtonContainer: {
@@ -762,7 +785,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   registerButtonText: {
-    fontFamily: theme.fontFamily.primary,
     fontSize: 16,
     fontWeight: "600",
     color: "#fff",
@@ -782,15 +804,11 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   loginText: {
-    fontFamily: theme.fontFamily.primary,
     fontSize: 14,
-    color: theme.colors.neutral.darkGray,
   },
   loginLink: {
-    fontFamily: theme.fontFamily.primary,
     fontSize: 14,
     fontWeight: "600",
-    color: theme.colors.primary.secondary,
     marginLeft: 5,
   },
 });

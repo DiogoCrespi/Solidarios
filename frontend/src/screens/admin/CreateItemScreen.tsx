@@ -23,7 +23,7 @@ import {
   CategoryPickerDropdown,
   FileUpload,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useItems } from "../../hooks/useItems";
@@ -73,6 +73,7 @@ const conservationStateOptions = [
 ];
 
 const CreateItemScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation =
     useNavigation<StackNavigationProp<AdminItemsStackParamList>>();
   const { createItem, isLoading, error, clearError } = useItems();
@@ -85,6 +86,7 @@ const CreateItemScreen: React.FC = () => {
     message: "",
     description: "",
   });
+  const styles = CreateItemScreenStyles(theme);
 
   useEffect(() => {
     fetchCategories();
@@ -140,7 +142,6 @@ const CreateItemScreen: React.FC = () => {
       <Header
         title="Criar Novo Item"
         onBackPress={() => navigation.goBack()}
-        backgroundColor={theme.colors.primary.main}
       />
 
       <NotificationBanner
@@ -329,7 +330,7 @@ const CreateItemScreen: React.FC = () => {
                   title="Criar Item"
                   onPress={() => handleSubmit()}
                   loading={isLoading}
-                  style={styles.buttonSubmit}
+                  style={[styles.buttonSubmit, { backgroundColor: theme.colors.primary.secondary }]}
                 />
               </View>
             </View>
@@ -340,19 +341,21 @@ const CreateItemScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const CreateItemScreenStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.neutral.white,
   },
   content: {
     flex: 1,
+    backgroundColor: theme.colors.neutral.white,
   },
   contentContainer: {
     padding: theme.spacing.m,
   },
   title: {
     marginBottom: theme.spacing.m,
+    color: theme.colors.neutral.black,
   },
   form: {
     width: "100%",
@@ -369,7 +372,6 @@ const styles = StyleSheet.create({
   buttonSubmit: {
     flex: 1,
     marginLeft: theme.spacing.xs,
-    backgroundColor: theme.colors.primary.secondary,
   },
 });
 

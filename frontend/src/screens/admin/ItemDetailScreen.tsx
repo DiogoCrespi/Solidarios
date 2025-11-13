@@ -33,7 +33,7 @@ import {
   ConfirmationDialog,
   Avatar,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -52,6 +52,7 @@ type ItemDetailScreenRouteProp = RouteProp<
 >;
 
 const ItemDetailScreen: React.FC = () => {
+  const theme = useTheme();
   // Navegação e parâmetros
   const route = useRoute<ItemDetailScreenRouteProp>();
   const { id } = route.params;
@@ -91,6 +92,7 @@ const ItemDetailScreen: React.FC = () => {
   const [showStatusConfirmation, setShowStatusConfirmation] = useState(false);
   const [newStatus, setNewStatus] = useState<ItemStatus | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const styles = ItemDetailScreenStyles(theme);
 
   // Carregar detalhes do item e verificar estoque
   const loadItemDetails = useCallback(async () => {
@@ -316,11 +318,10 @@ const ItemDetailScreen: React.FC = () => {
       <Header
         title="Detalhes do Item"
         onBackPress={() => navigation.goBack()}
-        backgroundColor={theme.colors.primary.main}
         rightComponent={
           <View style={styles.headerActions}>
             <TouchableOpacity
-              style={styles.headerButton}
+              style={[styles.headerButton, { backgroundColor: theme.colors.primary.secondary }]}
               onPress={handleEditItem}
             >
               <Typography variant="small" color={theme.colors.neutral.white}>
@@ -328,7 +329,7 @@ const ItemDetailScreen: React.FC = () => {
               </Typography>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.headerButton, styles.deleteButton]}
+              style={[styles.headerButton, styles.deleteButton, { backgroundColor: theme.colors.status.error }]}
               onPress={() => setShowDeleteConfirmation(true)}
             >
               <Typography variant="small" color={theme.colors.neutral.white}>
@@ -337,7 +338,7 @@ const ItemDetailScreen: React.FC = () => {
             </TouchableOpacity>
           </View>
         }
-      ></Header>
+      />
       {/* Notificação */}
       <NotificationBanner
         visible={notification.visible}
@@ -676,13 +677,14 @@ const ItemDetailScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const ItemDetailScreenStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.neutral.white,
   },
   content: {
     flex: 1,
+    backgroundColor: theme.colors.neutral.white,
   },
   contentContainer: {
     padding: theme.spacing.s,
@@ -692,13 +694,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   headerButton: {
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
     padding: theme.spacing.xs,
     borderRadius: theme.borderRadius.small,
     marginLeft: theme.spacing.xs,
   },
   deleteButton: {
-    backgroundColor: theme.colors.status.error,
+    // backgroundColor será aplicado inline
   },
   imageContainer: {
     marginBottom: theme.spacing.s,

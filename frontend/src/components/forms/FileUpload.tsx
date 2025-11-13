@@ -13,7 +13,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useFormikContext, getIn } from "formik";
 import Typography from "../common/Typography";
 import Button from "../common/Button";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 export interface FileUploadProps {
   name: string;
@@ -41,6 +41,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
   accept = "images",
   multiple = true,
 }) => {
+  const theme = useTheme();
   const [uploading, setUploading] = useState(false);
 
   // Integração com Formik
@@ -170,7 +171,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
         <Image source={{ uri: item.uri }} style={styles.fileImage} />
 
         <TouchableOpacity
-          style={styles.removeButton}
+          style={[styles.removeButton, { backgroundColor: theme.colors.status.error }]}
           onPress={() => handleRemoveFile(index)}
         >
           <Typography variant="small" color={theme.colors.neutral.white}>
@@ -184,7 +185,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
   return (
     <View style={[styles.container, style]}>
       <View style={styles.labelContainer}>
-        <Typography variant="bodySecondary" style={styles.label}>
+        <Typography variant="bodySecondary" color={theme.colors.neutral.black} style={styles.label}>
           {label}
         </Typography>
 
@@ -250,34 +251,34 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: theme.spacing.m,
+    marginBottom: 24,
   },
   labelContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: theme.spacing.xs,
+    marginBottom: 8,
   },
   label: {
-    marginRight: theme.spacing.xxs,
+    marginRight: 4,
   },
   buttonContainer: {
     flexDirection: "row",
-    marginBottom: theme.spacing.xs,
+    marginBottom: 8,
   },
   button: {
-    marginRight: theme.spacing.s,
+    marginRight: 16,
   },
   fileList: {
-    marginTop: theme.spacing.xs,
+    marginTop: 8,
   },
   fileListContent: {
-    paddingHorizontal: theme.spacing.xxs,
+    paddingHorizontal: 4,
   },
   fileItem: {
     width: 100,
     height: 100,
-    marginRight: theme.spacing.xs,
-    borderRadius: theme.borderRadius.small,
+    marginRight: 8,
+    borderRadius: 4,
     overflow: "hidden",
     position: "relative",
   },
@@ -293,15 +294,14 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: theme.colors.status.error,
     justifyContent: "center",
     alignItems: "center",
   },
   errorText: {
-    marginTop: theme.spacing.xxs,
+    marginTop: 4,
   },
   helpText: {
-    marginTop: theme.spacing.xxs,
+    marginTop: 4,
   },
 });
 

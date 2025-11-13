@@ -30,7 +30,7 @@ import {
   ErrorState,
   DistributionCard,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -46,6 +46,7 @@ type BeneficiaryDetailScreenRouteProp = RouteProp<
 >;
 
 const BeneficiaryDetailScreen: React.FC = () => {
+  const theme = useTheme();
   // Navegação e parâmetros
   const route = useRoute<BeneficiaryDetailScreenRouteProp>();
   const { id } = route.params;
@@ -73,6 +74,7 @@ const BeneficiaryDetailScreen: React.FC = () => {
   } = useDistributions();
 
   const [refreshing, setRefreshing] = useState(false);
+  const styles = BeneficiaryDetailScreenStyles(theme);
 
   // Carregar beneficiário e suas distribuições
   const loadBeneficiaryData = useCallback(async () => {
@@ -182,7 +184,6 @@ const BeneficiaryDetailScreen: React.FC = () => {
       <Header
         title="Detalhes do Beneficiário"
         onBackPress={() => navigation.goBack()}
-        backgroundColor={theme.colors.primary.secondary}
       />
 
       <ScrollView
@@ -231,7 +232,7 @@ const BeneficiaryDetailScreen: React.FC = () => {
               >
                 Telefone:
               </Typography>
-              <Typography variant="body">
+              <Typography variant="body" color={theme.colors.neutral.black}>
                 {beneficiary.phone || "Não informado"}
               </Typography>
             </View>
@@ -243,7 +244,7 @@ const BeneficiaryDetailScreen: React.FC = () => {
               >
                 Endereço:
               </Typography>
-              <Typography variant="body" style={styles.address}>
+              <Typography variant="body" style={styles.address} color={theme.colors.neutral.black}>
                 {beneficiary.address || "Não informado"}
               </Typography>
             </View>
@@ -339,13 +340,14 @@ const BeneficiaryDetailScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const BeneficiaryDetailScreenStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.neutral.white,
   },
   content: {
     flex: 1,
+    backgroundColor: theme.colors.neutral.white,
   },
   contentContainer: {
     padding: theme.spacing.s,
@@ -411,7 +413,7 @@ const styles = StyleSheet.create({
     padding: theme.spacing.s,
     alignItems: "center",
     borderTopWidth: 1,
-    borderTopColor: theme.colors.neutral.lightGray,
+    borderTopColor: theme.colors.neutral.mediumGray,
   },
 });
 

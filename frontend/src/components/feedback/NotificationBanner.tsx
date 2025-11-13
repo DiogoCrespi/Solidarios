@@ -9,7 +9,7 @@ import {
   Platform,
 } from "react-native";
 import Typography from "../common/Typography";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 export type NotificationType = "success" | "error" | "warning" | "info";
 
@@ -75,6 +75,7 @@ const NotificationBanner: React.FC<NotificationBannerProps> = ({
   icon,
   action,
 }) => {
+  const theme = useTheme();
   const translateY = useRef(
     new Animated.Value(position === "top" ? -100 : 100)
   ).current;
@@ -350,24 +351,24 @@ const commonIconStyles = StyleSheet.create({
 const baseStyles = StyleSheet.create({
   container: {
     position: "absolute",
-    left: theme.spacing.s,
-    right: theme.spacing.s,
-    borderRadius: theme.borderRadius.medium,
-    padding: theme.spacing.s,
+    left: 16,
+    right: 16,
+    borderRadius: 8,
+    padding: 16,
     zIndex: 9999,
   },
   topPosition: {
-    top: theme.spacing.l,
+    top: 32,
   },
   bottomPosition: {
-    bottom: theme.spacing.l,
+    bottom: 32,
   },
   contentContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
   icon: {
-    marginRight: theme.spacing.xs,
+    marginRight: 8,
   },
   defaultIcon: {
     width: 24,
@@ -375,7 +376,7 @@ const baseStyles = StyleSheet.create({
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: theme.spacing.xs,
+    marginRight: 8,
   },
   messageContainer: {
     flex: 1,
@@ -387,13 +388,13 @@ const baseStyles = StyleSheet.create({
     marginTop: 2,
   },
   closeButton: {
-    padding: theme.spacing.xxs,
-    marginLeft: theme.spacing.xs,
+    padding: 4,
+    marginLeft: 8,
   },
   actionButton: {
-    marginTop: theme.spacing.s,
-    paddingTop: theme.spacing.xs,
-    paddingHorizontal: theme.spacing.xs,
+    marginTop: 16,
+    paddingTop: 8,
+    paddingHorizontal: 8,
     borderTopWidth: 1,
     borderTopColor: "rgba(0, 0, 0, 0.05)",
     alignItems: "flex-end",

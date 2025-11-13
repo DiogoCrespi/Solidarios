@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, StyleSheet, ScrollView, Text } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { AdminDistributionsStackParamList } from "../../navigation/types";
@@ -7,19 +7,20 @@ import { AdminDistributionsStackParamList } from "../../navigation/types";
 // Componentes
 import {
   Header,
-  TextField,
+  Typography,
   Button,
   Loading,
   ErrorState,
   DistributionCard,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
 import { useDistributions } from "../../hooks/useDistributions";
 
 const DistributionDetailScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation =
     useNavigation<StackNavigationProp<AdminDistributionsStackParamList>>();
   const route = useRoute();
@@ -27,6 +28,7 @@ const DistributionDetailScreen: React.FC = () => {
   useAuth();
   const { distribution, isLoading, error, fetchDistributionById, clearError } =
     useDistributions();
+  const styles = DistributionDetailScreenStyles(theme);
 
   useEffect(() => {
     fetchDistributionById(id);
@@ -66,29 +68,28 @@ const DistributionDetailScreen: React.FC = () => {
       <Header
         title={`Distribuição #${distribution.id.slice(0, 8)}`}
         subtitle={`Data: ${new Date(distribution.date).toLocaleDateString()}`}
-        backgroundColor={theme.colors.primary.accent}
         onBackPress={() => navigation.goBack()}
       />
       <ScrollView style={styles.content}>
         <View style={styles.infoCard}>
-          <TextField style={styles.label}>Beneficiário:</TextField>
-          <TextField style={styles.value}>
+          <Typography variant="bodySecondary" style={styles.label}>Beneficiário:</Typography>
+          <Typography variant="body" style={styles.value}>
             {distribution.beneficiary?.name || "Não especificado"}
-          </TextField>
+          </Typography>
 
-          <TextField style={styles.label}>Data da Distribuição:</TextField>
-          <Text style={styles.value}>
+          <Typography variant="bodySecondary" style={styles.label}>Data da Distribuição:</Typography>
+          <Typography variant="body" style={styles.value}>
             {distribution.date
               ? new Date(distribution.date).toLocaleString()
               : "Data não disponível"}
-          </Text>
+          </Typography>
 
-          <Text style={styles.label}>Observações:</Text>
-          <Text style={styles.value}>
+          <Typography variant="bodySecondary" style={styles.label}>Observações:</Typography>
+          <Typography variant="body" style={styles.value}>
             {distribution.observations || "Sem observações"}
-          </Text>
+          </Typography>
 
-          <Text style={styles.label}>Itens Distribuídos:</Text>
+          <Typography variant="bodySecondary" style={styles.label}>Itens Distribuídos:</Typography>
           {distribution.items && distribution.items.length > 0 ? (
             distribution.items.map((item, index) => (
               <DistributionCard
@@ -107,7 +108,7 @@ const DistributionDetailScreen: React.FC = () => {
               />
             ))
           ) : (
-            <Text style={styles.noItems}>Nenhum item distribuído.</Text>
+            <Typography variant="bodySecondary" style={styles.noItems}>Nenhum item distribuído.</Typography>
           )}
         </View>
 
@@ -120,7 +121,7 @@ const DistributionDetailScreen: React.FC = () => {
                 id: distribution.id,
               });
             }}
-            style={styles.editButton}
+            style={[styles.editButton, { backgroundColor: theme.colors.primary.accent }]}
           />
         </View>
       </ScrollView>
@@ -128,7 +129,7 @@ const DistributionDetailScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const DistributionDetailScreenStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.neutral.white,
@@ -136,6 +137,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: theme.spacing.m,
+    backgroundColor: theme.colors.neutral.white,
   },
   infoCard: {
     backgroundColor: theme.colors.neutral.white,
@@ -161,7 +163,7 @@ const styles = StyleSheet.create({
   },
   noItems: {
     fontSize: theme.typography.body.fontSize,
-    color: theme.colors.neutral.lightGray,
+    color: theme.colors.neutral.darkGray,
     marginTop: theme.spacing.xs,
   },
   itemCard: {
@@ -171,7 +173,7 @@ const styles = StyleSheet.create({
     marginTop: theme.spacing.m,
   },
   editButton: {
-    backgroundColor: theme.colors.primary.accent,
+    // backgroundColor será aplicado inline
   },
 });
 

@@ -11,7 +11,7 @@ import Typography from "../common/Typography";
 import Avatar from "../common/Avatar";
 import Badge from "../common/Badge";
 import { User, UserRole } from "../../types/users.types";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 export interface UserCardProps {
   user: User;
@@ -53,6 +53,8 @@ const UserCard: React.FC<UserCardProps> = ({
   showRole = true,
   compact = false,
 }) => {
+  const theme = useTheme();
+  
   // Renderizar conteúdo do card
   const renderCardContent = () => (
     <View style={styles.contentContainer}>
@@ -68,6 +70,7 @@ const UserCard: React.FC<UserCardProps> = ({
         <View style={styles.nameContainer}>
           <Typography
             variant={compact ? "body" : "h4"}
+            color={theme.colors.neutral.black}
             style={styles.name}
             numberOfLines={1}
           >
@@ -87,6 +90,7 @@ const UserCard: React.FC<UserCardProps> = ({
         {/* E-mail do usuário */}
         <Typography
           variant="bodySecondary"
+          color={theme.colors.neutral.darkGray}
           style={styles.email}
           numberOfLines={1}
         >
@@ -106,7 +110,7 @@ const UserCard: React.FC<UserCardProps> = ({
                 },
               ]}
             />
-            <Typography variant="small">
+            <Typography variant="small" color={theme.colors.neutral.black}>
               {user.isActive ? "Ativo" : "Inativo"}
             </Typography>
           </View>
@@ -146,20 +150,20 @@ const UserCard: React.FC<UserCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    marginBottom: theme.spacing.s,
+    marginBottom: 16,
   },
   compactCard: {
     minHeight: 60,
   },
   cardContent: {
-    padding: theme.spacing.s,
+    padding: 16,
   },
   contentContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
   avatar: {
-    marginRight: theme.spacing.s,
+    marginRight: 16,
   },
   detailsContainer: {
     flex: 1,
@@ -167,17 +171,17 @@ const styles = StyleSheet.create({
   nameContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: theme.spacing.xxs,
+    marginBottom: 4,
   },
   name: {
     flex: 1,
-    marginRight: theme.spacing.xs,
+    marginRight: 8,
   },
   roleBadge: {
-    marginLeft: theme.spacing.xxs,
+    marginLeft: 4,
   },
   email: {
-    marginBottom: theme.spacing.xxs,
+    marginBottom: 4,
   },
   statusContainer: {
     flexDirection: "row",
@@ -187,10 +191,10 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    marginRight: theme.spacing.xxs,
+    marginRight: 4,
   },
   actionButton: {
-    paddingVertical: theme.spacing.xs,
+    paddingVertical: 8,
     alignItems: "center",
   },
 });

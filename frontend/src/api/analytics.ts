@@ -157,6 +157,7 @@ const AnalyticsService = {
     format: string;
     startDate?: string;
     endDate?: string;
+    categoryId?: string;
   }): Promise<Blob> => {
     const response = await api.post(
       "/analytics/generate-report",

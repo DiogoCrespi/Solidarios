@@ -20,12 +20,13 @@ import {
   Divider,
   NotificationBanner,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
 
 const ProfileScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation =
     useNavigation<StackNavigationProp<BeneficiarioProfileStackParamList>>();
   const { user, logout } = useAuth();
@@ -34,6 +35,7 @@ const ProfileScreen: React.FC = () => {
     message: "",
     type: "info" as "success" | "error" | "info" | "warning",
   });
+  const styles = ProfileScreenStyles(theme);
 
   // Tratar logout
   const handleLogout = async () => {
@@ -74,7 +76,7 @@ const ProfileScreen: React.FC = () => {
       />
 
       {/* Cabeçalho */}
-      <Header title="Meu Perfil" backgroundColor={theme.colors.primary.main} />
+      <Header title="Meu Perfil" />
 
       <ScrollView
         style={styles.content}
@@ -126,7 +128,7 @@ const ProfileScreen: React.FC = () => {
         <Button
           title="Sair da Conta"
           variant="secondary"
-          style={styles.logoutButton}
+          style={[styles.logoutButton, { backgroundColor: theme.colors.status.error }]}
           onPress={handleLogout}
         />
       </ScrollView>
@@ -134,13 +136,14 @@ const ProfileScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const ProfileScreenStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.neutral.lightGray,
   },
   content: {
     flex: 1,
+    backgroundColor: theme.colors.neutral.lightGray,
   },
   scrollContent: {
     padding: theme.spacing.m,
@@ -169,7 +172,7 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing.m,
   },
   logoutButton: {
-    backgroundColor: theme.colors.status.error,
+    // backgroundColor será aplicado inline
   },
 });
 

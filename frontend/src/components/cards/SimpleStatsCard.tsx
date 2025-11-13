@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, StyleProp, ViewStyle, useWindowDimensions } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Typography, Card } from '../barrelComponents';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
 
 export interface SimpleStatsCardProps {
   title: string;
@@ -18,10 +18,12 @@ const SimpleStatsCard: React.FC<SimpleStatsCardProps> = ({
   value,
   icon,
   iconFamily = 'MaterialCommunityIcons',
-  color = theme.colors.primary.main,
+  color,
   style,
 }) => {
+  const theme = useTheme();
   const { width } = useWindowDimensions();
+  const defaultColor = color || theme.colors.primary.main;
   
   // Calcular tamanho do ícone baseado no tamanho da tela
   // Mobile: 26px, Tablet: 28px, Desktop: 30px
@@ -30,7 +32,7 @@ const SimpleStatsCard: React.FC<SimpleStatsCardProps> = ({
   return (
     <Card style={[styles.card, style]}>
       <View style={styles.iconContainer}>
-        <MaterialCommunityIcons name={icon as any} size={iconSize} color={color} />
+        <MaterialCommunityIcons name={icon as any} size={iconSize} color={defaultColor} />
       </View>
       <View style={styles.content}>
         <Typography variant="h2" color={theme.colors.neutral.black}>
@@ -50,8 +52,8 @@ const SimpleStatsCard: React.FC<SimpleStatsCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    paddingHorizontal: theme.spacing.s,
-    paddingVertical: theme.spacing.m,
+    paddingHorizontal: 16,
+    paddingVertical: 24,
     alignItems: 'center',
     justifyContent: 'center',
     minWidth: 0,
@@ -59,7 +61,7 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   iconContainer: {
-    marginBottom: theme.spacing.xs,
+    marginBottom: 8,
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
@@ -72,10 +74,10 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   title: {
-    marginTop: theme.spacing.xs,
+    marginTop: 8,
     textAlign: 'center',
     flexWrap: 'wrap',
-    paddingHorizontal: theme.spacing.xs,
+    paddingHorizontal: 8,
   },
 });
 

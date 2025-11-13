@@ -26,7 +26,7 @@ import {
   Divider,
   Card,
 } from '../barrelComponents';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
 
 // Ícones
 import {
@@ -67,6 +67,7 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
   currentRoute,
   onNavigate,
 }) => {
+  const theme = useTheme();
   const navigation = useNavigation();
   const { user, logout } = useAuth();
   const dispatch = useAppDispatch();
@@ -195,6 +196,28 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
       label: 'Configurações',
       route: 'Settings',
     });
+
+    // Adicionar Auditoria apenas para Admin
+    if (user?.role === 'ADMIN') {
+      baseItems.push({
+        id: 'audit',
+        icon: 'history',
+        iconFamily: 'MaterialIcons',
+        label: 'Auditoria',
+        route: 'Audit',
+      });
+    }
+
+    // Adicionar Dev Screen para Admin e Funcionario
+    if (user?.role === 'ADMIN' || user?.role === 'FUNCIONARIO') {
+      baseItems.push({
+        id: 'dev',
+        icon: 'code',
+        iconFamily: 'MaterialIcons',
+        label: 'Dev',
+        route: 'Dev',
+      });
+    }
 
     return baseItems;
   };
@@ -534,11 +557,34 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
     }
   };
 
+  const dynamicStyles = {
+    container: {
+      backgroundColor: theme.colors.neutral.white,
+      borderRightColor: theme.colors.neutral.mediumGray,
+    },
+    activeMenuItem: {
+      backgroundColor: theme.colors.neutral.lightGray,
+      borderRightColor: theme.colors.primary.main,
+    },
+    modalContent: {
+      backgroundColor: theme.colors.neutral.white,
+    },
+    modalOption: {
+      backgroundColor: theme.colors.neutral.lightGray,
+    },
+    cameraModalContent: {
+      backgroundColor: theme.colors.neutral.white,
+    },
+    captureButton: {
+      backgroundColor: theme.colors.primary.main,
+    },
+  };
+
   return (
     <Animated.View 
-      style={[styles.container, { width: animatedWidth }]}
+      style={[styles.container, dynamicStyles.container, { width: animatedWidth }]}
     >
-        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Header com toggle */}
         <View style={styles.header}>
           <TouchableOpacity
@@ -607,7 +653,7 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
                 <TouchableOpacity
                   style={[
                     styles.menuItem,
-                    isActive && styles.activeMenuItem,
+                    isActive && [styles.activeMenuItem, dynamicStyles.activeMenuItem],
                   ]}
                   onPress={() => handleMenuItemPress(item)}
                   activeOpacity={0.7}
@@ -688,16 +734,16 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
         <TouchableWithoutFeedback onPress={() => setShowPhotoModal(false)}>
           <View style={styles.modalOverlay}>
             <TouchableWithoutFeedback>
-              <View style={styles.modalContent}>
+              <View style={[styles.modalContent, dynamicStyles.modalContent]}>
                 <Typography variant="h4" style={styles.modalTitle}>
                   Foto de Perfil
                 </Typography>
-                <Typography variant="body" style={styles.modalSubtitle}>
+                <Typography variant="body" style={[styles.modalSubtitle, { color: theme.colors.neutral.mediumGray }]}>
                   Escolha uma opção
                 </Typography>
 
                 <TouchableOpacity
-                  style={styles.modalOption}
+                  style={[styles.modalOption, dynamicStyles.modalOption]}
                   onPress={handleTakePhoto}
                   activeOpacity={0.7}
                 >
@@ -708,7 +754,7 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={styles.modalOption}
+                  style={[styles.modalOption, dynamicStyles.modalOption]}
                   onPress={handleChooseFromGallery}
                   activeOpacity={0.7}
                 >
@@ -745,7 +791,7 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
           }}
         >
           <View style={styles.modalOverlay}>
-            <View style={styles.cameraModalContent}>
+            <View style={[styles.cameraModalContent, dynamicStyles.cameraModalContent]}>
               <Typography variant="h4" style={styles.modalTitle}>
                 Tirar Foto
               </Typography>
@@ -779,7 +825,7 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
 
               <View style={styles.cameraButtons}>
                 <TouchableOpacity
-                  style={[styles.cameraButton, styles.captureButton]}
+                  style={[styles.cameraButton, styles.captureButton, dynamicStyles.captureButton]}
                   onPress={capturePhoto}
                   activeOpacity={0.7}
                 >
@@ -809,9 +855,7 @@ const ExpandableSidebar: React.FC<ExpandableSidebarProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: theme.colors.neutral.white,
     borderRightWidth: 1,
-    borderRightColor: theme.colors.neutral.lightGray,
     height: '100%',
     elevation: 4,
     shadowColor: '#000',
@@ -828,65 +872,63 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: theme.spacing.s,
-    paddingVertical: theme.spacing.s,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
     minHeight: 56,
   },
   toggleButton: {
-    padding: theme.spacing.xs,
-    borderRadius: theme.borderRadius.small,
+    padding: 8,
+    borderRadius: 4,
   },
   headerText: {
-    marginLeft: theme.spacing.s,
+    marginLeft: 16,
     flex: 1,
   },
   userCard: {
-    marginHorizontal: theme.spacing.s,
-    marginVertical: theme.spacing.s,
-    padding: theme.spacing.s,
+    marginHorizontal: 16,
+    marginVertical: 16,
+    padding: 16,
   },
   userInfo: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   userDetails: {
-    marginLeft: theme.spacing.s,
+    marginLeft: 16,
     flex: 1,
   },
   menuContainer: {
-    paddingVertical: theme.spacing.xs,
+    paddingVertical: 8,
   },
   menuItem: {
-    paddingHorizontal: theme.spacing.s,
-    paddingVertical: theme.spacing.s,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
     minHeight: 48,
   },
   activeMenuItem: {
-    backgroundColor: theme.colors.neutral.lightGray,
     borderRightWidth: 3,
-    borderRightColor: theme.colors.primary.main,
   },
   menuItemContent: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   menuItemText: {
-    marginLeft: theme.spacing.s,
+    marginLeft: 16,
     flex: 1,
   },
   statsContainer: {
-    marginTop: theme.spacing.xs,
+    marginTop: 8,
   },
   itemDivider: {
-    marginHorizontal: theme.spacing.s,
+    marginHorizontal: 16,
   },
   logoutContainer: {
     marginTop: 'auto',
-    paddingTop: theme.spacing.s,
+    paddingTop: 16,
   },
   logoutButton: {
-    paddingHorizontal: theme.spacing.s,
-    paddingVertical: theme.spacing.s,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
     minHeight: 48,
   },
   modalOverlay: {
@@ -896,9 +938,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: theme.colors.neutral.white,
-    borderRadius: theme.borderRadius.medium,
-    padding: theme.spacing.l,
+    borderRadius: 8,
+    padding: 32,
     width: '80%',
     maxWidth: 400,
     shadowColor: '#000',
@@ -911,42 +952,39 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   modalTitle: {
-    marginBottom: theme.spacing.xs,
+    marginBottom: 8,
     textAlign: 'center',
   },
   modalSubtitle: {
-    marginBottom: theme.spacing.l,
+    marginBottom: 32,
     textAlign: 'center',
-    color: theme.colors.neutral.mediumGray,
   },
   modalOption: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: theme.spacing.m,
-    borderRadius: theme.borderRadius.small,
-    backgroundColor: theme.colors.neutral.lightGray,
-    marginBottom: theme.spacing.s,
+    padding: 24,
+    borderRadius: 4,
+    marginBottom: 16,
   },
   modalOptionText: {
-    marginLeft: theme.spacing.m,
+    marginLeft: 24,
     flex: 1,
   },
   modalCancelButton: {
-    marginTop: theme.spacing.m,
-    padding: theme.spacing.m,
+    marginTop: 24,
+    padding: 24,
     alignItems: 'center',
   },
   cameraModalContent: {
-    backgroundColor: theme.colors.neutral.white,
-    borderRadius: theme.borderRadius.medium,
-    padding: theme.spacing.l,
+    borderRadius: 8,
+    padding: 32,
     width: '90%',
     maxWidth: 600,
     alignItems: 'center',
   },
   cameraContainer: {
     width: '100%',
-    marginVertical: theme.spacing.l,
+    marginVertical: 32,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -954,25 +992,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: theme.spacing.m,
+    gap: 24,
     width: '100%',
   },
   cameraButton: {
-    paddingVertical: theme.spacing.m,
-    paddingHorizontal: theme.spacing.l,
-    borderRadius: theme.borderRadius.medium,
+    paddingVertical: 24,
+    paddingHorizontal: 32,
+    borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
   },
   captureButton: {
-    backgroundColor: theme.colors.primary.main,
     width: 64,
     height: 64,
     borderRadius: 32,
   },
   cancelCameraButton: {
-    backgroundColor: theme.colors.status.error,
-    paddingHorizontal: theme.spacing.l,
+    paddingHorizontal: 32,
   },
 });
 

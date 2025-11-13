@@ -15,7 +15,7 @@ import {
   ErrorState,
   Select,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -27,6 +27,7 @@ import { Item, ItemStatus, ItemType } from "../../types/items.types";
 import { BENEFICIARIO_ROUTES } from "../../navigation/routes";
 
 const AvailableItemsScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation =
     useNavigation<StackNavigationProp<BeneficiarioStackParamList>>();
   const { user } = useAuth();
@@ -40,6 +41,7 @@ const AvailableItemsScreen: React.FC = () => {
     clearError,
   } = useItems();
   const { categories, fetchCategories } = useCategories();
+  const styles = AvailableItemsScreenStyles(theme);
 
   // Estados locais
   const [refreshing, setRefreshing] = useState(false);
@@ -165,7 +167,6 @@ const AvailableItemsScreen: React.FC = () => {
       <Header
         title="Itens Disponíveis"
         subtitle={`Olá, ${user?.name?.split(" ")[0] || "Beneficiário"}`}
-        backgroundColor={theme.colors.primary.secondary}
       />
 
       {/* Conteúdo */}
@@ -238,7 +239,7 @@ const AvailableItemsScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const AvailableItemsScreenStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.neutral.white,
@@ -246,6 +247,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: theme.spacing.s,
+    backgroundColor: theme.colors.neutral.white,
   },
   searchBar: {
     marginVertical: theme.spacing.s,

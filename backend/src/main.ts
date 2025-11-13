@@ -68,6 +68,8 @@ async function bootstrap() {
     .addTag('categories', 'Endpoints de categorias de itens')
     .addTag('inventory', 'Endpoints de gerenciamento de estoque')
     .addTag('distributions', 'Endpoints de distribuição de doações')
+    .addTag('analytics', 'Endpoints de analytics e relatórios')
+    .addTag('audit', 'Endpoints de auditoria')
     .addBearerAuth()
     .build();
 

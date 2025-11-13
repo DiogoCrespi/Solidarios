@@ -9,7 +9,7 @@ import {
   TextStyle,
   TextInputProps,
 } from "react-native";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 export interface SearchBarProps extends TextInputProps {
   value: string;
@@ -39,6 +39,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   delayMs = 500,
   ...rest
 }) => {
+  const theme = useTheme();
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
 
   // Função para lidar com a mudança de texto
@@ -76,18 +77,27 @@ const SearchBar: React.FC<SearchBarProps> = ({
     }
   };
 
+  const dynamicStyles = {
+    container: {
+      backgroundColor: theme.colors.neutral.lightGray,
+    },
+    input: {
+      color: theme.colors.neutral.black,
+    },
+  };
+
   return (
-    <View style={[styles.container, containerStyle]}>
+    <View style={[styles.container, dynamicStyles.container, containerStyle]}>
       {searchIcon ? (
         <View style={styles.searchIcon}>{searchIcon}</View>
       ) : (
         <View style={styles.searchIcon}>
-          <SearchIcon />
+          <SearchIcon theme={theme} />
         </View>
       )}
 
       <TextInput
-        style={[styles.input, inputStyle]}
+        style={[styles.input, dynamicStyles.input, inputStyle]}
         value={value}
         onChangeText={handleChangeText}
         placeholder={placeholder}
@@ -103,7 +113,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
           onPress={handleClear}
           activeOpacity={0.7}
         >
-          {clearIcon ? clearIcon : <ClearIcon />}
+          {clearIcon ? clearIcon : <ClearIcon theme={theme} />}
         </TouchableOpacity>
       )}
     </View>
@@ -111,12 +121,23 @@ const SearchBar: React.FC<SearchBarProps> = ({
 };
 
 // Componente de ícone de pesquisa padrão
-const SearchIcon = () => (
-  <View style={searchIconStyles.container}>
-    <View style={searchIconStyles.circle} />
-    <View style={searchIconStyles.handle} />
-  </View>
-);
+const SearchIcon: React.FC<{ theme: any }> = ({ theme }) => {
+  const iconStyles = {
+    circle: {
+      borderColor: theme.colors.neutral.darkGray,
+    },
+    handle: {
+      backgroundColor: theme.colors.neutral.darkGray,
+    },
+  };
+
+  return (
+    <View style={searchIconStyles.container}>
+      <View style={[searchIconStyles.circle, iconStyles.circle]} />
+      <View style={[searchIconStyles.handle, iconStyles.handle]} />
+    </View>
+  );
+};
 
 const searchIconStyles = StyleSheet.create({
   container: {
@@ -129,7 +150,6 @@ const searchIconStyles = StyleSheet.create({
     width: 10,
     height: 10,
     borderWidth: 1.5,
-    borderColor: theme.colors.neutral.darkGray,
     borderRadius: 5,
     position: "absolute",
     top: 0,
@@ -138,7 +158,6 @@ const searchIconStyles = StyleSheet.create({
   handle: {
     width: 6,
     height: 1.5,
-    backgroundColor: theme.colors.neutral.darkGray,
     position: "absolute",
     bottom: 2,
     right: 2,
@@ -147,12 +166,20 @@ const searchIconStyles = StyleSheet.create({
 });
 
 // Componente de ícone para limpar padrão
-const ClearIcon = () => (
-  <View style={clearIconStyles.container}>
-    <View style={clearIconStyles.line1} />
-    <View style={clearIconStyles.line2} />
-  </View>
-);
+const ClearIcon: React.FC<{ theme: any }> = ({ theme }) => {
+  const iconStyles = {
+    line: {
+      backgroundColor: theme.colors.neutral.darkGray,
+    },
+  };
+
+  return (
+    <View style={clearIconStyles.container}>
+      <View style={[clearIconStyles.line1, iconStyles.line]} />
+      <View style={[clearIconStyles.line2, iconStyles.line]} />
+    </View>
+  );
+};
 
 const clearIconStyles = StyleSheet.create({
   container: {
@@ -164,14 +191,12 @@ const clearIconStyles = StyleSheet.create({
   line1: {
     width: 14,
     height: 1.5,
-    backgroundColor: theme.colors.neutral.darkGray,
     position: "absolute",
     transform: [{ rotate: "45deg" }],
   },
   line2: {
     width: 14,
     height: 1.5,
-    backgroundColor: theme.colors.neutral.darkGray,
     position: "absolute",
     transform: [{ rotate: "-45deg" }],
   },
@@ -182,23 +207,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     height: 40,
-    backgroundColor: theme.colors.neutral.lightGray,
-    borderRadius: theme.borderRadius.medium,
-    paddingHorizontal: theme.spacing.s,
+    borderRadius: 8,
+    paddingHorizontal: 16,
   },
   searchIcon: {
-    marginRight: theme.spacing.xs,
+    marginRight: 8,
   },
   input: {
     flex: 1,
-    fontFamily: theme.fontFamily.primary,
+    fontFamily: 'System',
     fontSize: 14,
-    color: theme.colors.neutral.black,
     height: "100%",
     paddingVertical: 0,
   },
   clearButton: {
-    marginLeft: theme.spacing.xs,
+    marginLeft: 8,
     padding: 2,
   },
 });

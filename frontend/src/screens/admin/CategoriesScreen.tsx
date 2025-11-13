@@ -16,11 +16,12 @@ import {
   NotificationBanner,
   Loading,
 } from '../../components/barrelComponents';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useCategories } from '../../hooks/useCategories';
 
 const CategoriesScreen: React.FC = () => {
+  const theme = useTheme();
   const {
     categories,
     isLoading,
@@ -117,8 +118,17 @@ const CategoriesScreen: React.FC = () => {
     );
   }
 
+  const dynamicStyles = {
+    container: {
+      backgroundColor: theme.colors.neutral.lightGray,
+    },
+    categoryIcon: {
+      backgroundColor: theme.colors.primary.main + '15',
+    },
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, dynamicStyles.container]}>
       <Header
         title="Gerenciar Categorias"
         subtitle="Organize os itens por categorias"
@@ -153,7 +163,7 @@ const CategoriesScreen: React.FC = () => {
         {/* Formulário de adicionar categoria */}
         {showAddForm && (
           <Card style={styles.formCard}>
-            <Typography variant="h6" style={styles.formTitle}>
+            <Typography variant="h6" color={theme.colors.neutral.black} style={styles.formTitle}>
               Nova Categoria
             </Typography>
             <Divider style={styles.divider} />
@@ -198,7 +208,7 @@ const CategoriesScreen: React.FC = () => {
 
         {/* Lista de categorias */}
         <View style={styles.categoriesContainer}>
-          <Typography variant="h6" style={styles.sectionTitle}>
+          <Typography variant="h6" color={theme.colors.neutral.black} style={styles.sectionTitle}>
             Categorias Cadastradas ({filteredCategories.length})
           </Typography>
 
@@ -221,7 +231,7 @@ const CategoriesScreen: React.FC = () => {
             filteredCategories.map((category) => (
               <Card key={category.id} style={styles.categoryCard}>
                 <View style={styles.categoryHeader}>
-                  <View style={styles.categoryIcon}>
+                  <View style={[styles.categoryIcon, dynamicStyles.categoryIcon]}>
                     <MaterialCommunityIcons
                       name="shape"
                       size={24}
@@ -229,7 +239,7 @@ const CategoriesScreen: React.FC = () => {
                     />
                   </View>
                   <View style={styles.categoryInfo}>
-                    <Typography variant="h6" style={styles.categoryName}>
+                    <Typography variant="h6" color={theme.colors.neutral.black} style={styles.categoryName}>
                       {category.name}
                     </Typography>
                     <Typography
@@ -278,7 +288,6 @@ const CategoriesScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.neutral.lightGray,
   },
   loadingContainer: {
     flex: 1,
@@ -287,12 +296,12 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: theme.spacing.m,
+    padding: 24,
   },
   searchContainer: {
     flexDirection: 'row',
-    gap: theme.spacing.s,
-    marginBottom: theme.spacing.m,
+    gap: 16,
+    marginBottom: 24,
   },
   searchInput: {
     flex: 1,
@@ -301,19 +310,19 @@ const styles = StyleSheet.create({
     minWidth: 150,
   },
   formCard: {
-    marginBottom: theme.spacing.m,
+    marginBottom: 24,
   },
   formTitle: {
-    marginBottom: theme.spacing.s,
+    marginBottom: 16,
   },
   divider: {
-    marginBottom: theme.spacing.m,
+    marginBottom: 24,
   },
   formButtons: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    gap: theme.spacing.s,
-    marginTop: theme.spacing.m,
+    gap: 16,
+    marginTop: 24,
   },
   cancelButton: {
     minWidth: 100,
@@ -322,32 +331,31 @@ const styles = StyleSheet.create({
     minWidth: 100,
   },
   categoriesContainer: {
-    marginTop: theme.spacing.s,
+    marginTop: 16,
   },
   sectionTitle: {
-    marginBottom: theme.spacing.m,
+    marginBottom: 24,
   },
   emptyCard: {
     alignItems: 'center',
-    padding: theme.spacing.xl,
+    padding: 48,
   },
   emptyText: {
-    marginTop: theme.spacing.m,
+    marginTop: 24,
     textAlign: 'center',
   },
   categoryCard: {
-    marginBottom: theme.spacing.s,
+    marginBottom: 16,
   },
   categoryHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing.s,
+    gap: 16,
   },
   categoryIcon: {
     width: 48,
     height: 48,
-    borderRadius: theme.borderRadius.medium,
-    backgroundColor: theme.colors.primary.main + '15',
+    borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -355,22 +363,22 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   categoryName: {
-    marginBottom: theme.spacing.xxs,
+    marginBottom: 4,
   },
   categoryActions: {
     alignItems: 'flex-end',
-    gap: theme.spacing.s,
+    gap: 16,
   },
   itemCount: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing.xxs,
+    gap: 4,
   },
   countText: {
-    marginLeft: theme.spacing.xxs,
+    marginLeft: 4,
   },
   deleteButton: {
-    padding: theme.spacing.xs,
+    padding: 8,
   },
 });
 

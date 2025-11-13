@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import Typography from "./Typography";
 import Button from "./Button";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 export interface ErrorStateProps {
   title: string;
@@ -36,6 +36,8 @@ const ErrorState: React.FC<ErrorStateProps> = ({
   style,
   error,
 }) => {
+  const theme = useTheme();
+  
   return (
     <View style={[styles.container, style]}>
       {image && (
@@ -53,19 +55,33 @@ const ErrorState: React.FC<ErrorStateProps> = ({
       </Typography>
 
       {description && (
-        <Typography variant="bodySecondary" style={styles.description}>
+        <Typography variant="bodySecondary" color={theme.colors.neutral.darkGray} style={styles.description}>
           {description}
         </Typography>
       )}
 
       {error && typeof error !== "string" && (
-        <Typography variant="small" style={styles.errorDetail}>
+        <Typography 
+          variant="small" 
+          color={theme.colors.status.error}
+          style={[styles.errorDetail, { 
+            backgroundColor: theme.colors.notifications.error.background,
+            color: theme.colors.notifications.error.text 
+          }]}
+        >
           {error.message}
         </Typography>
       )}
 
       {error && typeof error === "string" && (
-        <Typography variant="small" style={styles.errorDetail}>
+        <Typography 
+          variant="small" 
+          color={theme.colors.status.error}
+          style={[styles.errorDetail, { 
+            backgroundColor: theme.colors.notifications.error.background,
+            color: theme.colors.notifications.error.text 
+          }]}
+        >
           {error}
         </Typography>
       )}
@@ -97,41 +113,39 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     justifyContent: "center",
-    padding: theme.spacing.l,
+    padding: 32,
   },
   image: {
     width: 120,
     height: 120,
-    marginBottom: theme.spacing.m,
+    marginBottom: 24,
   },
   iconContainer: {
-    marginBottom: theme.spacing.m,
+    marginBottom: 24,
   },
   title: {
     textAlign: "center",
-    marginBottom: theme.spacing.xs,
+    marginBottom: 8,
   },
   description: {
     textAlign: "center",
-    marginBottom: theme.spacing.xs,
+    marginBottom: 8,
   },
   errorDetail: {
     textAlign: "center",
-    color: theme.colors.status.error,
-    marginBottom: theme.spacing.m,
-    padding: theme.spacing.xs,
-    backgroundColor: theme.colors.notifications.error.background,
-    borderRadius: theme.borderRadius.small,
+    marginBottom: 24,
+    padding: 8,
+    borderRadius: 4,
   },
   buttonsContainer: {
     flexDirection: "row",
-    marginTop: theme.spacing.s,
+    marginTop: 16,
   },
   primaryButton: {
-    marginHorizontal: theme.spacing.xs,
+    marginHorizontal: 8,
   },
   secondaryButton: {
-    marginHorizontal: theme.spacing.xs,
+    marginHorizontal: 8,
   },
 });
 

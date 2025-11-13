@@ -8,7 +8,7 @@ import {
   Modal,
 } from "react-native";
 import Typography from "./Typography";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 export interface LoadingProps {
   visible?: boolean;
@@ -23,16 +23,24 @@ const Loading: React.FC<LoadingProps> = ({
   visible = true,
   message,
   size = "large",
-  color = theme.colors.primary.secondary,
+  color,
   overlay = false,
   style,
 }) => {
+  const theme = useTheme();
+  const loadingColor = color || theme.colors.primary.secondary;
+  
   const content = (
     <View style={[styles.container, overlay && styles.overlayContainer, style]}>
-      <ActivityIndicator size={size} color={color} />
+      <ActivityIndicator size={size} color={loadingColor} />
 
       {message && (
-        <Typography variant="bodySecondary" style={styles.message} center>
+        <Typography 
+          variant="bodySecondary" 
+          color={theme.colors.neutral.black}
+          style={[styles.message, { backgroundColor: theme.colors.neutral.white }]} 
+          center
+        >
           {message}
         </Typography>
       )}
@@ -58,18 +66,21 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     alignItems: "center",
-    padding: theme.spacing.m,
+    padding: 24,
   },
   overlayContainer: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   message: {
-    marginTop: theme.spacing.s,
-    backgroundColor: theme.colors.neutral.white,
-    padding: theme.spacing.xs,
-    borderRadius: theme.borderRadius.small,
-    ...theme.shadows.small,
+    marginTop: 16,
+    padding: 8,
+    borderRadius: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 1,
   },
 });
 

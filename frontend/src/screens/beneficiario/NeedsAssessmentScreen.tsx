@@ -20,7 +20,7 @@ import {
   NotificationBanner,
   CategoryPicker,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -52,6 +52,7 @@ const urgencyOptions = [
 ];
 
 const NeedsAssessmentScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation = useNavigation();
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -61,6 +62,7 @@ const NeedsAssessmentScreen: React.FC = () => {
     message: "",
     description: "",
   });
+  const styles = NeedsAssessmentScreenStyles(theme);
 
   // Enviar avaliação de necessidades
   const handleSubmitNeeds = async (values: any) => {
@@ -111,7 +113,6 @@ const NeedsAssessmentScreen: React.FC = () => {
       <Header
         title="Avaliação de Necessidades"
         onBackPress={() => navigation.goBack()}
-        backgroundColor={theme.colors.primary.main}
       />
 
       {/* Notificação */}
@@ -128,11 +129,11 @@ const NeedsAssessmentScreen: React.FC = () => {
         contentContainerStyle={styles.contentContainer}
         keyboardShouldPersistTaps="handled"
       >
-        <Typography variant="h3" style={styles.title}>
+        <Typography variant="h3" style={styles.title} color={theme.colors.neutral.black}>
           Informe suas necessidades
         </Typography>
 
-        <Typography variant="bodySecondary" style={styles.subtitle}>
+        <Typography variant="bodySecondary" style={styles.subtitle} color={theme.colors.neutral.darkGray}>
           Estas informações nos ajudarão a priorizar doações conforme suas
           necessidades
         </Typography>
@@ -218,7 +219,7 @@ const NeedsAssessmentScreen: React.FC = () => {
                   title="Enviar"
                   onPress={() => handleSubmit()}
                   loading={isLoading}
-                  style={styles.buttonSubmit}
+                  style={[styles.buttonSubmit, { backgroundColor: theme.colors.primary.secondary }]}
                 />
               </View>
             </View>
@@ -229,13 +230,14 @@ const NeedsAssessmentScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const NeedsAssessmentScreenStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.neutral.white,
   },
   content: {
     flex: 1,
+    backgroundColor: theme.colors.neutral.white,
   },
   contentContainer: {
     padding: theme.spacing.m,
@@ -245,7 +247,6 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     marginBottom: theme.spacing.m,
-    color: theme.colors.neutral.darkGray,
   },
   form: {
     width: "100%",
@@ -262,7 +263,6 @@ const styles = StyleSheet.create({
   buttonSubmit: {
     flex: 1,
     marginLeft: theme.spacing.xs,
-    backgroundColor: theme.colors.primary.secondary,
   },
 });
 

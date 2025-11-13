@@ -21,7 +21,7 @@ import {
   Select,
   NotificationBanner,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useUsers } from "../../hooks/useUsers";
@@ -49,6 +49,7 @@ const roleOptions = [
 ];
 
 const CreateUserScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation =
     useNavigation<StackNavigationProp<AdminUsersStackParamList>>();
   const { createUser, isLoading, error, clearError } = useUsers();
@@ -57,6 +58,7 @@ const CreateUserScreen: React.FC = () => {
     type: "success" as "success" | "error",
     message: "",
   });
+  const styles = CreateUserScreenStyles(theme);
 
   // Função para fechar notificação
   const handleCloseNotification = useCallback(() => {
@@ -100,7 +102,6 @@ const CreateUserScreen: React.FC = () => {
       <Header
         title="Criar Novo Usuário"
         onBackPress={() => navigation.goBack()}
-        backgroundColor={theme.colors.primary.main}
       />
 
       <NotificationBanner
@@ -202,7 +203,7 @@ const CreateUserScreen: React.FC = () => {
                   title="Criar Usuário"
                   onPress={() => handleSubmit()}
                   loading={isLoading}
-                  style={styles.buttonSubmit}
+                  style={[styles.buttonSubmit, { backgroundColor: theme.colors.primary.secondary }]}
                 />
               </View>
             </View>
@@ -213,19 +214,21 @@ const CreateUserScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const CreateUserScreenStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.neutral.white,
   },
   content: {
     flex: 1,
+    backgroundColor: theme.colors.neutral.white,
   },
   contentContainer: {
     padding: theme.spacing.m,
   },
   title: {
     marginBottom: theme.spacing.m,
+    color: theme.colors.neutral.black,
   },
   form: {
     width: "100%",
@@ -242,7 +245,6 @@ const styles = StyleSheet.create({
   buttonSubmit: {
     flex: 1,
     marginLeft: theme.spacing.xs,
-    backgroundColor: theme.colors.primary.secondary,
   },
 });
 

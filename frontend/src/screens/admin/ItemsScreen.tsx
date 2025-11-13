@@ -23,7 +23,7 @@ import {
   Typography,
   Badge,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useItems } from "../../hooks/useItems";
@@ -34,6 +34,7 @@ import { Item, ItemStatus, ItemType } from "../../types/items.types";
 import { ADMIN_ROUTES } from "../../navigation/routes";
 
 const ItemsScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation =
     useNavigation<StackNavigationProp<AdminItemsStackParamList>>();
   const { items, isLoading, error, fetchItems, pagination, clearError } =
@@ -168,8 +169,18 @@ const ItemsScreen: React.FC = () => {
     })),
   ];
 
+  const dynamicStyles = {
+    container: {
+      backgroundColor: theme.colors.neutral.lightGray,
+    },
+    floatingButton: {
+      backgroundColor: theme.colors.primary.main,
+      ...theme.shadows.medium,
+    },
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, dynamicStyles.container]}>
       {/* Cabeçalho */}
       <Header
         title="Gerenciamento de Itens"
@@ -227,7 +238,7 @@ const ItemsScreen: React.FC = () => {
 
         {/* Resumo dos resultados */}
         <View style={styles.resultsHeader}>
-          <Typography variant="bodySecondary">
+          <Typography variant="bodySecondary" color={theme.colors.neutral.black}>
             {filteredItems.length}{" "}
             {filteredItems.length === 1 ? "item" : "itens"} encontrados
           </Typography>
@@ -283,7 +294,7 @@ const ItemsScreen: React.FC = () => {
 
         {/* Botão flutuante para novo item */}
         <TouchableOpacity
-          style={styles.floatingButton}
+          style={[styles.floatingButton, dynamicStyles.floatingButton]}
           onPress={() => navigation.navigate(ADMIN_ROUTES.CREATE_ITEM as any)}
         >
           <Typography
@@ -301,26 +312,25 @@ const ItemsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.neutral.white,
   },
   content: {
     flex: 1,
-    paddingHorizontal: theme.spacing.s,
+    paddingHorizontal: 16,
   },
   searchBar: {
-    marginVertical: theme.spacing.s,
+    marginVertical: 16,
   },
   filtersContainer: {
-    marginBottom: theme.spacing.s,
+    marginBottom: 16,
   },
   filterRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: theme.spacing.xs,
+    marginBottom: 8,
   },
   filterSelect: {
     flex: 1,
-    marginRight: theme.spacing.xs,
+    marginRight: 8,
     marginBottom: 0,
   },
   categoryFilter: {
@@ -330,26 +340,24 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: theme.spacing.xs,
+    marginBottom: 8,
   },
   listContent: {
     flexGrow: 1,
-    paddingBottom: theme.spacing.xl + 60, // Espaço extra para o botão flutuante
+    paddingBottom: 108, // Espaço extra para o botão flutuante
   },
   addButton: {
     backgroundColor: "rgba(255, 255, 255, 0.2)",
-    padding: theme.spacing.xs,
-    borderRadius: theme.borderRadius.small,
+    padding: 8,
+    borderRadius: 4,
   },
   floatingButton: {
     position: "absolute",
-    right: theme.spacing.m,
-    bottom: theme.spacing.m,
-    backgroundColor: theme.colors.primary.main,
-    paddingHorizontal: theme.spacing.m,
-    paddingVertical: theme.spacing.s,
-    borderRadius: theme.borderRadius.round,
-    ...theme.shadows.medium,
+    right: 24,
+    bottom: 24,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    borderRadius: 50,
   },
 });
 

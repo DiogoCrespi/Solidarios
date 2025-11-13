@@ -14,7 +14,7 @@ import {
   ErrorState,
   DistributionCard,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -25,6 +25,7 @@ import { Distribution } from "../../types/distributions.types";
 import { BENEFICIARIO_ROUTES } from "../../navigation/routes";
 
 const MyReceiptsScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation =
     useNavigation<StackNavigationProp<BeneficiarioStackParamList>>();
   const { user } = useAuth();
@@ -40,6 +41,7 @@ const MyReceiptsScreen: React.FC = () => {
   // Estados locais
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const styles = MyReceiptsScreenStyles(theme);
 
   // CORREÇÃO 1: Mover a função de validação para fora do componente
   // para evitar recriação a cada render
@@ -271,7 +273,6 @@ const MyReceiptsScreen: React.FC = () => {
       <Header
         title="Meus Recebimentos"
         subtitle={`Olá, ${user?.name?.split(" ")[0] || "Beneficiário"}`}
-        backgroundColor={theme.colors.primary.secondary}
       />
 
       {/* Conteúdo */}
@@ -319,7 +320,7 @@ const MyReceiptsScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const MyReceiptsScreenStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.neutral.white,
@@ -327,6 +328,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: theme.spacing.s,
+    backgroundColor: theme.colors.neutral.white,
   },
   searchBar: {
     marginVertical: theme.spacing.s,

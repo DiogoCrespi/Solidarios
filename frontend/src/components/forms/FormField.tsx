@@ -9,7 +9,7 @@ import {
 import { useFormikContext, getIn } from "formik";
 import TextField, { TextFieldProps } from "../common/TextField";
 import Typography from "../common/Typography";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 export interface FormFieldProps extends Omit<TextFieldProps, "error"> {
   name: string;
@@ -29,6 +29,7 @@ const FormField: React.FC<FormFieldProps> = ({
   required = false,
   ...rest
 }) => {
+  const theme = useTheme();
   const { values, handleChange, handleBlur, touched, errors } =
     useFormikContext<any>();
 
@@ -41,6 +42,7 @@ const FormField: React.FC<FormFieldProps> = ({
         <View style={styles.labelContainer}>
           <Typography
             variant="bodySecondary"
+            color={theme.colors.neutral.black}
             style={[styles.label, labelStyle]}
           >
             {label}
@@ -71,15 +73,15 @@ const FormField: React.FC<FormFieldProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: theme.spacing.s,
+    marginBottom: 16,
   },
   labelContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: theme.spacing.xxs,
+    marginBottom: 4,
   },
   label: {
-    marginRight: theme.spacing.xxs,
+    marginRight: 4,
   },
 });
 

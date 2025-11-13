@@ -21,12 +21,13 @@ import {
   NotificationBanner,
   Badge,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
 
 const ProfileScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation =
     useNavigation<StackNavigationProp<DoadorProfileStackParamList>>();
   const { user, logout } = useAuth();
@@ -64,8 +65,17 @@ const ProfileScreen: React.FC = () => {
 
   if (!user) return null;
 
+  const dynamicStyles = {
+    container: {
+      backgroundColor: theme.colors.neutral.lightGray,
+    },
+    logoutButton: {
+      backgroundColor: theme.colors.status.error,
+    },
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, dynamicStyles.container]}>
       {/* Notificação */}
       <NotificationBanner
         visible={notification.visible}
@@ -89,8 +99,8 @@ const ProfileScreen: React.FC = () => {
           <View style={styles.profileHeader}>
             <Avatar name={user.name} size="large" style={styles.avatar} />
             <View style={styles.profileInfo}>
-              <Typography variant="h3">{user.name}</Typography>
-              <Typography variant="bodySecondary">{user.email}</Typography>
+              <Typography variant="h3" color={theme.colors.neutral.black}>{user.name}</Typography>
+              <Typography variant="bodySecondary" color={theme.colors.neutral.darkGray}>{user.email}</Typography>
               <Badge
                 label="Doador"
                 variant="success"
@@ -108,7 +118,7 @@ const ProfileScreen: React.FC = () => {
               >
                 Telefone:
               </Typography>
-              <Typography variant="body">{user.phone}</Typography>
+              <Typography variant="body" color={theme.colors.neutral.black}>{user.phone}</Typography>
             </View>
           )}
 
@@ -120,7 +130,7 @@ const ProfileScreen: React.FC = () => {
               >
                 Endereço:
               </Typography>
-              <Typography variant="body">{user.address}</Typography>
+              <Typography variant="body" color={theme.colors.neutral.black}>{user.address}</Typography>
             </View>
           )}
         </Card>
@@ -131,7 +141,7 @@ const ProfileScreen: React.FC = () => {
             style={styles.menuItem}
             onPress={() => navigation.navigate("EditProfile")}
           >
-            <Typography variant="body">Editar Perfil</Typography>
+            <Typography variant="body" color={theme.colors.neutral.black}>Editar Perfil</Typography>
           </TouchableOpacity>
 
           <Divider />
@@ -148,7 +158,7 @@ const ProfileScreen: React.FC = () => {
               }
             }}
           >
-            <Typography variant="body">Histórico de Doações</Typography>
+            <Typography variant="body" color={theme.colors.neutral.black}>Histórico de Doações</Typography>
           </TouchableOpacity>
 
           <Divider />
@@ -157,7 +167,7 @@ const ProfileScreen: React.FC = () => {
             style={styles.menuItem}
             onPress={() => navigation.navigate("Impact")}
           >
-            <Typography variant="body">Meu Impacto Social</Typography>
+            <Typography variant="body" color={theme.colors.neutral.black}>Meu Impacto Social</Typography>
           </TouchableOpacity>
         </Card>
 
@@ -188,7 +198,7 @@ const ProfileScreen: React.FC = () => {
         <Button
           title="Sair da Conta"
           variant="secondary"
-          style={styles.logoutButton}
+          style={[styles.logoutButton, dynamicStyles.logoutButton]}
           onPress={handleLogout}
         />
       </ScrollView>
@@ -199,56 +209,55 @@ const ProfileScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.neutral.lightGray,
   },
   content: {
     flex: 1,
   },
   scrollContent: {
-    padding: theme.spacing.m,
+    padding: 16,
   },
   profileCard: {
-    marginBottom: theme.spacing.m,
+    marginBottom: 16,
   },
   profileHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: theme.spacing.s,
+    marginBottom: 8,
   },
   avatar: {
-    marginRight: theme.spacing.m,
+    marginRight: 16,
   },
   profileInfo: {
     flex: 1,
   },
   roleTag: {
-    marginTop: theme.spacing.xs,
+    marginTop: 4,
   },
   contactInfo: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: theme.spacing.xs,
+    marginTop: 4,
   },
   menuCard: {
-    marginBottom: theme.spacing.m,
+    marginBottom: 16,
   },
   menuItem: {
-    paddingVertical: theme.spacing.m,
+    paddingVertical: 16,
   },
   statsCard: {
-    marginBottom: theme.spacing.m,
+    marginBottom: 16,
   },
   statsRow: {
     flexDirection: "row",
     justifyContent: "space-around",
-    paddingVertical: theme.spacing.s,
+    paddingVertical: 8,
   },
   statItem: {
     alignItems: "center",
   },
   logoutButton: {
-    backgroundColor: theme.colors.status.error,
+    marginTop: 16,
   },
 });
 

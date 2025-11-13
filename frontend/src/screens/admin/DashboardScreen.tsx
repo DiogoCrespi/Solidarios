@@ -23,7 +23,7 @@ import {
   Loading,
   ErrorState,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -62,6 +62,7 @@ type DashboardScreenProps = CompositeScreenProps<
 >;
 
 const DashboardScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation = useNavigation<DashboardScreenProps["navigation"]>();
   const { user } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
@@ -126,10 +127,10 @@ const DashboardScreen: React.FC = () => {
         ).length;
         const users = Array.isArray(usersResponse.data) ? usersResponse.data : [];
         const beneficiaries = users.filter(
-          (user) => user.role === "beneficiario"
+          (user) => user.role === "BENEFICIARIO"
         ).length;
         const donors = users.filter(
-          (user) => user.role === "doador"
+          (user) => user.role === "DOADOR"
         ).length;
 
         setStats({
@@ -247,7 +248,7 @@ const DashboardScreen: React.FC = () => {
   ];
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.neutral.lightGray }]}>
       {/* Cabeçalho */}
       <Header
         title="Dashboard"
@@ -315,13 +316,13 @@ const DashboardScreen: React.FC = () => {
                 />
               ))
             ) : (
-              <Typography variant="bodySecondary" style={styles.emptyText}>
+              <Typography variant="bodySecondary" color={theme.colors.neutral.darkGray} style={styles.emptyText}>
                 Nenhum item cadastrado recentemente.
               </Typography>
             )}
 
             <TouchableOpacity
-              style={styles.addButton}
+              style={[styles.addButton, { borderTopColor: theme.colors.neutral.lightGray }]}
               onPress={() => {
                 navigation.navigate("Items", {
                   screen: "CreateItem",
@@ -373,13 +374,13 @@ const DashboardScreen: React.FC = () => {
                 />
               ))
             ) : (
-              <Typography variant="bodySecondary" style={styles.emptyText}>
+              <Typography variant="bodySecondary" color={theme.colors.neutral.darkGray} style={styles.emptyText}>
                 Nenhuma distribuição realizada recentemente.
               </Typography>
             )}
 
             <TouchableOpacity
-              style={styles.addButton}
+              style={[styles.addButton, { borderTopColor: theme.colors.neutral.lightGray }]}
               onPress={() => {
                 navigation.navigate("Distributions", {
                   screen: "CreateDistribution",
@@ -417,7 +418,7 @@ const DashboardScreen: React.FC = () => {
               lowStockInventory.map((inv) => (
                 <TouchableOpacity
                   key={inv.id}
-                  style={styles.lowStockItem}
+                  style={[styles.lowStockItem, { borderBottomColor: theme.colors.neutral.lightGray }]}
                   onPress={() => {
                     navigation.navigate("Inventory", {
                       screen: "InventoryDetail",
@@ -426,7 +427,7 @@ const DashboardScreen: React.FC = () => {
                   }}
                 >
                   <View style={styles.lowStockInfo}>
-                    <Typography variant="body" numberOfLines={1}>
+                    <Typography variant="body" color={theme.colors.neutral.black} numberOfLines={1}>
                       {inv.item.description}
                     </Typography>
                     <Typography
@@ -436,10 +437,10 @@ const DashboardScreen: React.FC = () => {
                       Qtd: {inv.quantity} | Alerta: {inv.alertLevel}
                     </Typography>
                   </View>
-                  <View style={styles.lowStockBadge}>
+                  <View style={[styles.lowStockBadge, { backgroundColor: theme.colors.notifications.error.background }]}>
                     <Typography
                       variant="small"
-                      color={theme.colors.status.error}
+                      color={theme.colors.notifications.error.text}
                     >
                       Estoque Baixo
                     </Typography>
@@ -447,7 +448,7 @@ const DashboardScreen: React.FC = () => {
                 </TouchableOpacity>
               ))
             ) : (
-              <Typography variant="bodySecondary" style={styles.emptyText}>
+              <Typography variant="bodySecondary" color={theme.colors.neutral.darkGray} style={styles.emptyText}>
                 Não há itens com estoque baixo.
               </Typography>
             )}
@@ -461,48 +462,44 @@ const DashboardScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.neutral.lightGray,
   },
   content: {
     flex: 1,
   },
   contentContainer: {
-    padding: theme.spacing.s,
+    padding: 16,
   },
   statsCard: {
-    marginBottom: theme.spacing.s,
+    marginBottom: 16,
   },
   card: {
-    marginBottom: theme.spacing.s,
+    marginBottom: 16,
   },
   emptyText: {
     textAlign: "center",
-    marginVertical: theme.spacing.s,
+    marginVertical: 16,
   },
   addButton: {
     alignItems: "center",
-    paddingVertical: theme.spacing.xs,
-    marginTop: theme.spacing.xs,
+    paddingVertical: 8,
+    marginTop: 8,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.neutral.lightGray,
   },
   lowStockItem: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: theme.spacing.xs,
+    paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.neutral.lightGray,
   },
   lowStockInfo: {
     flex: 1,
   },
   lowStockBadge: {
-    backgroundColor: theme.colors.notifications.error.background,
-    paddingHorizontal: theme.spacing.xs,
+    paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: theme.borderRadius.small,
-    marginLeft: theme.spacing.s,
+    borderRadius: 4,
+    marginLeft: 16,
   },
 });
 

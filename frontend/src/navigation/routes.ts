@@ -21,6 +21,7 @@ export const ADMIN_ROUTES = {
   // Tabs
   DASHBOARD: "Dashboard",
   ANALYTICS: "Analytics",
+  AUDIT: "Audit",
   ITEMS: "Items",
   INVENTORY: "Inventory",
   DISTRIBUTIONS: "Distributions",

@@ -27,7 +27,7 @@ import {
   Loading,
   ErrorState,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -47,6 +47,7 @@ const STATUS_FILTERS = [
 ];
 
 const MyDonationsScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation = useNavigation<StackNavigationProp<DoadorStackParamList>>();
   const { user } = useAuth();
   const { items, isLoading, error, fetchItemsByDonor, pagination, clearError } =
@@ -191,7 +192,7 @@ const MyDonationsScreen: React.FC = () => {
         locations={[0, 0.3, 0.6]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={styles.headerGradient}
+        style={[styles.headerGradient, dynamicStyles.headerGradient]}
       >
         <View style={styles.header}>
           <View style={styles.welcomeContainer}>
@@ -236,7 +237,7 @@ const MyDonationsScreen: React.FC = () => {
             title="Erro ao carregar doações"
             description={error}
             icon={
-              <View style={styles.errorIconContainer}>
+              <View style={[styles.errorIconContainer, dynamicStyles.errorIconContainer]}>
                 <MaterialIcons
                   name="error-outline"
                   size={70}
@@ -266,7 +267,7 @@ const MyDonationsScreen: React.FC = () => {
             : "Você ainda não tem doações registradas. Que tal começar agora?"
         }
         icon={
-          <View style={styles.emptyStateIconContainer}>
+          <View style={[styles.emptyStateIconContainer, dynamicStyles.emptyStateIconContainer]}>
             <MaterialIcons
               name={searchQuery ? "search-off" : "volunteer-activism"}
               size={80}
@@ -281,8 +282,32 @@ const MyDonationsScreen: React.FC = () => {
   );
 
   // UI principal
+  const dynamicStyles = {
+    container: {
+      backgroundColor: theme.colors.neutral.white,
+    },
+    headerGradient: {
+      ...theme.shadows.medium,
+    },
+    searchBar: {
+      ...theme.shadows.small,
+    },
+    filterItem: {
+      ...theme.shadows.small,
+    },
+    activeFilterItem: {
+      ...theme.shadows.small,
+    },
+    errorIconContainer: {
+      backgroundColor: theme.colors.status.error + "15",
+    },
+    emptyStateIconContainer: {
+      backgroundColor: theme.colors.primary.secondary + "15",
+    },
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, dynamicStyles.container]}>
       <Header />
 
       {/* Conteúdo */}
@@ -293,7 +318,7 @@ const MyDonationsScreen: React.FC = () => {
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Buscar doações..."
-            containerStyle={styles.searchBar}
+            containerStyle={[styles.searchBar, dynamicStyles.searchBar]}
           />
         </View>
 
@@ -315,7 +340,7 @@ const MyDonationsScreen: React.FC = () => {
                     colors={["#173F5F", "#006E58"]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
-                    style={styles.activeFilterItem}
+                    style={[styles.activeFilterItem, dynamicStyles.activeFilterItem]}
                   >
                     <Typography
                       variant="bodySecondary"
@@ -325,7 +350,7 @@ const MyDonationsScreen: React.FC = () => {
                     </Typography>
                   </LinearGradient>
                 ) : (
-                  <View style={styles.filterItem}>
+                  <View style={[styles.filterItem, dynamicStyles.filterItem]}>
                     <Typography
                       variant="bodySecondary"
                       color={theme.colors.neutral.darkGray}
@@ -412,7 +437,6 @@ const MyDonationsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.neutral.white,
   },
   headerGradient: {
     paddingTop:
@@ -420,13 +444,12 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-    ...theme.shadows.medium,
   },
   header: {
-    paddingHorizontal: theme.spacing.m,
+    paddingHorizontal: 16,
   },
   welcomeContainer: {
-    marginBottom: theme.spacing.s,
+    marginBottom: 8,
   },
   welcomeText: {
     fontWeight: "bold",
@@ -438,46 +461,43 @@ const styles = StyleSheet.create({
     marginTop: -20,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    paddingHorizontal: theme.spacing.s,
+    paddingHorizontal: 8,
   },
   searchContainer: {
-    marginTop: theme.spacing.s,
+    marginTop: 8,
   },
   searchBar: {
-    marginVertical: theme.spacing.s,
+    marginVertical: 8,
     borderRadius: 12,
-    ...theme.shadows.small,
   },
   filtersContainer: {
-    marginBottom: theme.spacing.xs,
+    marginBottom: 4,
   },
   filtersScrollContent: {
-    paddingVertical: theme.spacing.xs,
-    paddingHorizontal: theme.spacing.xxs,
+    paddingVertical: 4,
+    paddingHorizontal: 2,
   },
   filterItem: {
-    paddingHorizontal: theme.spacing.s,
-    paddingVertical: theme.spacing.xs,
-    marginRight: theme.spacing.xs,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginRight: 4,
     borderRadius: 12,
     backgroundColor: "#F5F8FF",
     borderWidth: 1,
     borderColor: "#E0E7FF",
-    ...theme.shadows.small,
   },
   activeFilterItem: {
-    paddingHorizontal: theme.spacing.s,
-    paddingVertical: theme.spacing.xs,
-    marginRight: theme.spacing.xs,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginRight: 4,
     borderRadius: 12,
-    ...theme.shadows.small,
   },
   listContainer: {
     flex: 1,
   },
   listContent: {
     flexGrow: 1,
-    paddingBottom: theme.spacing.xl + 60,
+    paddingBottom: 108,
   },
   emptyListContent: {
     flexGrow: 1,
@@ -486,28 +506,27 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   loadingMoreContainer: {
-    paddingVertical: theme.spacing.m,
+    paddingVertical: 16,
     alignItems: "center",
   },
   loadingContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: theme.spacing.xl,
+    paddingHorizontal: 32,
   },
   errorIconContainer: {
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: `${theme.colors.status.error}15`,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: theme.spacing.m,
+    marginBottom: 16,
   },
   floatingButtonContainer: {
     position: "absolute",
-    right: theme.spacing.m,
-    bottom: theme.spacing.m,
+    right: 16,
+    bottom: 16,
     borderRadius: 12,
     overflow: "hidden",
     elevation: 4,
@@ -518,8 +537,8 @@ const styles = StyleSheet.create({
   },
   floatingButton: {
     flexDirection: "row",
-    paddingHorizontal: theme.spacing.m,
-    paddingVertical: theme.spacing.s,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -528,20 +547,19 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   emptyStateIconContainer: {
-    backgroundColor: `${theme.colors.primary.secondary}15`,
     width: 150,
     height: 150,
     borderRadius: 75,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: theme.spacing.m,
+    marginBottom: 16,
   },
   emptyStateContainer: {
     flex: 1,
     minHeight: 500,
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: theme.spacing.xl,
+    paddingVertical: 32,
   },
 });
 

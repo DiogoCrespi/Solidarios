@@ -13,7 +13,7 @@ import StatusIndicator from "../common/StatusIndicator";
 import { formatDate } from "../../utils/formatters";
 import { Inventory } from "../../types/inventory.types";
 import { ItemType } from "../../types/items.types";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 export interface InventoryCardProps {
   inventory: Inventory;
@@ -40,6 +40,7 @@ const InventoryCard: React.FC<InventoryCardProps> = ({
   showActions = true,
   compact = false,
 }) => {
+  const theme = useTheme();
   const { item } = inventory;
 
   // Verificar se o estoque está baixo
@@ -64,6 +65,7 @@ const InventoryCard: React.FC<InventoryCardProps> = ({
         {/* Descrição do item */}
         <Typography
           variant="body"
+          color={theme.colors.neutral.black}
           style={styles.description}
           numberOfLines={compact ? 1 : 2}
         >
@@ -76,7 +78,7 @@ const InventoryCard: React.FC<InventoryCardProps> = ({
             <Typography variant="small" color={theme.colors.neutral.darkGray}>
               Categoria:
             </Typography>
-            <Typography variant="small" style={styles.categoryText}>
+            <Typography variant="small" color={theme.colors.neutral.black} style={styles.categoryText}>
               {item.category.name}
             </Typography>
           </View>
@@ -117,14 +119,14 @@ const InventoryCard: React.FC<InventoryCardProps> = ({
   // Renderizar informações adicionais
   const renderAdditionalInfo = () =>
     !compact && (
-      <View style={styles.additionalInfoContainer}>
+      <View style={[styles.additionalInfoContainer, { borderTopColor: theme.colors.neutral.lightGray }]}>
         {/* Localização */}
         {inventory.location && (
           <View style={styles.infoItem}>
             <Typography variant="small" color={theme.colors.neutral.darkGray}>
               Localização:
             </Typography>
-            <Typography variant="small">{inventory.location}</Typography>
+            <Typography variant="small" color={theme.colors.neutral.black}>{inventory.location}</Typography>
           </View>
         )}
 
@@ -134,7 +136,7 @@ const InventoryCard: React.FC<InventoryCardProps> = ({
             <Typography variant="small" color={theme.colors.neutral.darkGray}>
               Nível de alerta:
             </Typography>
-            <Typography variant="small">
+            <Typography variant="small" color={theme.colors.neutral.black}>
               {inventory.alertLevel} unidades
             </Typography>
           </View>
@@ -145,7 +147,7 @@ const InventoryCard: React.FC<InventoryCardProps> = ({
           <Typography variant="small" color={theme.colors.neutral.darkGray}>
             Atualizado em:
           </Typography>
-          <Typography variant="small">
+          <Typography variant="small" color={theme.colors.neutral.black}>
             {formatDate(inventory.updatedAt)}
           </Typography>
         </View>
@@ -155,7 +157,7 @@ const InventoryCard: React.FC<InventoryCardProps> = ({
   // Renderizar rodapé do card com ações
   const renderCardFooter = () =>
     showActions && (
-      <View style={styles.footer}>
+      <View style={[styles.footer, { borderTopColor: theme.colors.neutral.lightGray }]}>
         <TouchableOpacity
           style={styles.actionButton}
           onPress={onUpdatePress}
@@ -186,13 +188,13 @@ const InventoryCard: React.FC<InventoryCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    marginBottom: theme.spacing.s,
+    marginBottom: 16,
   },
   compactCard: {
     minHeight: 80,
   },
   cardContent: {
-    padding: theme.spacing.s,
+    padding: 16,
   },
   contentContainer: {
     flexDirection: "row",
@@ -204,20 +206,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: theme.spacing.xxs,
+    marginBottom: 4,
   },
   description: {
-    marginBottom: theme.spacing.xxs,
+    marginBottom: 4,
   },
   categoryContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
   categoryText: {
-    marginLeft: theme.spacing.xxs,
+    marginLeft: 4,
   },
   inventoryInfoContainer: {
-    marginLeft: theme.spacing.s,
+    marginLeft: 16,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -225,13 +227,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   lowStockBadge: {
-    marginTop: theme.spacing.xxs,
+    marginTop: 4,
   },
   additionalInfoContainer: {
-    marginTop: theme.spacing.s,
-    paddingTop: theme.spacing.s,
+    marginTop: 16,
+    paddingTop: 16,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.neutral.lightGray,
   },
   infoItem: {
     flexDirection: "row",
@@ -240,10 +241,9 @@ const styles = StyleSheet.create({
   },
   footer: {
     borderTopWidth: 1,
-    borderTopColor: theme.colors.neutral.lightGray,
   },
   actionButton: {
-    paddingVertical: theme.spacing.xs,
+    paddingVertical: 8,
     alignItems: "center",
   },
 });

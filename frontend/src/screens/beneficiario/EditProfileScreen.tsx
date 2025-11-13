@@ -18,7 +18,7 @@ import {
   Button,
   NotificationBanner,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -35,6 +35,7 @@ const UpdateProfileSchema = Yup.object().shape({
 });
 
 const EditProfileScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation = useNavigation();
   const { user, getProfile } = useAuth();
   const { updateUser, isLoading, error, clearError } = useUsers();
@@ -43,6 +44,7 @@ const EditProfileScreen: React.FC = () => {
     type: "success" as "success" | "error",
     message: "",
   });
+  const styles = EditProfileScreenStyles(theme);
 
   // Atualizar perfil do usuário
   const handleUpdateProfile = async (values: any) => {
@@ -85,7 +87,6 @@ const EditProfileScreen: React.FC = () => {
       <Header
         title="Editar Perfil"
         onBackPress={() => navigation.goBack()}
-        backgroundColor={theme.colors.primary.main}
       />
 
       {/* Notificação de sucesso/erro */}
@@ -110,7 +111,7 @@ const EditProfileScreen: React.FC = () => {
         contentContainerStyle={styles.contentContainer}
         keyboardShouldPersistTaps="handled"
       >
-        <Typography variant="h3" style={styles.title}>
+        <Typography variant="h3" style={styles.title} color={theme.colors.neutral.black}>
           Atualize seus dados
         </Typography>
 
@@ -185,7 +186,7 @@ const EditProfileScreen: React.FC = () => {
                   title="Salvar"
                   onPress={() => handleSubmit()}
                   loading={isLoading}
-                  style={styles.buttonSubmit}
+                  style={[styles.buttonSubmit, { backgroundColor: theme.colors.primary.secondary }]}
                 />
               </View>
             </View>
@@ -196,13 +197,14 @@ const EditProfileScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const EditProfileScreenStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.neutral.white,
   },
   content: {
     flex: 1,
+    backgroundColor: theme.colors.neutral.white,
   },
   contentContainer: {
     padding: theme.spacing.m,
@@ -225,7 +227,6 @@ const styles = StyleSheet.create({
   buttonSubmit: {
     flex: 1,
     marginLeft: theme.spacing.xs,
-    backgroundColor: theme.colors.primary.secondary,
   },
 });
 

@@ -14,7 +14,7 @@ import Loading from "../common/Loading";
 import ErrorState from "../common/ErrorState";
 import useCategories from "../../hooks/useCategories";
 import { Category } from "../../types/categories.types";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 export interface CategoryPickerProps {
   name: string;
@@ -33,6 +33,7 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({
   multiple = false,
   showBadge = true,
 }) => {
+  const theme = useTheme();
   // Estado para acompanhar a seleção atual quando é múltipla
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
@@ -89,10 +90,24 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({
   // Renderizar item de categoria
   const renderCategoryItem = ({ item }: { item: Category }) => {
     const isSelected = isCategorySelected(item.id);
+    const dynamicStyles = {
+      selectedCategoryItem: {
+        borderColor: theme.colors.primary.secondary,
+        backgroundColor: theme.colors.primary.secondary + "10",
+      },
+      categoryItem: {
+        borderColor: theme.colors.neutral.mediumGray,
+      },
+    };
 
     return (
       <TouchableOpacity
-        style={[styles.categoryItem, isSelected && styles.selectedCategoryItem]}
+        style={[
+          styles.categoryItem,
+          dynamicStyles.categoryItem,
+          isSelected && styles.selectedCategoryItem,
+          isSelected && dynamicStyles.selectedCategoryItem,
+        ]}
         onPress={() => handleSelectCategory(item)}
         activeOpacity={0.7}
       >
@@ -156,10 +171,16 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({
     );
   }
 
+  const dynamicStyles = {
+    categoryList: {
+      borderColor: theme.colors.neutral.mediumGray,
+    },
+  };
+
   return (
     <View style={[styles.container, style]}>
       <View style={styles.labelContainer}>
-        <Typography variant="bodySecondary" style={styles.label}>
+        <Typography variant="bodySecondary" color={theme.colors.neutral.black} style={styles.label}>
           {label}
         </Typography>
 
@@ -175,7 +196,7 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({
         keyExtractor={(item) => item.id}
         renderItem={renderCategoryItem}
         horizontal={false}
-        style={styles.categoryList}
+        style={[styles.categoryList, dynamicStyles.categoryList]}
         contentContainerStyle={styles.categoryListContent}
       />
 
@@ -191,7 +212,7 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({
 
       {showBadge && getSelectedCategories().length > 0 && (
         <View style={styles.selectedContainer}>
-          <Typography variant="small" style={styles.selectedLabel}>
+          <Typography variant="small" color={theme.colors.neutral.black} style={styles.selectedLabel}>
             Selecionadas:
           </Typography>
 
@@ -213,52 +234,49 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: theme.spacing.m,
+    marginBottom: 24,
   },
   labelContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: theme.spacing.xs,
+    marginBottom: 8,
   },
   label: {
-    marginRight: theme.spacing.xxs,
+    marginRight: 4,
   },
   categoryList: {
     maxHeight: 200,
     borderWidth: 1,
-    borderColor: theme.colors.neutral.mediumGray,
-    borderRadius: theme.borderRadius.medium,
+    borderRadius: 8,
   },
   categoryListContent: {
-    padding: theme.spacing.xs,
+    padding: 8,
   },
   categoryItem: {
-    padding: theme.spacing.xs,
-    marginBottom: theme.spacing.xs,
-    borderRadius: theme.borderRadius.small,
+    padding: 8,
+    marginBottom: 8,
+    borderRadius: 4,
     borderWidth: 1,
-    borderColor: theme.colors.neutral.mediumGray,
   },
   selectedCategoryItem: {
-    borderColor: theme.colors.primary.secondary,
-    backgroundColor: theme.colors.primary.secondary + "10", // 10% de opacidade
+    // Cores aplicadas dinamicamente
   },
   errorText: {
-    marginTop: theme.spacing.xxs,
+    marginTop: 4,
   },
   selectedContainer: {
-    marginTop: theme.spacing.s,
+    marginTop: 16,
   },
   selectedLabel: {
-    marginBottom: theme.spacing.xxs,
+    marginBottom: 4,
   },
   badgesContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
   },
   badge: {
-    marginRight: theme.spacing.xs,
-    marginBottom: theme.spacing.xs,
+    marginRight: 8,
+    marginBottom: 8,
   },
 });
 

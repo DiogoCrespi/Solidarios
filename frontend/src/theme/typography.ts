@@ -33,70 +33,73 @@ export const fontFamily = {
   monospace: "RobotoMono",
 };
 
-// Estilos de texto
-export const typography: Record<string, TypographyStyle> = {
+// Função para criar tipografia baseada nas cores
+export const createTypography = (colors: typeof import('./colors').lightColors) => ({
   h1: {
+    fontSize: 32,
+    fontFamily: fontFamily.primary,
+    fontWeight: "bold" as FontWeight,
+    color: colors.neutral.black,
+    lineHeight: 40,
+  },
+  h2: {
     fontSize: 24,
     fontFamily: fontFamily.primary,
-    fontWeight: "bold",
+    fontWeight: "bold" as FontWeight,
     color: colors.neutral.black,
     lineHeight: 32,
   },
-  h2: {
+  h3: {
     fontSize: 20,
     fontFamily: fontFamily.primary,
-    fontWeight: "bold",
+    fontWeight: "600" as FontWeight,
     color: colors.neutral.black,
     lineHeight: 28,
   },
-  h3: {
+  h4: {
     fontSize: 18,
     fontFamily: fontFamily.primary,
-    fontWeight: "600",
-    color: colors.neutral.black,
-    lineHeight: 26,
-  },
-  h4: {
-    fontSize: 16,
-    fontFamily: fontFamily.primary,
-    fontWeight: "600",
+    fontWeight: "600" as FontWeight,
     color: colors.neutral.black,
     lineHeight: 24,
   },
   body: {
-    fontSize: 14,
+    fontSize: 16,
     fontFamily: fontFamily.primary,
-    fontWeight: "normal",
-    color: "#334155", // Cor específica para texto corpo
-    lineHeight: 22,
+    fontWeight: "normal" as FontWeight,
+    color: colors.neutral.black,
+    lineHeight: 24,
   },
   bodySecondary: {
     fontSize: 14,
     fontFamily: fontFamily.primary,
-    fontWeight: "normal",
+    fontWeight: "normal" as FontWeight,
     color: colors.neutral.darkGray,
-    lineHeight: 22,
+    lineHeight: 20,
   },
   small: {
     fontSize: 12,
     fontFamily: fontFamily.primary,
-    fontWeight: "normal",
+    fontWeight: "normal" as FontWeight,
     color: colors.neutral.darkGray,
-    lineHeight: 18,
+    lineHeight: 16,
   },
   button: {
     fontSize: 14,
     fontFamily: fontFamily.primary,
-    fontWeight: "600",
+    fontWeight: "600" as FontWeight,
     color: colors.neutral.white,
   },
   buttonSmall: {
     fontSize: 12,
     fontFamily: fontFamily.primary,
-    fontWeight: "600",
+    fontWeight: "600" as FontWeight,
     color: colors.neutral.white,
   },
-};
+});
+
+// Tipografia padrão (tema claro)
+export const typography = createTypography(colors);
 
 // Função auxiliar para aplicar estilos de texto
 export const applyTextStyle = (

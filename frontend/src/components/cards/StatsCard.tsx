@@ -9,7 +9,7 @@ import {
 import Card from "../common/Card";
 import Typography from "../common/Typography";
 import { formatNumber, formatPercent } from "../../utils/formatters";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 export type StatValueType = "number" | "currency" | "percentage" | "text";
 
@@ -42,6 +42,8 @@ const StatsCard: React.FC<StatsCardProps> = ({
   style,
   columns = 2,
 }) => {
+  const theme = useTheme();
+  
   // Formatar valor com base no tipo
   const formatValue = (stat: StatData): string => {
     const { value, type = "number" } = stat;
@@ -176,23 +178,23 @@ const StatsCard: React.FC<StatsCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    marginBottom: theme.spacing.s,
+    marginBottom: 16,
   },
   statsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
   },
   statItem: {
-    marginBottom: theme.spacing.m,
-    paddingHorizontal: theme.spacing.xs,
+    marginBottom: 24,
+    paddingHorizontal: 8,
   },
   statHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: theme.spacing.xxs,
+    marginBottom: 4,
   },
   statIcon: {
-    marginRight: theme.spacing.xxs,
+    marginRight: 4,
   },
   statTitle: {
     flex: 1,
@@ -202,14 +204,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   statValue: {
-    marginRight: theme.spacing.xs,
+    marginRight: 8,
   },
   changeContainer: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: theme.spacing.xxs,
+    paddingHorizontal: 4,
     paddingVertical: 2,
-    borderRadius: theme.borderRadius.small,
+    borderRadius: 4,
     borderWidth: 1,
   },
   arrow: {
@@ -235,7 +237,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
   },
   actionButton: {
-    paddingVertical: theme.spacing.xs,
+    paddingVertical: 8,
     alignItems: "center",
   },
 });

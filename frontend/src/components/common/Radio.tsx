@@ -7,7 +7,7 @@ import {
   ViewStyle,
 } from "react-native";
 import Typography from "./Typography";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 export interface RadioOption {
   label: string;
@@ -33,6 +33,8 @@ const Radio: React.FC<RadioProps> = ({
   style,
   size = "medium",
 }) => {
+  const theme = useTheme();
+  
   // Definir tamanhos com base no parâmetro size
   const getSize = () => {
     switch (size) {
@@ -103,10 +105,8 @@ const Radio: React.FC<RadioProps> = ({
             </View>
             <Typography
               variant="body"
-              style={[
-                styles.label,
-                disabled && { color: theme.colors.neutral.darkGray },
-              ]}
+              color={disabled ? theme.colors.neutral.darkGray : theme.colors.neutral.black}
+              style={styles.label}
             >
               {option.label}
             </Typography>
@@ -119,7 +119,7 @@ const Radio: React.FC<RadioProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: theme.spacing.xxs,
+    marginVertical: 4,
   },
   horizontal: {
     flexDirection: "row",
@@ -128,10 +128,10 @@ const styles = StyleSheet.create({
   option: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: theme.spacing.xs,
+    marginVertical: 8,
   },
   horizontalOption: {
-    marginRight: theme.spacing.m,
+    marginRight: 24,
   },
   radio: {
     borderWidth: 2,
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   label: {
-    marginLeft: theme.spacing.xs,
+    marginLeft: 8,
   },
 });
 

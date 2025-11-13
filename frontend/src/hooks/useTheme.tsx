@@ -6,7 +6,7 @@ import { useAppSelector, useAppDispatch } from "../store";
 import { setTheme, toggleTheme, initializeTheme, loadTheme } from "../store/slices/themeSlice";
 import { lightColors, darkColors } from "../theme/colors";
 import spacing from "../theme/spacing";
-import typography, { applyTextStyle, fontFamily } from "../theme/typography";
+import { applyTextStyle, fontFamily, createTypography } from "../theme/typography";
 import type { ThemeMode } from "../store/slices/themeSlice";
 import { useEffect } from "react";
 
@@ -77,11 +77,25 @@ export const useTheme = () => {
   }, [dispatch]);
 
   const colors = themeMode === "dark" ? darkColors : lightColors;
+  
+  // Garantir que createTypography sempre retorne um objeto válido
+  let themeTypography;
+  try {
+    themeTypography = createTypography(colors);
+    // Verificar se o objeto retornado tem as propriedades esperadas
+    if (!themeTypography || typeof themeTypography !== 'object') {
+      console.warn('createTypography returned invalid value, using fallback');
+      themeTypography = createTypography(lightColors); // Fallback para tema claro
+    }
+  } catch (error) {
+    console.error('Error creating typography:', error);
+    themeTypography = createTypography(lightColors); // Fallback para tema claro
+  }
 
   const theme = {
     colors,
     spacing,
-    typography,
+    typography: themeTypography,
     borderRadius,
     shadows,
     fontFamily,

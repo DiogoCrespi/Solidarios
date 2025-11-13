@@ -32,7 +32,7 @@ import {
   StatusIndicator,
   NotificationBanner,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -51,6 +51,7 @@ type ItemDetailScreenRouteProp = RouteProp<
 >;
 
 const ItemDetailScreen: React.FC = () => {
+  const theme = useTheme();
   // Navegação e parâmetros
   const route = useRoute<ItemDetailScreenRouteProp>();
   const id = route.params?.id || "";
@@ -73,6 +74,7 @@ const ItemDetailScreen: React.FC = () => {
     type: "success",
     message: "",
   });
+  const styles = ItemDetailScreenStyles(theme);
 
   // Carregar detalhes do item
   const loadItem = useCallback(async () => {
@@ -189,7 +191,6 @@ const ItemDetailScreen: React.FC = () => {
       <Header
         title="Detalhes do Item"
         onBackPress={() => navigation.goBack()}
-        backgroundColor={theme.colors.primary.secondary}
       />
 
       {/* Notificação */}
@@ -342,13 +343,14 @@ const ItemDetailScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const ItemDetailScreenStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.neutral.white,
   },
   content: {
     flex: 1,
+    backgroundColor: theme.colors.neutral.white,
   },
   contentContainer: {
     padding: theme.spacing.s,

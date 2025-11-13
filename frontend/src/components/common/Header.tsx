@@ -8,7 +8,7 @@ import {
   StatusBar,
 } from "react-native";
 import Typography from "./Typography";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 export interface HeaderProps {
   title: string;
@@ -30,19 +30,30 @@ const Header: React.FC<HeaderProps> = ({
   rightComponent,
   onBackPress,
   style,
-  backgroundColor = theme.colors.primary.main,
-  titleColor = theme.colors.neutral.white,
-  subtitleColor = theme.colors.neutral.white + "CC", // 80% opacity
+  backgroundColor,
+  titleColor,
+  subtitleColor,
   elevated = true,
 }) => {
+  const theme = useTheme();
+  
+  // Valores padrão baseados no tema
+  const defaultBackgroundColor = backgroundColor || theme.colors.primary.main;
+  const defaultTitleColor = titleColor || theme.colors.neutral.white;
+  const defaultSubtitleColor = subtitleColor || theme.colors.neutral.white + "CC"; // 80% opacity
+  
+  // Determinar estilo da barra de status baseado no tema
+  const statusBarStyle = theme.isDark ? "light-content" : "dark-content";
+  
   return (
     <>
-      <StatusBar backgroundColor={backgroundColor} barStyle="light-content" />
+      <StatusBar backgroundColor={defaultBackgroundColor} barStyle={statusBarStyle} />
       <View
         style={[
           styles.container,
-          { backgroundColor },
-          elevated && styles.elevated,
+          { backgroundColor: defaultBackgroundColor },
+          elevated && theme.shadows.medium,
+          elevated && { elevation: 4 },
           style,
         ]}
       >
@@ -55,7 +66,7 @@ const Header: React.FC<HeaderProps> = ({
               style={styles.backButton}
               activeOpacity={0.7}
             >
-              <BackIcon color={titleColor} />
+              <BackIcon color={defaultTitleColor} />
             </TouchableOpacity>
           ) : null}
         </View>
@@ -63,7 +74,7 @@ const Header: React.FC<HeaderProps> = ({
         <View style={styles.titleContainer}>
           <Typography
             variant="h3"
-            color={titleColor}
+            color={defaultTitleColor}
             style={styles.title}
             numberOfLines={1}
           >
@@ -72,7 +83,7 @@ const Header: React.FC<HeaderProps> = ({
           {subtitle && (
             <Typography
               variant="small"
-              color={subtitleColor}
+              color={defaultSubtitleColor}
               style={styles.subtitle}
               numberOfLines={1}
             >
@@ -117,11 +128,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     height: 56,
-    paddingHorizontal: theme.spacing.s,
-  },
-  elevated: {
-    ...theme.shadows.medium,
-    elevation: 4,
+    paddingHorizontal: 16,
   },
   leftContainer: {
     width: 48,
@@ -130,7 +137,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
   },
   backButton: {
-    padding: theme.spacing.xxs,
+    padding: 4,
   },
   titleContainer: {
     flex: 1,

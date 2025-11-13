@@ -17,7 +17,7 @@ import {
   Button,
 } from '../../components/barrelComponents';
 import { SimpleStatsCard } from '../../components/cards/barrelCards';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
 import AnalyticsService, {
   DashboardStats,
   UsersStats,
@@ -31,6 +31,7 @@ import AnalyticsFilters, { AnalyticsFiltersValues } from '../../components/filte
 import ReportGenerator, { ReportConfig } from '../../components/reports/ReportGenerator';
 
 const AnalyticsScreen: React.FC = () => {
+  const theme = useTheme();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -126,8 +127,9 @@ const AnalyticsScreen: React.FC = () => {
       const blob = await AnalyticsService.generateReport({
         type: config.type,
         format: config.format,
-        startDate: config.startDate,
-        endDate: config.endDate,
+        startDate: config.startDate || filters.startDate,
+        endDate: config.endDate || filters.endDate,
+        categoryId: config.categoryId || filters.categoryId,
       });
 
       // Download baseado na plataforma
@@ -195,13 +197,13 @@ const AnalyticsScreen: React.FC = () => {
 
   return (
     <ScrollView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: theme.colors.neutral.lightGray }]}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: theme.colors.neutral.white, borderBottomColor: theme.colors.neutral.lightGray }]}>
         <View style={styles.headerContent}>
           <View>
             <Typography variant="h2" color={theme.colors.primary.main}>
@@ -212,7 +214,7 @@ const AnalyticsScreen: React.FC = () => {
             </Typography>
           </View>
           <TouchableOpacity
-            style={styles.filterButton}
+            style={[styles.filterButton, { backgroundColor: theme.colors.neutral.lightGray }]}
             onPress={() => setShowFilters(!showFilters)}
           >
             <MaterialCommunityIcons
@@ -302,23 +304,23 @@ const AnalyticsScreen: React.FC = () => {
           </Typography>
           <View style={styles.listContainer}>
             {usersStats.usersByRole.map((item, index) => (
-              <View key={index} style={styles.listItem}>
-                <Typography variant="body">{item.role}</Typography>
+              <View key={index} style={[styles.listItem, { borderBottomColor: theme.colors.neutral.lightGray }]}>
+                <Typography variant="body" color={theme.colors.neutral.black}>{item.role}</Typography>
                 <Typography variant="body" color={theme.colors.primary.main}>
                   {item.count}
                 </Typography>
               </View>
             ))}
           </View>
-          <View style={styles.divider} />
-          <View style={styles.listItem}>
-            <Typography variant="body">Usuários Ativos</Typography>
+          <View style={[styles.divider, { backgroundColor: theme.colors.neutral.mediumGray }]} />
+          <View style={[styles.listItem, { borderBottomColor: theme.colors.neutral.lightGray }]}>
+            <Typography variant="body" color={theme.colors.neutral.black}>Usuários Ativos</Typography>
             <Typography variant="body" color={theme.colors.status.success}>
               {usersStats.activeUsers}
             </Typography>
           </View>
-          <View style={styles.listItem}>
-            <Typography variant="body">Novos (30 dias)</Typography>
+          <View style={[styles.listItem, { borderBottomColor: theme.colors.neutral.lightGray }]}>
+            <Typography variant="body" color={theme.colors.neutral.black}>Novos (30 dias)</Typography>
             <Typography variant="body" color={theme.colors.status.info}>
               {usersStats.recentUsers}
             </Typography>
@@ -334,8 +336,8 @@ const AnalyticsScreen: React.FC = () => {
           </Typography>
           <View style={styles.listContainer}>
             {itemsStats.itemsByStatus.map((item, index) => (
-              <View key={index} style={styles.listItem}>
-                <Typography variant="body">{item.status}</Typography>
+              <View key={index} style={[styles.listItem, { borderBottomColor: theme.colors.neutral.lightGray }]}>
+                <Typography variant="body" color={theme.colors.neutral.black}>{item.status}</Typography>
                 <Typography variant="body" color={theme.colors.primary.main}>
                   {item.count}
                 </Typography>
@@ -360,14 +362,14 @@ const AnalyticsScreen: React.FC = () => {
           </View>
           <View style={styles.listContainer}>
             {topDonors.map((donor, index) => (
-              <View key={donor.donorId} style={styles.topDonorItem}>
-                <View style={styles.rankBadge}>
+              <View key={donor.donorId} style={[styles.topDonorItem, { borderBottomColor: theme.colors.neutral.lightGray }]}>
+                <View style={[styles.rankBadge, { backgroundColor: theme.colors.primary.main }]}>
                   <Typography variant="small" color={theme.colors.neutral.white}>
                     {index + 1}º
                   </Typography>
                 </View>
                 <View style={styles.donorInfo}>
-                  <Typography variant="body">{donor.donorName}</Typography>
+                  <Typography variant="body" color={theme.colors.neutral.black}>{donor.donorName}</Typography>
                   <Typography variant="small" color={theme.colors.neutral.mediumGray}>
                     {donor.totalDonations} doações
                   </Typography>
@@ -386,8 +388,8 @@ const AnalyticsScreen: React.FC = () => {
           </Typography>
           <View style={styles.listContainer}>
             {categoriesDistribution.map((category) => (
-              <View key={category.categoryId} style={styles.categoryItem}>
-                <Typography variant="body">{category.categoryName}</Typography>
+              <View key={category.categoryId} style={[styles.categoryItem, { borderBottomColor: theme.colors.neutral.lightGray }]}>
+                <Typography variant="body" color={theme.colors.neutral.black}>{category.categoryName}</Typography>
                 <View style={styles.categoryCount}>
                   <Typography variant="body" color={theme.colors.primary.main}>
                     {category.count}
@@ -403,7 +405,10 @@ const AnalyticsScreen: React.FC = () => {
       )}
 
       {/* Gerador de Relatórios */}
-      <ReportGenerator onGenerate={handleGenerateReport} />
+      <ReportGenerator 
+        onGenerate={handleGenerateReport}
+        initialFilters={filters}
+      />
 
       {/* Espaço final */}
       <View style={styles.footer} />
@@ -414,13 +419,10 @@ const AnalyticsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.neutral.lightGray,
   },
   header: {
-    padding: theme.spacing.l,
-    backgroundColor: theme.colors.neutral.white,
+    padding: 32,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.neutral.lightGray,
   },
   headerContent: {
     flexDirection: 'row',
@@ -430,66 +432,61 @@ const styles = StyleSheet.create({
   filterButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing.xs,
-    padding: theme.spacing.m,
-    borderRadius: theme.spacing.s,
-    backgroundColor: theme.colors.neutral.lightGray,
+    gap: 8,
+    padding: 24,
+    borderRadius: 16,
   },
   carouselContainer: {
-    marginVertical: theme.spacing.s,
+    marginVertical: 16,
   },
   statsCarousel: {
-    paddingLeft: theme.spacing.m,
-    paddingVertical: theme.spacing.s,
+    paddingLeft: 24,
+    paddingVertical: 16,
     alignItems: 'center',
   },
   statCard: {
     minHeight: 120,
-    marginRight: theme.spacing.m,
+    marginRight: 24,
   },
   card: {
-    margin: theme.spacing.m,
-    padding: theme.spacing.l,
+    margin: 24,
+    padding: 32,
   },
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: theme.spacing.m,
+    marginBottom: 24,
   },
   cardTitle: {
-    marginLeft: theme.spacing.s,
+    marginLeft: 16,
   },
   listContainer: {
-    marginTop: theme.spacing.m,
+    marginTop: 24,
   },
   listItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: theme.spacing.s,
+    paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.neutral.lightGray,
   },
   divider: {
     height: 1,
-    backgroundColor: theme.colors.neutral.mediumGray,
-    marginVertical: theme.spacing.m,
+    marginVertical: 24,
   },
   topDonorItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: theme.spacing.m,
+    paddingVertical: 24,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.neutral.lightGray,
   },
   rankBadge: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: theme.colors.primary.main,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: theme.spacing.m,
+    marginRight: 24,
   },
   donorInfo: {
     flex: 1,
@@ -498,15 +495,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: theme.spacing.m,
+    paddingVertical: 24,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.neutral.lightGray,
   },
   categoryCount: {
     alignItems: 'flex-end',
   },
   footer: {
-    height: theme.spacing.xl,
+    height: 48,
   },
 });
 

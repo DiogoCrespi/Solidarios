@@ -30,7 +30,7 @@ import {
   ErrorState,
   ItemCard,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -47,6 +47,7 @@ type ReceiptDetailScreenRouteProp = RouteProp<
 >;
 
 const ReceiptDetailScreen: React.FC = () => {
+  const theme = useTheme();
   // Navegação e parâmetros
   const route = useRoute<ReceiptDetailScreenRouteProp>();
   const id = route.params?.id || "";
@@ -57,6 +58,7 @@ const ReceiptDetailScreen: React.FC = () => {
   const { user } = useAuth();
   const { distribution, fetchDistributionById, isLoading, error, clearError } =
     useDistributions();
+  const styles = ReceiptDetailScreenStyles(theme);
 
   // Carregar detalhes da distribuição
   const loadDistribution = useCallback(async () => {
@@ -123,11 +125,10 @@ const ReceiptDetailScreen: React.FC = () => {
       <Header
         title="Detalhes do Recebimento"
         onBackPress={() => navigation.goBack()}
-        backgroundColor={theme.colors.primary.secondary}
         rightComponent={
           <TouchableOpacity
             onPress={handleShareReceipt}
-            style={styles.shareButton}
+            style={[styles.shareButton, { backgroundColor: theme.colors.primary.secondary }]}
           >
             <Typography variant="small" color={theme.colors.neutral.white}>
               Compartilhar
@@ -143,7 +144,7 @@ const ReceiptDetailScreen: React.FC = () => {
         {/* Informações gerais */}
         <Card style={styles.card}>
           <View style={styles.headerRow}>
-            <Typography variant="h3">Recebimento de Doações</Typography>
+            <Typography variant="h3" color={theme.colors.neutral.black}>Recebimento de Doações</Typography>
             <Badge
               label={formatDate(distribution.date)}
               variant="info"
@@ -161,7 +162,7 @@ const ReceiptDetailScreen: React.FC = () => {
             >
               Código:
             </Typography>
-            <Typography variant="bodySecondary">
+            <Typography variant="bodySecondary" color={theme.colors.neutral.black}>
               {distribution.id.slice(0, 8).toUpperCase()}
             </Typography>
           </View>
@@ -174,7 +175,7 @@ const ReceiptDetailScreen: React.FC = () => {
             >
               Data e hora:
             </Typography>
-            <Typography variant="bodySecondary">
+            <Typography variant="bodySecondary" color={theme.colors.neutral.black}>
               {formatDateTime(distribution.date)}
             </Typography>
           </View>
@@ -189,7 +190,7 @@ const ReceiptDetailScreen: React.FC = () => {
                 Observações:
               </Typography>
               <View style={styles.observationsBox}>
-                <Typography variant="bodySecondary">
+                <Typography variant="bodySecondary" color={theme.colors.neutral.black}>
                   {distribution.observations}
                 </Typography>
               </View>
@@ -206,7 +207,7 @@ const ReceiptDetailScreen: React.FC = () => {
               style={styles.avatar}
             />
             <View style={styles.employeeInfo}>
-              <Typography variant="body">
+              <Typography variant="body" color={theme.colors.neutral.black}>
                 {distribution.employee.name}
               </Typography>
               <Typography variant="small" color={theme.colors.neutral.darkGray}>
@@ -250,7 +251,7 @@ const ReceiptDetailScreen: React.FC = () => {
               style={styles.itemsList}
             />
           ) : (
-            <Typography variant="bodySecondary" style={styles.emptyText}>
+            <Typography variant="bodySecondary" style={styles.emptyText} color={theme.colors.neutral.darkGray}>
               Nenhum item encontrado neste recebimento.
             </Typography>
           )}
@@ -275,7 +276,7 @@ const ReceiptDetailScreen: React.FC = () => {
                   style={styles.donorAvatar}
                 />
                 <View style={styles.donorInfo}>
-                  <Typography variant="bodySecondary">{donor.name}</Typography>
+                  <Typography variant="bodySecondary" color={theme.colors.neutral.black}>{donor.name}</Typography>
                   <Typography
                     variant="small"
                     color={theme.colors.neutral.darkGray}
@@ -315,13 +316,14 @@ const ReceiptDetailScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const ReceiptDetailScreenStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.neutral.white,
   },
   content: {
     flex: 1,
+    backgroundColor: theme.colors.neutral.white,
   },
   contentContainer: {
     padding: theme.spacing.s,
@@ -329,7 +331,6 @@ const styles = StyleSheet.create({
   },
   shareButton: {
     padding: theme.spacing.xs,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
     borderRadius: theme.borderRadius.small,
   },
   card: {
@@ -383,7 +384,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: theme.spacing.xs,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.neutral.lightGray,
+    borderBottomColor: theme.colors.neutral.mediumGray,
   },
   donorAvatar: {
     marginRight: theme.spacing.xs,

@@ -31,7 +31,7 @@ import {
   ErrorState,
   NotificationBanner,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -49,6 +49,7 @@ type DonationDetailScreenRouteProp = RouteProp<
 >;
 
 const DonationDetailScreen: React.FC = () => {
+  const theme = useTheme();
   // Navegação e parâmetros
   const route = useRoute<DonationDetailScreenRouteProp>();
   const id = route.params?.id;
@@ -190,8 +191,44 @@ const DonationDetailScreen: React.FC = () => {
     [ItemType.OUTRO]: "Outro",
   };
 
+  const dynamicStyles = {
+    container: {
+      backgroundColor: theme.colors.neutral.white,
+    },
+    contentContainer: {
+      backgroundColor: theme.colors.neutral.white,
+    },
+    imageContainer: {
+      backgroundColor: theme.colors.neutral.lightGray,
+      borderRadius: 8,
+    },
+    mainImage: {
+      backgroundColor: theme.colors.neutral.lightGray,
+    },
+    thumbnailContainer: {
+      backgroundColor: theme.colors.neutral.lightGray,
+    },
+    thumbnail: {
+      borderRadius: 4,
+    },
+    selectedThumbnail: {
+      borderColor: theme.colors.primary.secondary,
+    },
+    noImageContainer: {
+      backgroundColor: theme.colors.neutral.lightGray,
+    },
+    statusDot: {
+      backgroundColor: theme.colors.neutral.lightGray,
+      borderColor: theme.colors.neutral.mediumGray,
+    },
+    statusDotActive: {
+      backgroundColor: theme.colors.status.success,
+      borderColor: theme.colors.status.success,
+    },
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, dynamicStyles.container]}>
       {/* Cabeçalho */}
       <Header
         title="Detalhes da Doação"
@@ -210,22 +247,22 @@ const DonationDetailScreen: React.FC = () => {
 
       <ScrollView
         style={styles.content}
-        contentContainerStyle={styles.contentContainer}
+        contentContainerStyle={[styles.contentContainer, dynamicStyles.contentContainer]}
       >
         {/* Galeria de imagens */}
-        <View style={styles.imageContainer}>
+        <View style={[styles.imageContainer, dynamicStyles.imageContainer]}>
           {item.photos && item.photos.length > 0 ? (
             <>
               <Image
                 source={{ uri: item.photos[currentImage] }}
-                style={styles.mainImage}
+                style={[styles.mainImage, dynamicStyles.mainImage]}
                 resizeMode="cover"
               />
               {item.photos.length > 1 && (
                 <ScrollView
                   horizontal
                   showsHorizontalScrollIndicator={false}
-                  style={styles.thumbnailContainer}
+                  style={[styles.thumbnailContainer, dynamicStyles.thumbnailContainer]}
                 >
                   {item.photos.map((photo, index) => (
                     <TouchableOpacity
@@ -233,7 +270,9 @@ const DonationDetailScreen: React.FC = () => {
                       onPress={() => setCurrentImage(index)}
                       style={[
                         styles.thumbnail,
+                        dynamicStyles.thumbnail,
                         currentImage === index && styles.selectedThumbnail,
+                        currentImage === index && dynamicStyles.selectedThumbnail,
                       ]}
                     >
                       <Image
@@ -247,7 +286,7 @@ const DonationDetailScreen: React.FC = () => {
               )}
             </>
           ) : (
-            <View style={styles.noImageContainer}>
+            <View style={[styles.noImageContainer, dynamicStyles.noImageContainer]}>
               <Typography
                 variant="bodySecondary"
                 color={theme.colors.neutral.darkGray}
@@ -269,11 +308,11 @@ const DonationDetailScreen: React.FC = () => {
             <StatusIndicator status={item.status} showLabel />
           </View>
 
-          <Typography variant="h3" style={styles.title}>
+          <Typography variant="h3" style={styles.title} color={theme.colors.neutral.black}>
             {item.description}
           </Typography>
 
-          <Divider spacing={theme.spacing.s} />
+          <Divider spacing={8} />
 
           {/* Detalhes do item */}
           <View style={styles.detailsContainer}>
@@ -285,7 +324,7 @@ const DonationDetailScreen: React.FC = () => {
                 >
                   Tamanho:
                 </Typography>
-                <Typography variant="body">{item.size}</Typography>
+                <Typography variant="body" color={theme.colors.neutral.black}>{item.size}</Typography>
               </View>
             )}
 
@@ -297,7 +336,7 @@ const DonationDetailScreen: React.FC = () => {
                 >
                   Estado de conservação:
                 </Typography>
-                <Typography variant="body">{item.conservationState}</Typography>
+                <Typography variant="body" color={theme.colors.neutral.black}>{item.conservationState}</Typography>
               </View>
             )}
 
@@ -308,7 +347,7 @@ const DonationDetailScreen: React.FC = () => {
               >
                 Data de doação:
               </Typography>
-              <Typography variant="body">
+              <Typography variant="body" color={theme.colors.neutral.black}>
                 {formatDate(item.receivedDate)}
               </Typography>
             </View>
@@ -331,9 +370,9 @@ const DonationDetailScreen: React.FC = () => {
         <Card title="Status da Doação" style={styles.card}>
           <View style={styles.statusTimeline}>
             <View style={styles.statusItem}>
-              <View style={[styles.statusDot, styles.statusDotActive]} />
+              <View style={[styles.statusDot, dynamicStyles.statusDot, styles.statusDotActive, dynamicStyles.statusDotActive]} />
               <View style={styles.statusContent}>
-                <Typography variant="bodySecondary" style={styles.statusTitle}>
+                <Typography variant="bodySecondary" style={styles.statusTitle} color={theme.colors.neutral.black}>
                   Doação Recebida
                 </Typography>
                 <Typography
@@ -349,11 +388,13 @@ const DonationDetailScreen: React.FC = () => {
               <View
                 style={[
                   styles.statusDot,
+                  dynamicStyles.statusDot,
                   item.status !== "disponivel" && styles.statusDotActive,
+                  item.status !== "disponivel" && dynamicStyles.statusDotActive,
                 ]}
               />
               <View style={styles.statusContent}>
-                <Typography variant="bodySecondary" style={styles.statusTitle}>
+                <Typography variant="bodySecondary" style={styles.statusTitle} color={theme.colors.neutral.black}>
                   {item.status === "reservado" || item.status === "distribuido"
                     ? "Reservado para Beneficiário"
                     : "Aguardando Reserva"}
@@ -374,11 +415,13 @@ const DonationDetailScreen: React.FC = () => {
               <View
                 style={[
                   styles.statusDot,
+                  dynamicStyles.statusDot,
                   item.status === "distribuido" && styles.statusDotActive,
+                  item.status === "distribuido" && dynamicStyles.statusDotActive,
                 ]}
               />
               <View style={styles.statusContent}>
-                <Typography variant="bodySecondary" style={styles.statusTitle}>
+                <Typography variant="bodySecondary" style={styles.statusTitle} color={theme.colors.neutral.black}>
                   {item.status === "distribuido"
                     ? "Entregue ao Beneficiário"
                     : "Aguardando Entrega"}
@@ -413,42 +456,36 @@ const DonationDetailScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.neutral.white,
   },
   content: {
     flex: 1,
   },
   contentContainer: {
-    padding: theme.spacing.s,
-    paddingBottom: theme.spacing.xxl,
+    padding: 8,
+    paddingBottom: 48,
   },
   imageContainer: {
-    marginBottom: theme.spacing.s,
-    borderRadius: theme.borderRadius.medium,
+    marginBottom: 8,
     overflow: "hidden",
-    backgroundColor: theme.colors.neutral.lightGray,
   },
   mainImage: {
     width: "100%",
     height: 250,
-    backgroundColor: theme.colors.neutral.lightGray,
   },
   thumbnailContainer: {
     flexDirection: "row",
-    padding: theme.spacing.xs,
-    backgroundColor: theme.colors.neutral.lightGray,
+    padding: 4,
   },
   thumbnail: {
     width: 60,
     height: 60,
-    marginRight: theme.spacing.xs,
-    borderRadius: theme.borderRadius.small,
+    marginRight: 4,
     overflow: "hidden",
     borderWidth: 2,
     borderColor: "transparent",
   },
   selectedThumbnail: {
-    borderColor: theme.colors.primary.secondary,
+    // Border color applied dynamically
   },
   thumbnailImage: {
     width: "100%",
@@ -457,51 +494,47 @@ const styles = StyleSheet.create({
   noImageContainer: {
     width: "100%",
     height: 200,
-    backgroundColor: theme.colors.neutral.lightGray,
     justifyContent: "center",
     alignItems: "center",
   },
   card: {
-    marginBottom: theme.spacing.s,
+    marginBottom: 8,
   },
   headerRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: theme.spacing.xs,
+    marginBottom: 4,
   },
   title: {
-    marginBottom: theme.spacing.xs,
+    marginBottom: 4,
   },
   detailsContainer: {
-    marginTop: theme.spacing.xs,
+    marginTop: 4,
   },
   detailRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: theme.spacing.xs,
+    marginBottom: 4,
   },
   statusTimeline: {
-    padding: theme.spacing.xs,
+    padding: 4,
   },
   statusItem: {
     flexDirection: "row",
-    marginBottom: theme.spacing.s,
+    marginBottom: 8,
   },
   statusDot: {
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: theme.colors.neutral.lightGray,
     borderWidth: 1,
-    borderColor: theme.colors.neutral.mediumGray,
     marginTop: 4,
-    marginRight: theme.spacing.xs,
+    marginRight: 4,
   },
   statusDotActive: {
-    backgroundColor: theme.colors.status.success,
-    borderColor: theme.colors.status.success,
+    // Colors applied dynamically
   },
   statusContent: {
     flex: 1,
@@ -510,7 +543,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   actionButton: {
-    marginTop: theme.spacing.s,
+    marginTop: 8,
   },
 });
 

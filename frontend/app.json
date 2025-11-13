@@ -45,7 +45,7 @@
       ]
     },
     "web": {
-      "favicon": "./assets/favicon.svg"
+      "favicon": "./assets/icon.png"
     },
     "primaryColor": "#64748B"
   }

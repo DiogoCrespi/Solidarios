@@ -20,7 +20,7 @@ import * as Yup from "yup";
 import { LinearGradient } from "expo-linear-gradient";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 import { AuthStackParamList } from "../../navigation/AuthNavigator";
 import { AUTH_ROUTES } from "../../navigation/routes";
 import AuthService from "../../api/auth";
@@ -34,6 +34,7 @@ const ForgotPasswordSchema = Yup.object().shape({
 Dimensions.get("window");
 
 const ForgotPasswordScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation =
     useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
   const [isLoading, setIsLoading] = useState(false);
@@ -44,6 +45,17 @@ const ForgotPasswordScreen: React.FC = () => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
   const shakeAnim = useRef(new Animated.Value(0)).current;
+
+  // Estilos de sombra baseados na plataforma
+  const buttonShadowStyle = Platform.OS === "web"
+    ? { boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)" }
+    : {
+        elevation: 2,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      };
 
   // Efeito de animação ao carregar a tela
   useEffect(() => {
@@ -124,13 +136,21 @@ const ForgotPasswordScreen: React.FC = () => {
       style={styles.container}
     >
       <StatusBar
-        barStyle="dark-content"
+        barStyle={theme.isDark ? "light-content" : "dark-content"}
         backgroundColor="transparent"
         translucent
       />
 
       <LinearGradient
-        colors={["#b0e6f2", "#e3f7ff", "#ffffff"]}
+        colors={
+          theme.isDark
+            ? [
+                theme.colors.neutral.darkGray,
+                theme.colors.neutral.mediumGray,
+                theme.colors.neutral.lightGray,
+              ]
+            : ["#b0e6f2", "#e3f7ff", "#ffffff"]
+        }
         locations={[0, 0.6, 1]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -181,8 +201,8 @@ const ForgotPasswordScreen: React.FC = () => {
               },
             ]}
           >
-            <Text style={styles.title}>Esqueceu sua senha?</Text>
-            <Text style={styles.subtitle}>
+            <Text style={[styles.title, { color: theme.colors.primary.main }]}>Esqueceu sua senha?</Text>
+            <Text style={[styles.subtitle, { color: theme.colors.neutral.darkGray }]}>
               Informe seu endereço de email e enviaremos instruções para
               recuperar sua senha.
             </Text>
@@ -203,16 +223,16 @@ const ForgotPasswordScreen: React.FC = () => {
           >
             {/* Mensagens de feedback */}
             {errorMessage && (
-              <View style={styles.errorContainer}>
-                <MaterialIcons name="error-outline" size={20} color="#FF3B30" />
-                <Text style={styles.errorText}>{errorMessage}</Text>
+              <View style={[styles.errorContainer, { backgroundColor: theme.colors.notifications.error.background }]}>
+                <MaterialIcons name="error-outline" size={20} color={theme.colors.status.error} />
+                <Text style={[styles.errorText, { color: theme.colors.status.error }]}>{errorMessage}</Text>
               </View>
             )}
 
             {successMessage && (
-              <View style={styles.successContainer}>
-                <MaterialIcons name="check-circle" size={20} color="#34C759" />
-                <Text style={styles.successText}>{successMessage}</Text>
+              <View style={[styles.successContainer, { backgroundColor: theme.colors.notifications.success.background }]}>
+                <MaterialIcons name="check-circle" size={20} color={theme.colors.status.success} />
+                <Text style={[styles.successText, { color: theme.colors.status.success }]}>{successMessage}</Text>
               </View>
             )}
 
@@ -231,17 +251,20 @@ const ForgotPasswordScreen: React.FC = () => {
               }) => (
                 <>
                   {/* Campo de email */}
-                  <View style={styles.inputContainer}>
+                  <View style={[styles.inputContainer, { 
+                    backgroundColor: theme.colors.neutral.white,
+                    borderColor: theme.colors.neutral.mediumGray 
+                  }]}>
                     <MaterialIcons
                       name="email"
                       size={22}
-                      color="#666"
+                      color={theme.colors.neutral.darkGray}
                       style={styles.inputIcon}
                     />
                     <TextInput
-                      style={styles.input}
+                      style={[styles.input, { color: theme.colors.neutral.black }]}
                       placeholder="Email"
-                      placeholderTextColor="#999"
+                      placeholderTextColor={theme.colors.neutral.mediumGray}
                       keyboardType="email-address"
                       autoCapitalize="none"
                       value={values.email}
@@ -250,12 +273,12 @@ const ForgotPasswordScreen: React.FC = () => {
                     />
                   </View>
                   {touched.email && errors.email && (
-                    <Text style={styles.validationError}>{errors.email}</Text>
+                    <Text style={[styles.validationError, { color: theme.colors.status.error }]}>{errors.email}</Text>
                   )}
 
                   {/* Botão de recuperar senha */}
                   <TouchableOpacity
-                    style={styles.resetButtonContainer}
+                    style={[styles.resetButtonContainer, buttonShadowStyle]}
                     onPress={() => handleSubmit()}
                     activeOpacity={0.8}
                     disabled={isLoading}
@@ -323,17 +346,13 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   title: {
-    fontFamily: theme.fontFamily.primary,
     fontSize: 28,
     fontWeight: "bold",
-    color: theme.colors.primary.main,
     marginBottom: 10,
     textAlign: "center",
   },
   subtitle: {
-    fontFamily: theme.fontFamily.primary,
     fontSize: 16,
-    color: theme.colors.neutral.darkGray,
     textAlign: "center",
     lineHeight: 24,
   },
@@ -344,13 +363,11 @@ const styles = StyleSheet.create({
   errorContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFEBEE",
     padding: 12,
     borderRadius: 8,
     marginBottom: 16,
   },
   errorText: {
-    color: "#FF3B30",
     marginLeft: 8,
     flex: 1,
     fontSize: 14,
@@ -358,13 +375,11 @@ const styles = StyleSheet.create({
   successContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#E8F5E9",
     padding: 12,
     borderRadius: 8,
     marginBottom: 16,
   },
   successText: {
-    color: "#34C759",
     marginLeft: 8,
     flex: 1,
     fontSize: 14,
@@ -372,25 +387,20 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F5F8FF",
     borderRadius: 12,
     paddingHorizontal: 16,
     marginBottom: 12,
     height: 56,
     borderWidth: 1,
-    borderColor: "#E0E7FF",
   },
   inputIcon: {
     marginRight: 12,
   },
   input: {
     flex: 1,
-    fontFamily: theme.fontFamily.primary,
     fontSize: 16,
-    color: "#333",
   },
   validationError: {
-    color: "#FF3B30",
     fontSize: 12,
     marginTop: -8,
     marginBottom: 12,
@@ -401,11 +411,6 @@ const styles = StyleSheet.create({
     height: 56,
     borderRadius: 12,
     overflow: "hidden",
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
     marginTop: 20,
   },
   resetButton: {
@@ -414,7 +419,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   resetButtonText: {
-    fontFamily: theme.fontFamily.primary,
     fontSize: 16,
     fontWeight: "600",
     color: "#fff",
@@ -426,24 +430,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#fff",
     borderTopColor: "transparent",
-  },
-  loginContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 24,
-  },
-  loginText: {
-    fontFamily: theme.fontFamily.primary,
-    fontSize: 14,
-    color: theme.colors.neutral.darkGray,
-  },
-  loginLink: {
-    fontFamily: theme.fontFamily.primary,
-    fontSize: 14,
-    fontWeight: "600",
-    color: theme.colors.primary.secondary,
-    marginLeft: 5,
   },
 });
 

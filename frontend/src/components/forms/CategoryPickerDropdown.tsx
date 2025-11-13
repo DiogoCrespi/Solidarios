@@ -16,7 +16,7 @@ import Loading from "../common/Loading";
 import ErrorState from "../common/ErrorState";
 import useCategories from "../../hooks/useCategories";
 import { Category } from "../../types/categories.types";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 export interface CategoryPickerDropdownProps {
   name: string;
@@ -33,6 +33,7 @@ const CategoryPickerDropdown: React.FC<CategoryPickerDropdownProps> = ({
   style,
   required = false,
 }) => {
+  const theme = useTheme();
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Formik context para integração com formulários
@@ -67,15 +68,27 @@ const CategoryPickerDropdown: React.FC<CategoryPickerDropdownProps> = ({
   // Renderizar item de categoria
   const renderCategoryItem = ({ item }: { item: Category }) => {
     const isSelected = value === item.id;
+    const dynamicStyles = {
+      selectedItem: {
+        backgroundColor: theme.colors.primary.main + "10",
+      },
+      itemIcon: {
+        backgroundColor: theme.colors.neutral.lightGray,
+      },
+    };
 
     return (
       <TouchableOpacity
-        style={[styles.dropdownItem, isSelected && styles.selectedItem]}
+        style={[
+          styles.dropdownItem,
+          isSelected && styles.selectedItem,
+          isSelected && dynamicStyles.selectedItem,
+        ]}
         onPress={() => handleSelectCategory(item)}
         activeOpacity={0.7}
       >
         <View style={styles.itemContent}>
-          <View style={styles.itemIcon}>
+          <View style={[styles.itemIcon, dynamicStyles.itemIcon]}>
             <MaterialCommunityIcons
               name="shape"
               size={20}
@@ -112,11 +125,28 @@ const CategoryPickerDropdown: React.FC<CategoryPickerDropdownProps> = ({
     );
   };
 
+  const dynamicStyles = {
+    selector: {
+      borderColor: error ? theme.colors.status.error : theme.colors.neutral.mediumGray,
+      backgroundColor: theme.colors.neutral.white,
+    },
+    selectorExpanded: {
+      borderColor: error ? theme.colors.status.error : theme.colors.neutral.mediumGray,
+    },
+    dropdown: {
+      borderColor: theme.colors.neutral.mediumGray,
+      backgroundColor: theme.colors.neutral.white,
+    },
+    loadingContainer: {
+      borderColor: theme.colors.neutral.mediumGray,
+    },
+  };
+
   if (isLoading && !categories.length) {
     return (
       <View style={[styles.container, style]}>
         <View style={styles.labelContainer}>
-          <Typography variant="body" style={styles.label}>
+          <Typography variant="body" color={theme.colors.neutral.black} style={styles.label}>
             {label}
           </Typography>
           {required && (
@@ -125,7 +155,7 @@ const CategoryPickerDropdown: React.FC<CategoryPickerDropdownProps> = ({
             </Typography>
           )}
         </View>
-        <View style={styles.loadingContainer}>
+        <View style={[styles.loadingContainer, dynamicStyles.loadingContainer]}>
           <Loading size="small" />
           <Typography variant="caption" color={theme.colors.neutral.darkGray}>
             Carregando categorias...
@@ -139,7 +169,7 @@ const CategoryPickerDropdown: React.FC<CategoryPickerDropdownProps> = ({
     return (
       <View style={[styles.container, style]}>
         <View style={styles.labelContainer}>
-          <Typography variant="body" style={styles.label}>
+          <Typography variant="body" color={theme.colors.neutral.black} style={styles.label}>
             {label}
           </Typography>
           {required && (
@@ -163,7 +193,7 @@ const CategoryPickerDropdown: React.FC<CategoryPickerDropdownProps> = ({
     <View style={[styles.container, style]}>
       {/* Label */}
       <View style={styles.labelContainer}>
-        <Typography variant="body" style={styles.label}>
+        <Typography variant="body" color={theme.colors.neutral.black} style={styles.label}>
           {label}
         </Typography>
         {required && (
@@ -177,8 +207,10 @@ const CategoryPickerDropdown: React.FC<CategoryPickerDropdownProps> = ({
       <TouchableOpacity
         style={[
           styles.selector,
+          dynamicStyles.selector,
           error && styles.selectorError,
           isExpanded && styles.selectorExpanded,
+          isExpanded && dynamicStyles.selectorExpanded,
         ]}
         onPress={() => setIsExpanded(!isExpanded)}
         activeOpacity={0.7}
@@ -222,7 +254,7 @@ const CategoryPickerDropdown: React.FC<CategoryPickerDropdownProps> = ({
 
       {/* Lista expansível */}
       {isExpanded && (
-        <View style={styles.dropdown}>
+        <View style={[styles.dropdown, dynamicStyles.dropdown]}>
           <FlatList
             data={Array.isArray(categories) ? categories : []}
             keyExtractor={(item) => item.id}
@@ -265,39 +297,36 @@ const CategoryPickerDropdown: React.FC<CategoryPickerDropdownProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: theme.spacing.m,
+    marginBottom: 24,
   },
   labelContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: theme.spacing.xs,
+    marginBottom: 8,
   },
   label: {
-    marginRight: theme.spacing.xxs,
+    marginRight: 4,
     fontWeight: "500",
   },
   loadingContainer: {
     flexDirection: "row",
     alignItems: "center",
-    padding: theme.spacing.m,
+    padding: 24,
     borderWidth: 1,
-    borderColor: theme.colors.neutral.mediumGray,
-    borderRadius: theme.borderRadius.medium,
-    gap: theme.spacing.s,
+    borderRadius: 8,
+    gap: 16,
   },
   selector: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: theme.spacing.s,
+    padding: 16,
     borderWidth: 1,
-    borderColor: theme.colors.neutral.mediumGray,
-    borderRadius: theme.borderRadius.medium,
-    backgroundColor: theme.colors.neutral.white,
+    borderRadius: 8,
     minHeight: 50,
   },
   selectorError: {
-    borderColor: theme.colors.status.error,
+    // Cor aplicada dinamicamente
   },
   selectorExpanded: {
     borderBottomLeftRadius: 0,
@@ -312,7 +341,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   selectedIcon: {
-    marginRight: theme.spacing.s,
+    marginRight: 16,
   },
   selectedTextContainer: {
     flex: 1,
@@ -320,10 +349,8 @@ const styles = StyleSheet.create({
   dropdown: {
     borderWidth: 1,
     borderTopWidth: 0,
-    borderColor: theme.colors.neutral.mediumGray,
-    borderBottomLeftRadius: theme.borderRadius.medium,
-    borderBottomRightRadius: theme.borderRadius.medium,
-    backgroundColor: theme.colors.neutral.white,
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 8,
     maxHeight: 300,
     shadowColor: "#000",
     shadowOffset: {
@@ -338,15 +365,15 @@ const styles = StyleSheet.create({
     maxHeight: 300,
   },
   dropdownListContent: {
-    padding: theme.spacing.xxs,
+    padding: 4,
   },
   dropdownItem: {
-    padding: theme.spacing.s,
-    borderRadius: theme.borderRadius.small,
-    marginBottom: theme.spacing.xxs,
+    padding: 16,
+    borderRadius: 4,
+    marginBottom: 4,
   },
   selectedItem: {
-    backgroundColor: theme.colors.primary.main + "10",
+    // Cor aplicada dinamicamente
   },
   itemContent: {
     flexDirection: "row",
@@ -355,28 +382,27 @@ const styles = StyleSheet.create({
   itemIcon: {
     width: 32,
     height: 32,
-    borderRadius: theme.borderRadius.small,
-    backgroundColor: theme.colors.neutral.lightGray,
+    borderRadius: 4,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: theme.spacing.s,
+    marginRight: 16,
   },
   itemText: {
     flex: 1,
   },
   itemName: {
-    marginBottom: theme.spacing.xxs,
+    marginBottom: 4,
   },
   emptyContainer: {
     alignItems: "center",
-    padding: theme.spacing.xl,
+    padding: 48,
   },
   emptyText: {
-    marginTop: theme.spacing.s,
+    marginTop: 16,
     textAlign: "center",
   },
   errorText: {
-    marginTop: theme.spacing.xxs,
+    marginTop: 4,
   },
 });
 

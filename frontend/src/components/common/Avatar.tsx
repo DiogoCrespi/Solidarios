@@ -8,7 +8,7 @@ import {
   ImageSourcePropType,
   Text,
 } from 'react-native';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
 
 export type AvatarSize = 'small' | 'medium' | 'large' | number;
 
@@ -53,17 +53,28 @@ const Avatar: React.FC<AvatarProps> = ({
   source,
   name,
   size = 'medium',
-  backgroundColor = theme.colors.primary.main,
+  backgroundColor,
   style,
 }) => {
+  const theme = useTheme();
   const sizeValue = getSizeValue(size);
   const fontSize = sizeValue * 0.4;
+  const defaultBackgroundColor = backgroundColor || theme.colors.primary.main;
   
   const containerStyle = {
     width: sizeValue,
     height: sizeValue,
     borderRadius: sizeValue / 2,
-    backgroundColor,
+    backgroundColor: defaultBackgroundColor,
+  };
+
+  const dynamicStyles = {
+    placeholder: {
+      backgroundColor: theme.colors.neutral.mediumGray,
+    },
+    initials: {
+      color: theme.colors.neutral.white,
+    },
   };
 
   return (
@@ -75,11 +86,11 @@ const Avatar: React.FC<AvatarProps> = ({
           resizeMode="cover"
         />
       ) : name ? (
-        <Text style={[styles.initials, { fontSize }]}>
+        <Text style={[styles.initials, dynamicStyles.initials, { fontSize }]}>
           {getInitials(name)}
         </Text>
       ) : (
-        <View style={styles.placeholder} />
+        <View style={[styles.placeholder, dynamicStyles.placeholder]} />
       )}
     </View>
   );
@@ -96,14 +107,12 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   initials: {
-    color: theme.colors.neutral.white,
-    fontFamily: theme.fontFamily.primary,
+    fontFamily: 'System',
     fontWeight: '500',
   },
   placeholder: {
     width: '100%',
     height: '100%',
-    backgroundColor: theme.colors.neutral.mediumGray,
   },
 });
 

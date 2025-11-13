@@ -4,7 +4,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import ExpandableSidebar from './ExpandableSidebar';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
 
 interface SidebarLayoutProps {
   children: React.ReactNode;
@@ -17,6 +17,7 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({
   currentRoute,
   onNavigate,
 }) => {
+  const theme = useTheme();
   // Sidebar inicia minimizada (recolhida)
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
 
@@ -35,7 +36,7 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({
       />
 
       {/* Conteúdo principal - sem overlay */}
-      <View style={styles.mainContent}>
+      <View style={[styles.mainContent, { backgroundColor: theme.colors.neutral.lightGray }]}>
         {children}
       </View>
     </View>
@@ -49,7 +50,6 @@ const styles = StyleSheet.create({
   },
   mainContent: {
     flex: 1,
-    backgroundColor: theme.colors.neutral.lightGray,
   },
 });
 

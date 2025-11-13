@@ -13,13 +13,14 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 import { AUTH_ROUTES } from "../../navigation/routes";
 import { AuthStackParamList } from "../../navigation/AuthNavigator";
 
 const { width, height } = Dimensions.get("window");
 
 const WelcomeScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation =
     useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
 
@@ -27,6 +28,17 @@ const WelcomeScreen: React.FC = () => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
+
+  // Estilos de sombra baseados na plataforma
+  const buttonShadowStyle = Platform.OS === "web"
+    ? { boxShadow: "0 2px 4px rgba(0, 0, 0, 0.15)" }
+    : {
+        elevation: 3,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.15,
+        shadowRadius: 4,
+      };
 
   useEffect(() => {
     // useNativeDriver não é suportado no React Native Web
@@ -62,11 +74,19 @@ const WelcomeScreen: React.FC = () => {
       <StatusBar
         translucent
         backgroundColor="transparent"
-        barStyle="dark-content"
+        barStyle={theme.isDark ? "light-content" : "dark-content"}
       />
 
       <LinearGradient
-        colors={["#b0e6f2", "#e3f7ff", "#ffffff"]}
+        colors={
+          theme.isDark
+            ? [
+                theme.colors.neutral.darkGray,
+                theme.colors.neutral.mediumGray,
+                theme.colors.neutral.lightGray,
+              ]
+            : ["#b0e6f2", "#e3f7ff", "#ffffff"]
+        }
         locations={[0, 0.6, 1]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -98,8 +118,8 @@ const WelcomeScreen: React.FC = () => {
             },
           ]}
         >
-          <Text style={styles.title}>Bem-vindo ao Solidários</Text>
-          <Text style={styles.subtitle}>
+          <Text style={[styles.title, { color: theme.colors.primary.main }]}>Bem-vindo ao Solidários</Text>
+          <Text style={[styles.subtitle, { color: theme.colors.neutral.darkGray }]}>
             Conectando quem pode doar a quem precisa receber
           </Text>
         </Animated.View>
@@ -115,12 +135,7 @@ const WelcomeScreen: React.FC = () => {
           ]}
         >
           <TouchableOpacity
-            style={[
-              styles.loginButton,
-              Platform.OS === "web"
-                ? styles.loginButtonWeb
-                : styles.loginButtonMobile,
-            ]}
+            style={[styles.loginButton, buttonShadowStyle]}
             onPress={() => navigation.navigate(AUTH_ROUTES.LOGIN as any)}
             activeOpacity={0.8}
           >
@@ -135,11 +150,11 @@ const WelcomeScreen: React.FC = () => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.registerButton}
+            style={[styles.registerButton, { borderColor: theme.colors.primary.secondary }]}
             onPress={() => navigation.navigate(AUTH_ROUTES.REGISTER as any)}
             activeOpacity={0.8}
           >
-            <Text style={styles.registerButtonText}>Criar uma conta</Text>
+            <Text style={[styles.registerButtonText, { color: theme.colors.primary.secondary }]}>Criar uma conta</Text>
           </TouchableOpacity>
         </Animated.View>
 
@@ -152,7 +167,7 @@ const WelcomeScreen: React.FC = () => {
             },
           ]}
         >
-          <Text style={styles.footerText}>© 2025 Solidários</Text>
+          <Text style={[styles.footerText, { color: theme.colors.neutral.darkGray }]}>© 2025 Solidários</Text>
         </Animated.View>
       </LinearGradient>
     </SafeAreaView>
@@ -186,17 +201,13 @@ const styles = StyleSheet.create({
     maxWidth: 350,
   },
   title: {
-    fontFamily: theme.fontFamily.primary,
     fontSize: 28,
     fontWeight: "bold",
-    color: theme.colors.primary.main,
     marginBottom: 12,
     textAlign: "center",
   },
   subtitle: {
-    fontFamily: theme.fontFamily.primary,
     fontSize: 16,
-    color: theme.colors.neutral.darkGray,
     textAlign: "center",
     lineHeight: 24,
   },
@@ -211,25 +222,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: "hidden",
   },
-  loginButtonWeb: {
-    // Para web, usar boxShadow ao invés de shadow* props
-    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.15)",
-  } as any,
-  loginButtonMobile: {
-    // Sombras para mobile (Android/iOS)
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-  },
   gradientButton: {
     paddingVertical: 15,
     alignItems: "center",
     justifyContent: "center",
   },
   loginButtonText: {
-    fontFamily: theme.fontFamily.primary,
     color: "white",
     fontSize: 16,
     fontWeight: "600",
@@ -240,13 +238,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: theme.colors.primary.secondary,
     borderRadius: 12,
     backgroundColor: "transparent",
+    marginTop: 12,
   },
   registerButtonText: {
-    fontFamily: theme.fontFamily.primary,
-    color: theme.colors.primary.secondary,
     fontSize: 16,
     fontWeight: "600",
   },
@@ -255,9 +251,7 @@ const styles = StyleSheet.create({
     bottom: 30,
   },
   footerText: {
-    fontFamily: theme.fontFamily.primary,
     fontSize: 12,
-    color: theme.colors.neutral.darkGray,
   },
 });
 

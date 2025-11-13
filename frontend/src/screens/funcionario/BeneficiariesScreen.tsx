@@ -22,7 +22,7 @@ import {
   Loading,
   ErrorState,
 } from "../../components/barrelComponents";
-import theme from "../../theme";
+import { useTheme } from "../../hooks/useTheme";
 
 // Hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -32,6 +32,7 @@ import { useUsers } from "../../hooks/useUsers";
 import { User, UserRole } from "../../types/users.types";
 
 const BeneficiariesScreen: React.FC = () => {
+  const theme = useTheme();
   const navigation =
     useNavigation<
       StackNavigationProp<FuncionarioBeneficiariesStackParamList>
@@ -46,6 +47,7 @@ const BeneficiariesScreen: React.FC = () => {
   const [filteredBeneficiaries, setFilteredBeneficiaries] = useState<User[]>(
     []
   );
+  const styles = BeneficiariesScreenStyles(theme);
 
   // Carregar beneficiários
   const loadBeneficiaries = useCallback(
@@ -136,7 +138,6 @@ const BeneficiariesScreen: React.FC = () => {
       <Header
         title="Beneficiários"
         subtitle={`${filteredBeneficiaries.length} beneficiários cadastrados`}
-        backgroundColor={theme.colors.primary.secondary}
       />
 
       {/* Conteúdo */}
@@ -216,7 +217,7 @@ const BeneficiariesScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const BeneficiariesScreenStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.neutral.white,
@@ -224,6 +225,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: theme.spacing.s,
+    backgroundColor: theme.colors.neutral.white,
   },
   searchBar: {
     marginVertical: theme.spacing.s,
