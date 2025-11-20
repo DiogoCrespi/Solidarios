@@ -156,3 +156,4 @@ netstat -ano | findstr :8082
 **Conclusão:** O ADB está funcionando corretamente agora. O problema original foi resolvido ou era temporário. O dispositivo está pronto para desenvolvimento.
 
 
+

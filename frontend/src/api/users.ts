@@ -18,10 +18,10 @@ const UsersService = {
    * @returns Lista paginada de usuários
    */
   getAll: async (pageOptions?: PageOptionsDto): Promise<UsersPage> => {
-    const response = await api.get<UsersPage>("/users", {
+    const response = await api.get<{ data: UsersPage }>("/users", {
       params: pageOptions,
     });
-    return response.data;
+    return response.data.data;
   },
 
   /**
@@ -30,8 +30,8 @@ const UsersService = {
    * @returns Usuário encontrado
    */
   getById: async (id: string): Promise<User> => {
-    const response = await api.get<User>(`/users/${id}`);
-    return response.data;
+    const response = await api.get<{ data: User }>(`/users/${id}`);
+    return response.data.data;
   },
 
   /**
@@ -40,8 +40,8 @@ const UsersService = {
    * @returns Usuário criado
    */
   create: async (userData: CreateUserDto): Promise<User> => {
-    const response = await api.post<User>("/users", userData);
-    return response.data;
+    const response = await api.post<{ data: User }>("/users", userData);
+    return response.data.data;
   },
 
   /**
@@ -51,8 +51,8 @@ const UsersService = {
    * @returns Usuário atualizado
    */
   update: async (id: string, userData: UpdateUserDto): Promise<User> => {
-    const response = await api.patch<User>(`/users/${id}`, userData);
-    return response.data;
+    const response = await api.patch<{ data: User }>(`/users/${id}`, userData);
+    return response.data.data;
   },
 
   /**
@@ -74,10 +74,10 @@ const UsersService = {
     role: string,
     pageOptions?: PageOptionsDto
   ): Promise<UsersPage> => {
-    const response = await api.get<UsersPage>(`/users/role/${role}`, {
+    const response = await api.get<{ data: UsersPage }>(`/users/role/${role}`, {
       params: pageOptions,
     });
-    return response.data;
+    return response.data.data;
   },
 
   /**
@@ -87,10 +87,10 @@ const UsersService = {
    * @returns Usuário atualizado
    */
   toggleActive: async (id: string, isActive: boolean): Promise<User> => {
-    const response = await api.patch<User>(`/users/${id}/status`, {
+    const response = await api.patch<{ data: User }>(`/users/${id}/status`, {
       isActive,
     });
-    return response.data;
+    return response.data.data;
   },
 
   /**

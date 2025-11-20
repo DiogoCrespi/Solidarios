@@ -164,3 +164,5 @@ O app abrirá em `http://localhost:8082`
 - [Expo Go - Guia de Uso](https://docs.expo.dev/get-started/expo-go/)
 
 
+
+

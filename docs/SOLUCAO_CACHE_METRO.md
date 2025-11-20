@@ -163,3 +163,4 @@ Para evitar que o problema aconteça novamente:
 
 **Última atualização:** $(Get-Date -Format "dd/MM/yyyy")
 
+
