@@ -41,6 +41,8 @@ export const useUsers = () => {
 
     try {
       const response = await UsersService.getAll(pageOptions);
+      // O UsersService já extrai response.data.data, então response é diretamente o PageDto<User>
+      // que contém { data: User[], meta: PageMetaDto }
       setUsers(Array.isArray(response.data) ? response.data : []);
       setPagination({
         page: response.meta?.page || 1,
@@ -140,7 +142,9 @@ export const useUsers = () => {
 
       try {
         const response = await UsersService.getByRole(role, pageOptions);
-        setUsers(response.data);
+        // O UsersService já extrai response.data.data, então response é diretamente o PageDto<User>
+        // que contém { data: User[], meta: PageMetaDto }
+        setUsers(Array.isArray(response.data) ? response.data : []);
         setPagination({
           page: response.meta?.page || 1,
           totalPages: response.meta?.pageCount || 1,

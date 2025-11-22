@@ -30,6 +30,7 @@ export class AuthController {
 
   @Public()
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Autenticar usuário' })
   @ApiResponse({ status: 200, description: 'Usuário autenticado com sucesso.' })
   @ApiResponse({ status: 401, description: 'Credenciais inválidas.' })
