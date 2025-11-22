@@ -5,6 +5,7 @@ import {
   FlatList,
   RefreshControl,
   TouchableOpacity,
+  useWindowDimensions,
 } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -33,10 +34,15 @@ import { ADMIN_ROUTES } from "../../navigation/routes";
 
 const UsersScreen: React.FC = () => {
   const theme = useTheme();
+  const { width } = useWindowDimensions();
   const navigation =
     useNavigation<StackNavigationProp<AdminUsersStackParamList>>();
   const { users, isLoading, error, fetchUsers, pagination, clearError } =
     useUsers();
+  
+  // Determinar se é desktop (largura maior que 1024px)
+  const isDesktop = width > 1024;
+  const maxContentWidth = isDesktop ? 1200 : undefined;
 
   // Estados locais
   const [refreshing, setRefreshing] = useState(false);
@@ -153,7 +159,7 @@ const UsersScreen: React.FC = () => {
       />
 
       {/* Conteúdo */}
-      <View style={styles.content}>
+      <View style={[styles.content, isDesktop && styles.contentDesktop, maxContentWidth && { maxWidth: maxContentWidth, alignSelf: 'center', width: '100%' }]}>
         {/* Barra de pesquisa */}
         <SearchBar
           value={searchQuery}
@@ -194,7 +200,7 @@ const UsersScreen: React.FC = () => {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <Card
-              style={styles.userCard}
+              style={[styles.userCard, isDesktop && styles.userCardDesktop]}
               onPress={() =>
                 navigation.navigate("UserDetail", {
                   id: item.id,
@@ -283,6 +289,9 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
   },
+  contentDesktop: {
+    paddingHorizontal: 24,
+  },
   searchBar: {
     marginVertical: 16,
   },
@@ -318,6 +327,11 @@ const styles = StyleSheet.create({
   userCard: {
     marginBottom: 16,
     padding: 16,
+  },
+  userCardDesktop: {
+    maxWidth: 800,
+    alignSelf: 'center',
+    width: '100%',
   },
   userInfo: {
     flex: 1,

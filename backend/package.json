@@ -102,5 +102,8 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "overrides": {
+    "jwa": "^2.0.1"
   }
 }

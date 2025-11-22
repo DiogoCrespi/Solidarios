@@ -6,6 +6,7 @@ import {
   RefreshControl,
   TouchableOpacity,
   Platform,
+  useWindowDimensions,
 } from 'react-native';
 import {
   Typography,
@@ -44,7 +45,13 @@ const formatDate = (dateString: string): string => {
 
 const AuditScreen: React.FC = () => {
   const theme = useTheme();
+  const { width } = useWindowDimensions();
   const [loading, setLoading] = useState(true);
+  
+  // Determinar se é desktop (largura maior que 1024px)
+  const isDesktop = width > 1024;
+  const isTablet = width > 600 && width <= 1024;
+  const maxContentWidth = isDesktop ? 1400 : undefined;
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
@@ -201,7 +208,7 @@ const AuditScreen: React.FC = () => {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.neutral.lightGray }]}>
       {/* Header */}
-      <View style={[styles.header, { backgroundColor: theme.colors.neutral.white, borderBottomColor: theme.colors.neutral.lightGray }]}>
+      <View style={[styles.header, isDesktop && styles.headerDesktop, { backgroundColor: theme.colors.neutral.white, borderBottomColor: theme.colors.neutral.lightGray }]}>
         <View style={styles.headerContent}>
           <View>
             <Typography variant="h2" color={theme.colors.primary.main}>
@@ -223,7 +230,7 @@ const AuditScreen: React.FC = () => {
               />
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.filterButton, { backgroundColor: theme.colors.neutral.lightGray }]}
+              style={[styles.filterButton, isDesktop && styles.filterButtonDesktop, { backgroundColor: theme.colors.neutral.lightGray }]}
               onPress={() => setShowFilters(!showFilters)}
             >
               <MaterialCommunityIcons
@@ -241,9 +248,9 @@ const AuditScreen: React.FC = () => {
 
       {/* Filtros */}
       {showFilters && (
-        <Card style={styles.filtersCard}>
-          <View style={styles.filtersRow}>
-            <View style={styles.filterField}>
+        <Card style={[styles.filtersCard, isDesktop && styles.filtersCardDesktop]}>
+          <View style={[styles.filtersRow, isDesktop && styles.filtersRowDesktop]}>
+            <View style={[styles.filterField, isDesktop && styles.filterFieldDesktop]}>
               <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
                 Ação
               </Typography>
@@ -256,7 +263,7 @@ const AuditScreen: React.FC = () => {
               />
             </View>
 
-            <View style={styles.filterField}>
+            <View style={[styles.filterField, isDesktop && styles.filterFieldDesktop]}>
               <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
                 Tipo de Recurso
               </Typography>
@@ -269,7 +276,7 @@ const AuditScreen: React.FC = () => {
               />
             </View>
 
-            <View style={styles.filterField}>
+            <View style={[styles.filterField, isDesktop && styles.filterFieldDesktop]}>
               <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
                 Data Inicial
               </Typography>
@@ -281,7 +288,7 @@ const AuditScreen: React.FC = () => {
               />
             </View>
 
-            <View style={styles.filterField}>
+            <View style={[styles.filterField, isDesktop && styles.filterFieldDesktop]}>
               <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
                 Data Final
               </Typography>
@@ -293,7 +300,7 @@ const AuditScreen: React.FC = () => {
               />
             </View>
 
-            <View style={styles.filterField}>
+            <View style={[styles.filterField, isDesktop && styles.filterFieldDesktop, isDesktop && { minWidth: '100%' }]}>
               <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
                 Buscar
               </Typography>
@@ -324,7 +331,7 @@ const AuditScreen: React.FC = () => {
 
       {/* Lista de Logs */}
       <ScrollView
-        style={styles.content}
+        style={[styles.content, isDesktop && styles.contentDesktop, maxContentWidth && { maxWidth: maxContentWidth, alignSelf: 'center', width: '100%' }]}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -333,8 +340,8 @@ const AuditScreen: React.FC = () => {
         {showStats && stats && (
           <>
             {/* Cards de Estatísticas Rápidas */}
-            <View style={styles.statsCardsContainer}>
-              <Card style={styles.statCard}>
+            <View style={[styles.statsCardsContainer, isDesktop && styles.statsCardsContainerDesktop]}>
+              <Card style={[styles.statCard, isDesktop && styles.statCardDesktop]}>
                 <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
                   Total de Logs
                 </Typography>
@@ -370,7 +377,7 @@ const AuditScreen: React.FC = () => {
 
             {/* Gráfico de Ações */}
             {stats.byAction && stats.byAction.length > 0 && (
-              <Card style={styles.chartCard}>
+              <Card style={[styles.chartCard, isDesktop && styles.chartCardDesktop]}>
                 <SimpleBarChart
                   title="Ações por Tipo"
                   data={stats.byAction.map((item) => ({
@@ -385,7 +392,7 @@ const AuditScreen: React.FC = () => {
 
             {/* Gráfico de Recursos */}
             {stats.byResource && stats.byResource.length > 0 && (
-              <Card style={styles.chartCard}>
+              <Card style={[styles.chartCard, isDesktop && styles.chartCardDesktop]}>
                 <SimplePieChart
                   title="Distribuição por Recurso"
                   data={stats.byResource.map((item, index) => ({
@@ -406,7 +413,7 @@ const AuditScreen: React.FC = () => {
 
             {/* Gráfico de Tendências (Período) - Usando barras verticais */}
             {stats.byPeriod && stats.byPeriod.length > 0 && (
-              <Card style={styles.chartCard}>
+              <Card style={[styles.chartCard, isDesktop && styles.chartCardDesktop]}>
                 <SimpleBarChart
                   title="Tendências (Últimos 30 dias)"
                   data={stats.byPeriod.slice(-30).map((item) => {
@@ -433,7 +440,7 @@ const AuditScreen: React.FC = () => {
 
             {/* Top Usuários */}
             {stats.byUser && stats.byUser.length > 0 && (
-              <Card style={styles.chartCard}>
+              <Card style={[styles.chartCard, isDesktop && styles.chartCardDesktop]}>
                 <Typography variant="h3" color={theme.isDark ? theme.colors.neutral.black : theme.colors.neutral.darkGray} style={styles.chartTitle}>
                   Top 10 Usuários Mais Ativos
                 </Typography>
@@ -474,7 +481,7 @@ const AuditScreen: React.FC = () => {
 
         {/* Logs */}
         {logs.map((log) => (
-          <Card key={log.id} style={styles.logCard}>
+          <Card key={log.id} style={[styles.logCard, isDesktop && styles.logCardDesktop]}>
             <View style={styles.logHeader}>
               <View style={styles.logHeaderLeft}>
                 <View
@@ -627,8 +634,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    padding: 32,
+    padding: Platform.OS === 'android' ? 20 : 32,
     borderBottomWidth: 1,
+  },
+  headerDesktop: {
+    paddingHorizontal: 48,
+    paddingVertical: 32,
   },
   headerContent: {
     flexDirection: 'row',
@@ -648,8 +659,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    padding: 24,
-    borderRadius: 16,
+    padding: Platform.OS === 'android' ? 12 : 24,
+    borderRadius: Platform.OS === 'android' ? 8 : 16,
+  },
+  filterButtonDesktop: {
+    padding: 12,
+    borderRadius: 8,
   },
   statsCardsContainer: {
     flexDirection: 'row',
@@ -657,15 +672,26 @@ const styles = StyleSheet.create({
     gap: 16,
     marginBottom: 24,
   },
+  statsCardsContainerDesktop: {
+    gap: 20,
+  },
   statCard: {
     flex: 1,
-    minWidth: '45%',
-    padding: 24,
+    minWidth: Platform.OS === 'android' ? '48%' : '45%',
+    padding: Platform.OS === 'android' ? 16 : 24,
     alignItems: 'center',
   },
+  statCardDesktop: {
+    minWidth: '22%',
+    maxWidth: '22%',
+    padding: 20,
+  },
   chartCard: {
-    marginBottom: 24,
-    padding: 24,
+    marginBottom: Platform.OS === 'android' ? 16 : 24,
+    padding: Platform.OS === 'android' ? 16 : 24,
+  },
+  chartCardDesktop: {
+    padding: 32,
   },
   chartTitle: {
     marginBottom: 16,
@@ -691,14 +717,29 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   filtersCard: {
-    margin: 24,
-    padding: 32,
+    margin: Platform.OS === 'android' ? 16 : 24,
+    padding: Platform.OS === 'android' ? 20 : 32,
+  },
+  filtersCardDesktop: {
+    marginHorizontal: 'auto',
+    maxWidth: 1400,
+    padding: 40,
   },
   filtersRow: {
     gap: 24,
   },
+  filtersRowDesktop: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 20,
+  },
   filterField: {
     marginBottom: 24,
+  },
+  filterFieldDesktop: {
+    flex: 1,
+    minWidth: '30%',
+    marginBottom: 0,
   },
   select: {
     marginTop: 8,
@@ -717,15 +758,25 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 24,
+    padding: Platform.OS === 'android' ? 16 : 24,
+  },
+  contentDesktop: {
+    paddingHorizontal: 48,
+    paddingVertical: 32,
   },
   statsCard: {
     marginBottom: 24,
     padding: 24,
   },
   logCard: {
-    marginBottom: 24,
-    padding: 24,
+    marginBottom: Platform.OS === 'android' ? 16 : 24,
+    padding: Platform.OS === 'android' ? 16 : 24,
+  },
+  logCardDesktop: {
+    maxWidth: 1000,
+    alignSelf: 'center',
+    width: '100%',
+    padding: 28,
   },
   logHeader: {
     flexDirection: 'row',
