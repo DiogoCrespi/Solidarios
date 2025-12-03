@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between, MoreThanOrEqual, LessThanOrEqual } from 'typeorm';
 import { User, UserRole } from '../users/entities/user.entity';
-import { Item } from '../items/entities/item.entity';
+import { Item, ItemStatus } from '../items/entities/item.entity';
 import { Distribution } from '../distributions/entities/distribution.entity';
 import { Inventory } from '../inventory/entities/inventory.entity';
 import { Category } from '../categories/entities/category.entity';
@@ -36,6 +36,7 @@ export class AnalyticsService {
         totalDonors,
         totalBeneficiaries,
         totalItems,
+        availableItems,
         totalDistributions,
         totalCategories,
         lowStockItems,
@@ -45,6 +46,10 @@ export class AnalyticsService {
         this.usersRepository.count({ where: { role: UserRole.DOADOR } }),
         this.usersRepository.count({ where: { role: UserRole.BENEFICIARIO } }),
         this.itemsRepository.count(),
+        this.itemsRepository
+          .createQueryBuilder('item')
+          .where('item.status = :status', { status: ItemStatus.DISPONIVEL })
+          .getCount(),
         this.distributionsRepository.count(),
         this.categoriesRepository.count(),
         this.inventoryRepository.count({
@@ -62,6 +67,7 @@ export class AnalyticsService {
         totalDonors,
         totalBeneficiaries,
         totalItems,
+        availableItems,
         totalDistributions,
         totalCategories,
         lowStockItems,
@@ -372,6 +378,40 @@ export class AnalyticsService {
       );
       throw error;
     }
+  }
+
+  // Métodos auxiliares para buscar listas completas para relatórios
+  async getAllUsers() {
+    return this.usersRepository.find({
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async getAllItems() {
+    return this.itemsRepository.find({
+      relations: ['donor', 'category'],
+      order: { receivedDate: 'DESC' },
+    });
+  }
+
+  async getAllDistributions() {
+    return this.distributionsRepository.find({
+      relations: ['beneficiary', 'employee', 'items'],
+      order: { date: 'DESC' },
+    });
+  }
+
+  async getAllCategories() {
+    return this.categoriesRepository.find({
+      order: { name: 'ASC' },
+    });
+  }
+
+  async getLowStockInventoryItems() {
+    return this.inventoryRepository.find({
+      where: { quantity: LessThanOrEqual(5) },
+      relations: ['item', 'item.category'],
+    });
   }
 }
 

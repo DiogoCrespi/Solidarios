@@ -17,7 +17,7 @@ import {
   Select,
   TextField,
 } from '../../components/barrelComponents';
-import { SimpleBarChart, SimplePieChart } from '../../components/charts';
+import { SimplePieChart } from '../../components/charts';
 import { useTheme } from '../../hooks/useTheme';
 import AuditService, {
   AuditLog,
@@ -208,37 +208,37 @@ const AuditScreen: React.FC = () => {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.neutral.lightGray }]}>
       {/* Header */}
-      <View style={[styles.header, isDesktop && styles.headerDesktop, { backgroundColor: theme.colors.neutral.white, borderBottomColor: theme.colors.neutral.lightGray }]}>
-        <View style={styles.headerContent}>
-          <View>
-            <Typography variant="h2" color={theme.colors.primary.main}>
+      <View style={[styles.header, isDesktop && styles.headerDesktop, { backgroundColor: theme.colors.neutral.white, borderBottomWidth: 1, borderBottomColor: theme.colors.neutral.lightGray }]}>
+        <View style={[styles.headerContent, isDesktop && styles.headerContentDesktop]}>
+          <View style={styles.headerText}>
+            <Typography variant="h2" color={theme.colors.primary.main} style={styles.headerTitle}>
               Logs de Auditoria
             </Typography>
-            <Typography variant="body" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
+            <Typography variant="body" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray} style={styles.headerSubtitle}>
               Registro de todas as alterações no sistema
             </Typography>
           </View>
           <View style={styles.headerActions}>
             <TouchableOpacity
-              style={[styles.headerButton, { backgroundColor: theme.colors.neutral.lightGray }]}
+              style={[styles.headerButton, { backgroundColor: showStats ? theme.colors.primary.main + '15' : theme.colors.neutral.lightGray }]}
               onPress={() => setShowStats(!showStats)}
             >
               <MaterialCommunityIcons
                 name={showStats ? "chart-line" : "chart-line-variant"}
                 size={20}
-                color={theme.colors.primary.main}
+                color={showStats ? theme.colors.primary.main : theme.colors.neutral.mediumGray}
               />
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.filterButton, isDesktop && styles.filterButtonDesktop, { backgroundColor: theme.colors.neutral.lightGray }]}
+              style={[styles.filterButton, isDesktop && styles.filterButtonDesktop, { backgroundColor: showFilters ? theme.colors.primary.main + '15' : theme.colors.neutral.lightGray }]}
               onPress={() => setShowFilters(!showFilters)}
             >
               <MaterialCommunityIcons
                 name="filter-variant"
-                size={24}
-                color={theme.colors.primary.main}
+                size={20}
+                color={showFilters ? theme.colors.primary.main : theme.colors.neutral.mediumGray}
               />
-              <Typography variant="body" color={theme.colors.primary.main}>
+              <Typography variant="body" color={showFilters ? theme.colors.primary.main : theme.colors.neutral.mediumGray} style={styles.filterButtonText}>
                 Filtros
               </Typography>
             </TouchableOpacity>
@@ -248,85 +248,92 @@ const AuditScreen: React.FC = () => {
 
       {/* Filtros */}
       {showFilters && (
-        <Card style={[styles.filtersCard, isDesktop && styles.filtersCardDesktop]}>
-          <View style={[styles.filtersRow, isDesktop && styles.filtersRowDesktop]}>
-            <View style={[styles.filterField, isDesktop && styles.filterFieldDesktop]}>
-              <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
-                Ação
+        <View style={[styles.filtersContainer, isDesktop && styles.filtersContainerDesktop]}>
+          <Card style={[styles.filtersCard, isDesktop && styles.filtersCardDesktop]}>
+            <View style={styles.filtersHeader}>
+              <Typography variant="h4" color={theme.colors.primary.main}>
+                Filtros de Busca
               </Typography>
-              <Select
-                selectedValue={filters.action || ''}
-                onSelect={(value) => updateFilter('action', value ? value as AuditAction : undefined)}
-                options={actionOptions}
-                placeholder="Todas as ações"
-                selectStyle={styles.select}
-              />
+            </View>
+            <View style={[styles.filtersRow, isDesktop && styles.filtersRowDesktop]}>
+              <View style={[styles.filterField, isDesktop && styles.filterFieldDesktop]}>
+                <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray} style={styles.filterLabel}>
+                  Ação
+                </Typography>
+                <Select
+                  selectedValue={filters.action || ''}
+                  onSelect={(value) => updateFilter('action', value ? value as AuditAction : undefined)}
+                  options={actionOptions}
+                  placeholder="Todas as ações"
+                  selectStyle={styles.select}
+                />
+              </View>
+
+              <View style={[styles.filterField, isDesktop && styles.filterFieldDesktop]}>
+                <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray} style={styles.filterLabel}>
+                  Tipo de Recurso
+                </Typography>
+                <Select
+                  selectedValue={filters.resourceType || ''}
+                  onSelect={(value) => updateFilter('resourceType', value ? value as AuditResource : undefined)}
+                  options={resourceOptions}
+                  placeholder="Todos os recursos"
+                  selectStyle={styles.select}
+                />
+              </View>
+
+              <View style={[styles.filterField, isDesktop && styles.filterFieldDesktop]}>
+                <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray} style={styles.filterLabel}>
+                  Data Inicial
+                </Typography>
+                <TextField
+                  value={filters.startDate || ''}
+                  onChangeText={(value) => updateFilter('startDate', value || undefined)}
+                  placeholder="AAAA-MM-DD"
+                  style={styles.input}
+                />
+              </View>
+
+              <View style={[styles.filterField, isDesktop && styles.filterFieldDesktop]}>
+                <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray} style={styles.filterLabel}>
+                  Data Final
+                </Typography>
+                <TextField
+                  value={filters.endDate || ''}
+                  onChangeText={(value) => updateFilter('endDate', value || undefined)}
+                  placeholder="AAAA-MM-DD"
+                  style={styles.input}
+                />
+              </View>
+
+              <View style={[styles.filterField, isDesktop && styles.filterFieldDesktop, isDesktop && styles.filterFieldFullWidth]}>
+                <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray} style={styles.filterLabel}>
+                  Buscar
+                </Typography>
+                <TextField
+                  value={filters.search || ''}
+                  onChangeText={(value) => updateFilter('search', value || undefined)}
+                  placeholder="Usuário, recurso, descrição..."
+                  style={styles.input}
+                />
+              </View>
             </View>
 
-            <View style={[styles.filterField, isDesktop && styles.filterFieldDesktop]}>
-              <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
-                Tipo de Recurso
-              </Typography>
-              <Select
-                selectedValue={filters.resourceType || ''}
-                onSelect={(value) => updateFilter('resourceType', value ? value as AuditResource : undefined)}
-                options={resourceOptions}
-                placeholder="Todos os recursos"
-                selectStyle={styles.select}
+            <View style={styles.filterActions}>
+              <Button
+                title="Limpar Filtros"
+                onPress={handleClearFilters}
+                variant="secondary"
+                style={styles.filterActionButton}
+              />
+              <Button
+                title="Aplicar Filtros"
+                onPress={handleApplyFilters}
+                style={styles.filterActionButton}
               />
             </View>
-
-            <View style={[styles.filterField, isDesktop && styles.filterFieldDesktop]}>
-              <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
-                Data Inicial
-              </Typography>
-              <TextField
-                value={filters.startDate || ''}
-                onChangeText={(value) => updateFilter('startDate', value || undefined)}
-                placeholder="AAAA-MM-DD"
-                style={styles.input}
-              />
-            </View>
-
-            <View style={[styles.filterField, isDesktop && styles.filterFieldDesktop]}>
-              <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
-                Data Final
-              </Typography>
-              <TextField
-                value={filters.endDate || ''}
-                onChangeText={(value) => updateFilter('endDate', value || undefined)}
-                placeholder="AAAA-MM-DD"
-                style={styles.input}
-              />
-            </View>
-
-            <View style={[styles.filterField, isDesktop && styles.filterFieldDesktop, isDesktop && { minWidth: '100%' }]}>
-              <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
-                Buscar
-              </Typography>
-              <TextField
-                value={filters.search || ''}
-                onChangeText={(value) => updateFilter('search', value || undefined)}
-                placeholder="Usuário, recurso, descrição..."
-                style={styles.input}
-              />
-            </View>
-          </View>
-
-          <View style={styles.filterActions}>
-            <Button
-              title="Limpar"
-              onPress={handleClearFilters}
-              variant="secondary"
-              style={styles.filterActionButton}
-            />
-            <Button
-              title="Aplicar"
-              onPress={handleApplyFilters}
-              style={styles.filterActionButton}
-            />
-          </View>
-        </Card>
+          </Card>
+        </View>
       )}
 
       {/* Lista de Logs */}
@@ -342,51 +349,72 @@ const AuditScreen: React.FC = () => {
             {/* Cards de Estatísticas Rápidas */}
             <View style={[styles.statsCardsContainer, isDesktop && styles.statsCardsContainerDesktop]}>
               <Card style={[styles.statCard, isDesktop && styles.statCardDesktop]}>
-                <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
-                  Total de Logs
-                </Typography>
-                <Typography variant="h2" color={theme.colors.primary.main}>
-                  {stats.total}
-                </Typography>
+                <View style={styles.statCardContent}>
+                  <MaterialCommunityIcons name="file-document-multiple" size={24} color={theme.colors.primary.main} />
+                  <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray} style={styles.statLabel}>
+                    Total de Logs
+                  </Typography>
+                  <Typography variant="h2" color={theme.colors.primary.main} style={styles.statValue}>
+                    {stats.total.toLocaleString('pt-BR')}
+                  </Typography>
+                </View>
               </Card>
-              <Card style={styles.statCard}>
-                <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
-                  Últimas 24h
-                </Typography>
-                <Typography variant="h2" color={theme.colors.status.info}>
-                  {stats.last24Hours}
-                </Typography>
+              <Card style={[styles.statCard, isDesktop && styles.statCardDesktop]}>
+                <View style={styles.statCardContent}>
+                  <MaterialCommunityIcons name="clock-outline" size={24} color={theme.colors.status.info} />
+                  <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray} style={styles.statLabel}>
+                    Últimas 24h
+                  </Typography>
+                  <Typography variant="h2" color={theme.colors.status.info} style={styles.statValue}>
+                    {stats.last24Hours.toLocaleString('pt-BR')}
+                  </Typography>
+                </View>
               </Card>
-              <Card style={styles.statCard}>
-                <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
-                  Últimos 7 dias
-                </Typography>
-                <Typography variant="h2" color={theme.colors.status.success}>
-                  {stats.last7Days}
-                </Typography>
+              <Card style={[styles.statCard, isDesktop && styles.statCardDesktop]}>
+                <View style={styles.statCardContent}>
+                  <MaterialCommunityIcons name="calendar-week" size={24} color={theme.colors.status.success} />
+                  <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray} style={styles.statLabel}>
+                    Últimos 7 dias
+                  </Typography>
+                  <Typography variant="h2" color={theme.colors.status.success} style={styles.statValue}>
+                    {stats.last7Days.toLocaleString('pt-BR')}
+                  </Typography>
+                </View>
               </Card>
-              <Card style={styles.statCard}>
-                <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
-                  Últimos 30 dias
-                </Typography>
-                <Typography variant="h2" color={theme.colors.status.warning}>
-                  {stats.last30Days}
-                </Typography>
+              <Card style={[styles.statCard, isDesktop && styles.statCardDesktop]}>
+                <View style={styles.statCardContent}>
+                  <MaterialCommunityIcons name="calendar-month" size={24} color={theme.colors.status.warning} />
+                  <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray} style={styles.statLabel}>
+                    Últimos 30 dias
+                  </Typography>
+                  <Typography variant="h2" color={theme.colors.status.warning} style={styles.statValue}>
+                    {stats.last30Days.toLocaleString('pt-BR')}
+                  </Typography>
+                </View>
               </Card>
             </View>
 
-            {/* Gráfico de Ações */}
+            {/* Ações por Tipo - Lista */}
             {stats.byAction && stats.byAction.length > 0 && (
               <Card style={[styles.chartCard, isDesktop && styles.chartCardDesktop]}>
-                <SimpleBarChart
-                  title="Ações por Tipo"
-                  data={stats.byAction.map((item) => ({
-                    label: getActionLabel(item.action as AuditAction),
-                    value: item.count,
-                    color: getActionColor(item.action as AuditAction),
-                  }))}
-                  height={200}
-                />
+                <Typography variant="h3" color={theme.isDark ? theme.colors.neutral.black : theme.colors.neutral.darkGray} style={styles.chartTitle}>
+                  Ações por Tipo
+                </Typography>
+                <View style={styles.statsList}>
+                  {stats.byAction.map((item, index) => (
+                    <View key={index} style={[styles.statsListItem, { borderBottomColor: theme.colors.neutral.mediumGray }]}>
+                      <View style={styles.statsListLeft}>
+                        <View style={[styles.statsListDot, { backgroundColor: getActionColor(item.action as AuditAction) }]} />
+                        <Typography variant="body" color={theme.isDark ? theme.colors.neutral.black : theme.colors.neutral.darkGray}>
+                          {getActionLabel(item.action as AuditAction)}
+                        </Typography>
+                      </View>
+                      <Typography variant="body" color={theme.colors.primary.main} style={styles.statsListValue}>
+                        {item.count.toLocaleString('pt-BR')}
+                      </Typography>
+                    </View>
+                  ))}
+                </View>
               </Card>
             )}
 
@@ -411,30 +439,47 @@ const AuditScreen: React.FC = () => {
               </Card>
             )}
 
-            {/* Gráfico de Tendências (Período) - Usando barras verticais */}
+            {/* Tendências (Período) - Lista */}
             {stats.byPeriod && stats.byPeriod.length > 0 && (
               <Card style={[styles.chartCard, isDesktop && styles.chartCardDesktop]}>
-                <SimpleBarChart
-                  title="Tendências (Últimos 30 dias)"
-                  data={stats.byPeriod.slice(-30).map((item) => {
+                <Typography variant="h3" color={theme.isDark ? theme.colors.neutral.black : theme.colors.neutral.darkGray} style={styles.chartTitle}>
+                  Tendências (Últimos 30 dias)
+                </Typography>
+                <View style={styles.statsList}>
+                  {stats.byPeriod.slice(-30).map((item, index) => {
                     try {
-                      // Formato: YYYY-MM-DD
                       const [year, month, day] = item.period.split('-');
-                      return {
-                        label: `${day}/${month}`,
-                        value: item.count,
-                        color: theme.colors.primary.main,
-                      };
+                      const label = `${day}/${month}/${year}`;
+                      return (
+                        <View key={index} style={[styles.statsListItem, { borderBottomColor: theme.colors.neutral.mediumGray }]}>
+                          <View style={styles.statsListLeft}>
+                            <MaterialCommunityIcons name="calendar" size={16} color={theme.colors.primary.main} />
+                            <Typography variant="body" color={theme.isDark ? theme.colors.neutral.black : theme.colors.neutral.darkGray}>
+                              {label}
+                            </Typography>
+                          </View>
+                          <Typography variant="body" color={theme.colors.primary.main} style={styles.statsListValue}>
+                            {item.count.toLocaleString('pt-BR')}
+                          </Typography>
+                        </View>
+                      );
                     } catch {
-                      return {
-                        label: item.period,
-                        value: item.count,
-                        color: theme.colors.primary.main,
-                      };
+                      return (
+                        <View key={index} style={[styles.statsListItem, { borderBottomColor: theme.colors.neutral.mediumGray }]}>
+                          <View style={styles.statsListLeft}>
+                            <MaterialCommunityIcons name="calendar" size={16} color={theme.colors.primary.main} />
+                            <Typography variant="body" color={theme.isDark ? theme.colors.neutral.black : theme.colors.neutral.darkGray}>
+                              {item.period}
+                            </Typography>
+                          </View>
+                          <Typography variant="body" color={theme.colors.primary.main} style={styles.statsListValue}>
+                            {item.count.toLocaleString('pt-BR')}
+                          </Typography>
+                        </View>
+                      );
                     }
                   })}
-                  height={200}
-                />
+                </View>
               </Card>
             )}
 
@@ -490,77 +535,114 @@ const AuditScreen: React.FC = () => {
                     { backgroundColor: getActionColor(log.action) },
                   ]}
                 >
-                  <Typography variant="small" color={theme.colors.neutral.white}>
+                  <Typography variant="small" color={theme.colors.neutral.white} style={styles.badgeText}>
                     {getActionLabel(log.action)}
                   </Typography>
                 </View>
                 <View style={[styles.resourceBadge, { borderColor: theme.colors.neutral.mediumGray }]}>
-                  <Typography variant="small" color={theme.colors.primary.main}>
+                  <Typography variant="small" color={theme.colors.primary.main} style={styles.badgeText}>
                     {getResourceLabel(log.resourceType)}
                   </Typography>
                 </View>
               </View>
-              <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
-                {formatDate(log.createdAt)}
-              </Typography>
+              <View style={styles.logDateContainer}>
+                <MaterialCommunityIcons
+                  name="clock-outline"
+                  size={14}
+                  color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}
+                />
+                <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray} style={styles.logDate}>
+                  {formatDate(log.createdAt)}
+                </Typography>
+              </View>
             </View>
 
             {log.description && (
-              <Typography variant="body" color={theme.isDark ? theme.colors.neutral.black : theme.colors.neutral.darkGray} style={styles.description}>
-                {log.description}
-              </Typography>
+              <View style={[styles.descriptionContainer, { backgroundColor: theme.isDark ? theme.colors.neutral.mediumGray + '20' : '#F9FAFB' }]}>
+                <Typography variant="body" color={theme.isDark ? theme.colors.neutral.black : theme.colors.neutral.darkGray} style={styles.description}>
+                  {log.description}
+                </Typography>
+              </View>
             )}
 
             <View style={styles.logDetails}>
               {log.userName && (
                 <View style={styles.detailRow}>
-                  <MaterialCommunityIcons
-                    name="account"
-                    size={16}
-                    color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}
-                  />
-                  <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
-                    {log.userName} {log.userEmail && `(${log.userEmail})`}
-                  </Typography>
+                  <View style={[styles.detailIconContainer, { backgroundColor: theme.colors.primary.main + '15' }]}>
+                    <MaterialCommunityIcons
+                      name="account"
+                      size={16}
+                      color={theme.colors.primary.main}
+                    />
+                  </View>
+                  <View style={styles.detailTextContainer}>
+                    <Typography variant="caption" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray} style={styles.detailLabel}>
+                      Usuário
+                    </Typography>
+                    <Typography variant="small" color={theme.isDark ? theme.colors.neutral.black : theme.colors.neutral.darkGray} style={styles.detailValue}>
+                      {log.userName} {log.userEmail && `(${log.userEmail})`}
+                    </Typography>
+                  </View>
                 </View>
               )}
 
               {log.resourceName && (
                 <View style={styles.detailRow}>
-                  <MaterialCommunityIcons
-                    name="file-document"
-                    size={16}
-                    color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}
-                  />
-                  <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
-                    {log.resourceName}
-                  </Typography>
+                  <View style={[styles.detailIconContainer, { backgroundColor: theme.colors.status.info + '20' }]}>
+                    <MaterialCommunityIcons
+                      name="file-document"
+                      size={16}
+                      color={theme.colors.status.info}
+                    />
+                  </View>
+                  <View style={styles.detailTextContainer}>
+                    <Typography variant="caption" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray} style={styles.detailLabel}>
+                      Recurso
+                    </Typography>
+                    <Typography variant="small" color={theme.isDark ? theme.colors.neutral.black : theme.colors.neutral.darkGray} style={styles.detailValue}>
+                      {log.resourceName}
+                    </Typography>
+                  </View>
                 </View>
               )}
 
               {log.endpoint && (
                 <View style={styles.detailRow}>
-                  <MaterialCommunityIcons
-                    name="web"
-                    size={16}
-                    color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}
-                  />
-                  <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
-                    {log.method} {log.endpoint}
-                  </Typography>
+                  <View style={[styles.detailIconContainer, { backgroundColor: theme.colors.status.warning + '20' }]}>
+                    <MaterialCommunityIcons
+                      name="web"
+                      size={16}
+                      color={theme.colors.status.warning}
+                    />
+                  </View>
+                  <View style={styles.detailTextContainer}>
+                    <Typography variant="caption" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray} style={styles.detailLabel}>
+                      Endpoint
+                    </Typography>
+                    <Typography variant="small" color={theme.isDark ? theme.colors.neutral.black : theme.colors.neutral.darkGray} style={styles.detailValue}>
+                      {log.method} {log.endpoint}
+                    </Typography>
+                  </View>
                 </View>
               )}
 
               {log.ipAddress && (
                 <View style={styles.detailRow}>
-                  <MaterialCommunityIcons
-                    name="ip-network"
-                    size={16}
-                    color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}
-                  />
-                  <Typography variant="small" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
-                    {log.ipAddress}
-                  </Typography>
+                  <View style={[styles.detailIconContainer, { backgroundColor: theme.colors.neutral.mediumGray + '20' }]}>
+                    <MaterialCommunityIcons
+                      name="ip-network"
+                      size={16}
+                      color={theme.colors.neutral.mediumGray}
+                    />
+                  </View>
+                  <View style={styles.detailTextContainer}>
+                    <Typography variant="caption" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray} style={styles.detailLabel}>
+                      IP Address
+                    </Typography>
+                    <Typography variant="small" color={theme.isDark ? theme.colors.neutral.black : theme.colors.neutral.darkGray} style={styles.detailValue}>
+                      {log.ipAddress}
+                    </Typography>
+                  </View>
                 </View>
               )}
             </View>
@@ -569,10 +651,13 @@ const AuditScreen: React.FC = () => {
             {(log.oldValues || log.newValues) && (
               <View style={styles.valuesContainer}>
                 {log.oldValues && Object.keys(log.oldValues).length > 0 && (
-                  <View style={[styles.valuesSection, { backgroundColor: theme.isDark ? theme.colors.neutral.mediumGray : theme.colors.neutral.lightGray }]}>
-                    <Typography variant="small" color={theme.colors.status.error}>
-                      Valores Antigos:
-                    </Typography>
+                  <View style={[styles.valuesSection, { backgroundColor: theme.colors.status.error + '10', borderLeftWidth: 3, borderLeftColor: theme.colors.status.error }]}>
+                    <View style={styles.valuesHeader}>
+                      <MaterialCommunityIcons name="arrow-down" size={16} color={theme.colors.status.error} />
+                      <Typography variant="small" color={theme.colors.status.error} style={styles.valuesTitle}>
+                        Valores Antigos
+                      </Typography>
+                    </View>
                     <Typography variant="small" color={theme.isDark ? theme.colors.neutral.black : theme.colors.neutral.darkGray} style={styles.valuesText}>
                       {JSON.stringify(log.oldValues, null, 2)}
                     </Typography>
@@ -580,10 +665,13 @@ const AuditScreen: React.FC = () => {
                 )}
 
                 {log.newValues && Object.keys(log.newValues).length > 0 && (
-                  <View style={[styles.valuesSection, { backgroundColor: theme.isDark ? theme.colors.neutral.mediumGray : theme.colors.neutral.lightGray }]}>
-                    <Typography variant="small" color={theme.colors.status.success}>
-                      Valores Novos:
-                    </Typography>
+                  <View style={[styles.valuesSection, { backgroundColor: theme.colors.status.success + '10', borderLeftWidth: 3, borderLeftColor: theme.colors.status.success }]}>
+                    <View style={styles.valuesHeader}>
+                      <MaterialCommunityIcons name="arrow-up" size={16} color={theme.colors.status.success} />
+                      <Typography variant="small" color={theme.colors.status.success} style={styles.valuesTitle}>
+                        Valores Novos
+                      </Typography>
+                    </View>
                     <Typography variant="small" color={theme.isDark ? theme.colors.neutral.black : theme.colors.neutral.darkGray} style={styles.valuesText}>
                       {JSON.stringify(log.newValues, null, 2)}
                     </Typography>
@@ -596,31 +684,47 @@ const AuditScreen: React.FC = () => {
 
         {/* Paginação */}
         {pagination.totalPages > 1 && (
-          <View style={styles.pagination}>
-            <Button
-              title="Anterior"
-              onPress={() => handlePageChange(pagination.page - 1)}
-              disabled={pagination.page === 1}
-              variant="secondary"
-              style={styles.paginationButton}
-            />
-            <Typography variant="body" color={theme.isDark ? theme.colors.neutral.black : theme.colors.neutral.darkGray}>
-              Página {pagination.page} de {pagination.totalPages}
-            </Typography>
-            <Button
-              title="Próxima"
-              onPress={() => handlePageChange(pagination.page + 1)}
-              disabled={pagination.page === pagination.totalPages}
-              variant="secondary"
-              style={styles.paginationButton}
-            />
-          </View>
+          <Card style={styles.paginationCard}>
+            <View style={styles.pagination}>
+              <Button
+                title="Anterior"
+                onPress={() => handlePageChange(pagination.page - 1)}
+                disabled={pagination.page === 1}
+                variant="secondary"
+                style={styles.paginationButton}
+              />
+              <View style={styles.paginationInfo}>
+                <Typography variant="body" color={theme.isDark ? theme.colors.neutral.black : theme.colors.neutral.darkGray} style={styles.paginationText}>
+                  Página {pagination.page} de {pagination.totalPages}
+                </Typography>
+                <Typography variant="caption" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
+                  Total: {pagination.total.toLocaleString('pt-BR')} logs
+                </Typography>
+              </View>
+              <Button
+                title="Próxima"
+                onPress={() => handlePageChange(pagination.page + 1)}
+                disabled={pagination.page === pagination.totalPages}
+                variant="secondary"
+                style={styles.paginationButton}
+              />
+            </View>
+          </Card>
         )}
 
-        {logs.length === 0 && (
+        {logs.length === 0 && !loading && (
           <Card style={styles.emptyCard}>
-            <Typography variant="body" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
-              Nenhum log de auditoria encontrado
+            <MaterialCommunityIcons 
+              name="file-document-remove" 
+              size={48} 
+              color={theme.colors.neutral.mediumGray} 
+              style={styles.emptyIcon}
+            />
+            <Typography variant="h4" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray} style={styles.emptyTitle}>
+              Nenhum log encontrado
+            </Typography>
+            <Typography variant="body" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray} style={styles.emptyDescription}>
+              Não há logs de auditoria que correspondam aos filtros aplicados.
             </Typography>
           </Card>
         )}
@@ -634,57 +738,97 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    padding: Platform.OS === 'android' ? 20 : 32,
+    padding: 20,
     borderBottomWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
   },
   headerDesktop: {
     paddingHorizontal: 48,
-    paddingVertical: 32,
+    paddingVertical: 24,
   },
   headerContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    gap: 16,
+  },
+  headerContentDesktop: {
+    maxWidth: 1400,
+    alignSelf: 'center',
+    width: '100%',
+  },
+  headerText: {
+    flex: 1,
+  },
+  headerTitle: {
+    marginBottom: 4,
+  },
+  headerSubtitle: {
+    marginTop: 4,
   },
   headerActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 12,
   },
   headerButton: {
-    padding: 12,
+    padding: 10,
     borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 40,
+    minHeight: 40,
   },
   filterButton: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    padding: Platform.OS === 'android' ? 12 : 24,
-    borderRadius: Platform.OS === 'android' ? 8 : 16,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 8,
+    minHeight: 40,
   },
   filterButtonDesktop: {
-    padding: 12,
-    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  filterButtonText: {
+    fontWeight: '500',
   },
   statsCardsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 16,
+    gap: 12,
     marginBottom: 24,
   },
   statsCardsContainerDesktop: {
-    gap: 20,
+    gap: 16,
   },
   statCard: {
     flex: 1,
-    minWidth: Platform.OS === 'android' ? '48%' : '45%',
-    padding: Platform.OS === 'android' ? 16 : 24,
-    alignItems: 'center',
+    minWidth: '48%',
+    padding: 20,
   },
   statCardDesktop: {
     minWidth: '22%',
     maxWidth: '22%',
-    padding: 20,
+    padding: 24,
+  },
+  statCardContent: {
+    alignItems: 'center',
+    gap: 8,
+  },
+  statLabel: {
+    marginTop: 4,
+    textAlign: 'center',
+  },
+  statValue: {
+    marginTop: 4,
+    fontWeight: '600',
   },
   chartCard: {
     marginBottom: Platform.OS === 'android' ? 16 : 24,
@@ -716,30 +860,53 @@ const styles = StyleSheet.create({
   userCount: {
     alignItems: 'flex-end',
   },
+  filtersContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 0,
+  },
+  filtersContainerDesktop: {
+    paddingHorizontal: 48,
+    paddingTop: 24,
+  },
   filtersCard: {
-    margin: Platform.OS === 'android' ? 16 : 24,
-    padding: Platform.OS === 'android' ? 20 : 32,
+    padding: 20,
   },
   filtersCardDesktop: {
-    marginHorizontal: 'auto',
     maxWidth: 1400,
-    padding: 40,
+    alignSelf: 'center',
+    width: '100%',
+    padding: 32,
+  },
+  filtersHeader: {
+    marginBottom: 20,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
   },
   filtersRow: {
-    gap: 24,
+    gap: 20,
   },
   filtersRowDesktop: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 20,
+    gap: 16,
   },
   filterField: {
-    marginBottom: 24,
+    marginBottom: 20,
   },
   filterFieldDesktop: {
     flex: 1,
     minWidth: '30%',
-    marginBottom: 0,
+    marginBottom: 16,
+  },
+  filterFieldFullWidth: {
+    minWidth: '100%',
+    flexBasis: '100%',
+  },
+  filterLabel: {
+    marginBottom: 8,
+    fontWeight: '500',
   },
   select: {
     marginTop: 8,
@@ -769,75 +936,185 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   logCard: {
-    marginBottom: Platform.OS === 'android' ? 16 : 24,
-    padding: Platform.OS === 'android' ? 16 : 24,
+    marginBottom: 16,
+    padding: 20,
   },
   logCardDesktop: {
-    maxWidth: 1000,
+    maxWidth: 1200,
     alignSelf: 'center',
     width: '100%',
-    padding: 28,
+    padding: 24,
   },
   logHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: 16,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
   },
   logHeaderLeft: {
     flexDirection: 'row',
     gap: 8,
     alignItems: 'center',
+    flex: 1,
+    flexWrap: 'wrap',
+  },
+  logDateContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginLeft: 8,
+  },
+  logDate: {
+    fontWeight: '500',
   },
   actionBadge: {
     paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    minHeight: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   resourceBadge: {
     paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
     borderWidth: 1,
+    minHeight: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  badgeText: {
+    fontWeight: '600',
+    fontSize: 11,
+  },
+  descriptionContainer: {
+    marginBottom: 16,
+    padding: 12,
+    borderRadius: 8,
   },
   description: {
-    marginBottom: 16,
+    lineHeight: 20,
+    color: undefined, // Será aplicado dinamicamente via Typography
   },
   logDetails: {
-    gap: 8,
+    gap: 12,
     marginTop: 16,
   },
   detailRow: {
     flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 12,
+  },
+  detailIconContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'center',
+    marginTop: 2,
+  },
+  detailTextContainer: {
+    flex: 1,
+    gap: 2,
+  },
+  detailLabel: {
+    fontWeight: '500',
+    marginBottom: 2,
+  },
+  detailValue: {
+    color: undefined, // Será aplicado dinamicamente via Typography
   },
   valuesContainer: {
-    marginTop: 16,
-    gap: 16,
+    marginTop: 20,
+    gap: 12,
   },
   valuesSection: {
     padding: 16,
     borderRadius: 8,
-    // backgroundColor será aplicado dinamicamente via style inline
+    marginTop: 8,
+  },
+  valuesHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 12,
+  },
+  valuesTitle: {
+    fontWeight: '600',
+    fontSize: 12,
   },
   valuesText: {
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    marginTop: 8,
+    fontSize: 11,
+    lineHeight: 18,
+  },
+  paginationCard: {
+    marginTop: 24,
+    marginBottom: 24,
+    padding: 20,
   },
   pagination: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 24,
-    marginBottom: 24,
+    gap: 16,
+  },
+  paginationInfo: {
+    alignItems: 'center',
+    gap: 4,
+  },
+  paginationText: {
+    fontWeight: '600',
   },
   paginationButton: {
-    minWidth: 100,
+    minWidth: 120,
   },
   emptyCard: {
     padding: 48,
     alignItems: 'center',
+    marginTop: 24,
+  },
+  emptyIcon: {
+    marginBottom: 16,
+    opacity: 0.5,
+  },
+  emptyTitle: {
+    marginBottom: 8,
+    fontWeight: '600',
+  },
+  emptyDescription: {
+    textAlign: 'center',
+    maxWidth: 400,
+  },
+  statsList: {
+    marginTop: 16,
+    gap: 0,
+  },
+  statsListItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+  },
+  statsListLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    flex: 1,
+  },
+  statsListDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+  },
+  statsListValue: {
+    fontWeight: '600',
+    marginLeft: 8,
   },
 });
 

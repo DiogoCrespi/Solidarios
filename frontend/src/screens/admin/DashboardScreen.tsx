@@ -31,6 +31,7 @@ import { useItems } from "../../hooks/useItems";
 import { useInventory } from "../../hooks/useInventory";
 import { useDistributions } from "../../hooks/useDistributions";
 import { useUsers } from "../../hooks/useUsers";
+import AnalyticsService, { DashboardStats } from "../../api/analytics";
 
 // Tipos e rotas
 import {
@@ -99,62 +100,45 @@ const DashboardScreen: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      // Carregar dados em paralelo
+      // Carregar estatísticas do dashboard e dados para cards em paralelo
       const [
+        dashboardStats,
         itemsResponse,
-        inventoryResponse,
         distributionsResponse,
-        usersResponse,
         lowStockResponse,
       ] = await Promise.all([
+        AnalyticsService.getDashboardStats(),
         itemsHook.fetchItems({ page: 1, take: 50 }),
-        inventoryHook.fetchInventory({ page: 1, take: 50 }),
         distributionsHook.fetchDistributions({ page: 1, take: 10 }),
-        usersHook.fetchUsers({ page: 1, take: 50 }),
         inventoryHook.fetchLowStock({ page: 1, take: 5 }),
       ]);
 
-      // Calcular estatísticas
-      if (
-        itemsResponse &&
-        inventoryResponse &&
-        distributionsResponse &&
-        usersResponse
-      ) {
-        const items = Array.isArray(itemsResponse.data) ? itemsResponse.data : [];
-        const availableItems = items.filter(
-          (item) => item.status === "disponivel"
-        ).length;
-        const users = Array.isArray(usersResponse.data) ? usersResponse.data : [];
-        const beneficiaries = users.filter(
-          (user) => user.role === "BENEFICIARIO"
-        ).length;
-        const donors = users.filter(
-          (user) => user.role === "DOADOR"
-        ).length;
-
+      // Atualizar estatísticas do dashboard
+      if (dashboardStats) {
         setStats({
-          totalItems: itemsResponse.meta?.itemCount || 0,
-          availableItems,
-          totalDistributions: distributionsResponse.meta?.itemCount || 0,
-          lowStockItems: lowStockResponse ? (lowStockResponse.meta?.itemCount || 0) : 0,
-          totalUsers: usersResponse.meta?.itemCount || 0,
-          totalBeneficiaries: beneficiaries,
-          totalDonors: donors,
+          totalItems: dashboardStats.totalItems || 0,
+          availableItems: dashboardStats.availableItems || 0,
+          totalDistributions: dashboardStats.totalDistributions || 0,
+          lowStockItems: dashboardStats.lowStockItems || 0,
+          totalUsers: dashboardStats.totalUsers || 0,
+          totalBeneficiaries: dashboardStats.totalBeneficiaries || 0,
+          totalDonors: dashboardStats.totalDonors || 0,
         });
+      }
 
-        // Definir itens recentes
-        setRecentItems(items.slice(0, 3));
+      // Definir itens recentes
+      if (itemsResponse && Array.isArray(itemsResponse.data)) {
+        setRecentItems(itemsResponse.data.slice(0, 3));
+      }
 
-        // Definir distribuições recentes
-        const distributions = Array.isArray(distributionsResponse.data) ? distributionsResponse.data : [];
-        setRecentDistributions(distributions.slice(0, 3));
+      // Definir distribuições recentes
+      if (distributionsResponse && Array.isArray(distributionsResponse.data)) {
+        setRecentDistributions(distributionsResponse.data.slice(0, 3));
+      }
 
-        // Definir itens com estoque baixo
-        if (lowStockResponse) {
-          const lowStock = Array.isArray(lowStockResponse.data) ? lowStockResponse.data : [];
-          setLowStockInventory(lowStock.slice(0, 3));
-        }
+      // Definir itens com estoque baixo
+      if (lowStockResponse && Array.isArray(lowStockResponse.data)) {
+        setLowStockInventory(lowStockResponse.data.slice(0, 3));
       }
     } catch (err) {
       console.error("Erro ao carregar dados do dashboard:", err);

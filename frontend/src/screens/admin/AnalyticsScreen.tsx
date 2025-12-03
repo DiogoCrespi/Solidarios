@@ -209,7 +209,7 @@ const AnalyticsScreen: React.FC = () => {
             <Typography variant="h2" color={theme.colors.primary.main}>
               Analytics & Relatórios
             </Typography>
-            <Typography variant="body" color={theme.colors.neutral.mediumGray}>
+            <Typography variant="body" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
               Visão geral do sistema
             </Typography>
           </View>

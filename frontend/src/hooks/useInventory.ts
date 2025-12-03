@@ -40,7 +40,10 @@ export const useInventory = () => {
 
     try {
       const response = await InventoryService.getAll(pageOptions);
-      setInventoryItems(Array.isArray(response.data) ? response.data : []);
+      // A resposta já é um InventoryPage (PageDto<Inventory>)
+      // que tem { data: Inventory[], meta: PageMetaDto }
+      const inventoryData = response.data || [];
+      setInventoryItems(Array.isArray(inventoryData) ? inventoryData : []);
       setPagination({
         page: response.meta?.page || 1,
         totalPages: response.meta?.pageCount || 1,
@@ -186,7 +189,9 @@ export const useInventory = () => {
 
     try {
       const response = await InventoryService.getLowStock(pageOptions);
-      setInventoryItems(response.data);
+      // A resposta já é um InventoryPage (PageDto<Inventory>)
+      const inventoryData = response.data || [];
+      setInventoryItems(Array.isArray(inventoryData) ? inventoryData : []);
       setPagination({
         page: response.meta?.page || 1,
         totalPages: response.meta?.pageCount || 1,

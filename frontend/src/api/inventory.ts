@@ -18,10 +18,12 @@ const InventoryService = {
    * @returns Lista paginada de registros de inventário
    */
   getAll: async (pageOptions?: PageOptionsDto): Promise<InventoryPage> => {
-    const response = await api.get<InventoryPage>("/inventory", {
+    const response = await api.get<{ data: InventoryPage }>("/inventory", {
       params: pageOptions,
     });
-    return response.data;
+    // O interceptor retorna { data: PageDto, statusCode, message, timestamp }
+    // Então response.data já é o PageDto
+    return response.data.data || response.data;
   },
 
   /**
@@ -108,10 +110,11 @@ const InventoryService = {
    * @returns Lista paginada de registros de inventário com estoque baixo
    */
   getLowStock: async (pageOptions?: PageOptionsDto): Promise<InventoryPage> => {
-    const response = await api.get<InventoryPage>("/inventory/low-stock", {
+    const response = await api.get<{ data: InventoryPage }>("/inventory/low-stock", {
       params: pageOptions,
     });
-    return response.data;
+    // O interceptor retorna { data: PageDto, statusCode, message, timestamp }
+    return response.data.data || response.data;
   },
 
   /**

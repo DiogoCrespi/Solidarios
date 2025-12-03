@@ -8,6 +8,7 @@ export interface DashboardStats {
   totalDonors: number;
   totalBeneficiaries: number;
   totalItems: number;
+  availableItems: number;
   totalDistributions: number;
   totalCategories: number;
   lowStockItems: number;

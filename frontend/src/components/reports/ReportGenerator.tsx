@@ -100,19 +100,19 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ onGenerate, initialFi
           size={28}
           color={theme.colors.primary.main}
         />
-        <Typography variant="h5" color={theme.colors.neutral.darkGray} style={styles.title}>
+        <Typography variant="h5" color={theme.isDark ? theme.colors.neutral.black : theme.colors.neutral.darkGray} style={styles.title}>
           Gerador de Relatórios
         </Typography>
       </View>
 
-      <Typography variant="body" color={theme.colors.neutral.mediumGray} style={styles.description}>
+      <Typography variant="body" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray} style={styles.description}>
         Selecione o tipo de relatório e o formato para exportação
       </Typography>
 
       <View style={styles.form}>
         {/* Tipo de Relatório */}
         <View style={styles.field}>
-          <Typography variant="caption" color={theme.colors.neutral.mediumGray}>
+          <Typography variant="caption" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
             Tipo de Relatório
           </Typography>
           <Select
@@ -126,7 +126,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ onGenerate, initialFi
 
         {/* Formato */}
         <View style={styles.field}>
-          <Typography variant="caption" color={theme.colors.neutral.mediumGray}>
+          <Typography variant="caption" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
             Formato
           </Typography>
           <Select
@@ -143,7 +143,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ onGenerate, initialFi
           <>
             {/* Data Inicial */}
             <View style={styles.field}>
-              <Typography variant="caption" color={theme.colors.neutral.mediumGray}>
+              <Typography variant="caption" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
                 Data Inicial (Opcional)
               </Typography>
               <TextField
@@ -156,7 +156,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ onGenerate, initialFi
 
             {/* Data Final */}
             <View style={styles.field}>
-              <Typography variant="caption" color={theme.colors.neutral.mediumGray}>
+              <Typography variant="caption" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
                 Data Final (Opcional)
               </Typography>
               <TextField
@@ -170,7 +170,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ onGenerate, initialFi
             {/* Categoria - Apenas para relatório de itens */}
             {reportType === 'items' && (
               <View style={styles.field}>
-                <Typography variant="caption" color={theme.colors.neutral.mediumGray}>
+                <Typography variant="caption" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
                   Categoria (Opcional)
                 </Typography>
                 <Select
@@ -208,7 +208,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ onGenerate, initialFi
           size={16}
           color={theme.colors.status.info}
         />
-        <Typography variant="caption" color={theme.colors.neutral.mediumGray} style={styles.infoText}>
+        <Typography variant="caption" color={theme.isDark ? theme.colors.notifications.info.text : theme.colors.neutral.darkGray} style={styles.infoText}>
           Os relatórios são gerados com base nos dados atuais do sistema
         </Typography>
       </View>

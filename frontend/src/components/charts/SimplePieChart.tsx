@@ -104,23 +104,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 8,
+    gap: 8,
   },
   legendColor: {
     width: 16,
     height: 16,
     borderRadius: 4,
-    marginRight: 8,
+    flexShrink: 0,
+    flexGrow: 0,
   },
   itemLabel: {
     flex: 1,
+    flexShrink: 1,
   },
   itemValue: {
-    marginLeft: 8,
+    flexShrink: 0,
   },
   barContainer: {
     height: 8,
     borderRadius: 4,
     overflow: 'hidden',
+    width: '100%',
   },
   bar: {
     height: '100%',

@@ -34,21 +34,13 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
       )}
       <View style={[styles.chartContainer, { height }]}>
         {data.map((item, index) => {
-          const barHeight = (item.value / maxValue) * (height - 60);
+          const chartHeight = height - 80; // Altura disponível para as barras (altura total - espaço para labels)
+          const barHeight = Math.max(4, Math.min(chartHeight, (item.value / maxValue) * chartHeight));
           const barColor = item.color || theme.colors.primary.main;
 
           return (
             <View key={index} style={styles.barContainer}>
-              <View style={styles.barWrapper}>
-                <View
-                  style={[
-                    styles.bar,
-                    {
-                      height: barHeight,
-                      backgroundColor: barColor,
-                    },
-                  ]}
-                />
+              <View style={styles.barColumn}>
                 {showValues && (
                   <Typography
                     variant="small"
@@ -58,6 +50,17 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
                     {item.value}
                   </Typography>
                 )}
+                <View style={[styles.barArea, { height: chartHeight }]}>
+                  <View
+                    style={[
+                      styles.bar,
+                      {
+                        height: barHeight,
+                        backgroundColor: barColor,
+                      },
+                    ]}
+                  />
+                </View>
               </View>
               <Typography
                 variant="caption"
@@ -88,23 +91,30 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingHorizontal: 8,
     paddingBottom: 40,
+    paddingTop: 20,
+    minHeight: 200,
   },
   barContainer: {
     flex: 1,
     alignItems: 'center',
     marginHorizontal: 4,
+    maxWidth: 120,
   },
-  barWrapper: {
-    flex: 1,
+  barColumn: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  barArea: {
     width: '100%',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    minHeight: 20,
+    marginTop: 4,
   },
   bar: {
-    width: '80%',
+    width: '70%',
     borderRadius: 4,
     minHeight: 4,
+    maxHeight: '100%',
   },
   valueLabel: {
     marginTop: 4,
@@ -118,4 +128,5 @@ const styles = StyleSheet.create({
 });
 
 export default SimpleBarChart;
+
 

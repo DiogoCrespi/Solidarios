@@ -98,7 +98,7 @@ const SettingsScreen: React.FC = () => {
               <Typography variant="body" color={theme.colors.neutral.black}>
                 Notificações Push
               </Typography>
-              <Typography variant="caption" color={theme.colors.neutral.mediumGray}>
+              <Typography variant="caption" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
                 Receber notificações sobre doações e distribuições
               </Typography>
             </View>
@@ -120,7 +120,7 @@ const SettingsScreen: React.FC = () => {
               <Typography variant="body" color={theme.colors.neutral.black}>
                 Modo Escuro
               </Typography>
-              <Typography variant="caption" color={theme.colors.neutral.mediumGray}>
+              <Typography variant="caption" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
                 Usar tema escuro na interface
               </Typography>
             </View>
@@ -142,7 +142,7 @@ const SettingsScreen: React.FC = () => {
               <Typography variant="body" color={theme.colors.neutral.black}>
                 Sincronização Automática
               </Typography>
-              <Typography variant="caption" color={theme.colors.neutral.mediumGray}>
+              <Typography variant="caption" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
                 Sincronizar dados automaticamente
               </Typography>
             </View>
@@ -159,7 +159,7 @@ const SettingsScreen: React.FC = () => {
               <Typography variant="body" color={theme.colors.neutral.black}>
                 Autenticação Biométrica
               </Typography>
-              <Typography variant="caption" color={theme.colors.neutral.mediumGray}>
+              <Typography variant="caption" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
                 Usar impressão digital ou reconhecimento facial
               </Typography>
             </View>
@@ -206,10 +206,10 @@ const SettingsScreen: React.FC = () => {
           </Typography>
           
           <View style={styles.infoItem}>
-            <Typography variant="body" color={theme.colors.neutral.mediumGray}>
+            <Typography variant="body" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
               Versão do App
             </Typography>
-            <Typography variant="body" color={theme.colors.neutral.black}>
+            <Typography variant="body" color={theme.isDark ? theme.colors.neutral.black : theme.colors.neutral.black}>
               1.0.0
             </Typography>
           </View>
@@ -217,10 +217,10 @@ const SettingsScreen: React.FC = () => {
           <Divider style={styles.settingDivider} />
           
           <View style={styles.infoItem}>
-            <Typography variant="body" color={theme.colors.neutral.mediumGray}>
+            <Typography variant="body" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
               Usuário Logado
             </Typography>
-            <Typography variant="body" color={theme.colors.neutral.black}>
+            <Typography variant="body" color={theme.isDark ? theme.colors.neutral.black : theme.colors.neutral.black}>
               {user?.name}
             </Typography>
           </View>
@@ -228,10 +228,10 @@ const SettingsScreen: React.FC = () => {
           <Divider style={styles.settingDivider} />
           
           <View style={styles.infoItem}>
-            <Typography variant="body" color={theme.colors.neutral.mediumGray}>
+            <Typography variant="body" color={theme.isDark ? theme.colors.neutral.darkGray : theme.colors.neutral.mediumGray}>
               Tipo de Conta
             </Typography>
-            <Typography variant="body" color={theme.colors.neutral.black}>
+            <Typography variant="body" color={theme.isDark ? theme.colors.neutral.black : theme.colors.neutral.black}>
               {user?.role}
             </Typography>
           </View>
